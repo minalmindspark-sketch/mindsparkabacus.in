@@ -1,1 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Free Abacus Practice Tests – MindSpark Abacus</title>
+<meta name="description" content="Free abacus practice tests for kids ages 5-14. Start with Little Sparks for beginners or take the Level 1 timed test."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#1a1a2e;
+  --bg:#fdf9f4;
+  --surface:#FFFFFF;
+  --warm:#f3f4f6;
+  --border:#ECE3D6;
+  --muted:#6b7280;
+  --orange:#E8751A;
+  --orange-light:#f28c3a;
+  --orange-d:#B85A0F;
+  --navy:#1B3A6B;
+  --navy-light:#2a4f8a;
+  --r-md:14px;
+  --r-lg:22px;
+  --r-xl:32px;
+  --shadow: 0 4px 16px rgba(27,58,107,.08), 0 1px 3px rgba(27,58,107,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow-x:hidden;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  background-image:
+    radial-gradient(circle at 15% 8%, rgba(232,117,26,.07) 0%, transparent 45%),
+    radial-gradient(circle at 85% 92%, rgba(27,58,107,.06) 0%, transparent 45%);
+}
 
+/* ── TOPBAR ─────────────────────────────────────────────────────── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(253,249,244,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1.5px solid var(--border);
+  padding:12px 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.topbar-back{
+  font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;
+  color:var(--navy);text-decoration:none;flex-shrink:0;
+  padding:7px 12px;border-radius:999px;transition:background .15s;
+  white-space:nowrap;
+}
+.topbar-back:hover{background:var(--warm);}
+.topbar-brand{
+  font-family:'Playfair Display',serif;font-weight:900;font-size:19px;
+  color:var(--orange);letter-spacing:.01em;
+}
+.topbar-right{width:90px;flex-shrink:0;}
+
+/* ── LAYOUT ─────────────────────────────────────────────────────── */
+.wrap{max-width:760px;margin:0 auto;padding:32px 16px 80px;}
+
+/* ── HERO ───────────────────────────────────────────────────────── */
+.hero{text-align:center;padding:14px 0 32px;}
+.hero-badge{
+  display:inline-block;background:rgba(232,117,26,.12);color:var(--orange-d);
+  font-size:13px;font-weight:800;padding:7px 18px;border-radius:999px;
+  margin-bottom:16px;letter-spacing:.04em;
+}
+.hero h1{
+  font-family:'Playfair Display',serif;font-weight:900;
+  font-size:clamp(2.1rem,7vw,3.2rem);color:var(--navy);line-height:1.15;margin-bottom:12px;
+}
+.hero h1 .accent{color:var(--orange);}
+.hero p{font-size:16px;color:var(--muted);font-weight:500;max-width:480px;margin:0 auto;line-height:1.65;}
+
+/* ── LEVEL CARDS ────────────────────────────────────────────────── */
+.level-grid{display:grid;grid-template-columns:1fr;gap:18px;margin-top:28px;}
+.level-card{
+  background:var(--surface);border:2.5px solid var(--border);
+  border-radius:var(--r-xl);padding:26px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;
+  transition:transform .15s,border-color .15s;
+}
+.level-card.active:hover{transform:translateY(-3px);border-color:var(--orange);}
+.level-card.soon{opacity:.7;}
+
+.level-top{display:flex;align-items:flex-start;gap:16px;}
+.level-icon{
+  width:64px;height:64px;border-radius:18px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+}
+.level-icon.l0{background:#FFF1E3;}
+.level-icon.l1{background:#E8EEF8;}
+.level-icon.soon{background:var(--warm);}
+
+.level-tag{
+  display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;
+  text-transform:uppercase;padding:4px 12px;border-radius:999px;margin-bottom:6px;
+}
+.tag-beginner{background:#FFF1E3;color:var(--orange-d);}
+.tag-level1{background:#E8EEF8;color:var(--navy);}
+.tag-soon{background:var(--warm);color:var(--muted);}
+
+.level-title{font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--navy);margin-bottom:4px;}
+.level-sub{font-size:14px;color:var(--muted);font-weight:500;line-height:1.6;}
+
+.level-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:2px;}
+.meta-chip{
+  font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;
+  background:var(--warm);color:var(--navy);
+}
+
+.level-btn{
+  font-family:'DM Sans',sans-serif;font-weight:800;font-size:15px;
+  padding:14px 24px;border-radius:999px;border:none;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  text-decoration:none;width:100%;transition:transform .1s,box-shadow .1s;
+}
+.level-btn:active{transform:scale(.97);}
+.level-btn.orange{background:var(--orange);color:#fff;box-shadow:0 5px 0 var(--orange-d);}
+.level-btn.orange:hover{box-shadow:0 2px 0 var(--orange-d);transform:translateY(3px);}
+.level-btn.navy{background:var(--navy);color:#fff;box-shadow:0 5px 0 var(--navy-light);}
+.level-btn.navy:hover{box-shadow:0 2px 0 var(--navy-light);transform:translateY(3px);}
+.level-btn.disabled{
+  background:var(--warm);color:var(--muted);box-shadow:none;cursor:default;pointer-events:none;
+}
+
+.soon-ribbon{
+  position:absolute;top:18px;right:-32px;background:var(--navy);color:#fff;
+  font-size:11px;font-weight:800;padding:5px 40px;transform:rotate(35deg);
+  letter-spacing:.06em;text-transform:uppercase;
+}
+
+/* ── INFO STRIP ─────────────────────────────────────────────────── */
+.info-strip{
+  background:#EFF3FB;border:2px solid #D6E2F5;border-radius:var(--r-md);
+  padding:16px 18px;font-size:13.5px;color:var(--navy);line-height:1.6;
+  margin-top:28px;font-weight:600;text-align:center;
+}
+
+@media (min-width:640px){
+  .level-grid{grid-template-columns:repeat(2,1fr);}
+  .level-grid > .level-card.full-width{grid-column:1 / -1;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="../index.html" class="topbar-back">← Back to Site</a>
+  <div class="topbar-brand">🧮 Practice Tests</div>
+  <div class="topbar-right"></div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-badge">100% Free · Ages 5–14</div>
+    <h1>Free Abacus<br/><span class="accent">Practice Tests</span></h1>
+    <p>Pick a level below and start practicing right away. New levels are added regularly — check back often!</p>
+  </div>
+
+  <div class="level-grid">
+
+    <!-- LITTLE SPARKS -->
+    <div class="level-card active">
+      <div class="level-top">
+        <div class="level-icon l0">✨</div>
+        <div>
+          <span class="level-tag tag-beginner">Little Sparks</span>
+          <div class="level-title">Learn &amp; Play</div>
+          <div class="level-sub">A fun, no-pressure abacus playground for little learners. Meet Sparky and discover counting!</div>
+        </div>
+      </div>
+      <div class="level-meta">
+        <span class="meta-chip">👶 Ages 5–6</span>
+        <span class="meta-chip">🎯 10 fun questions</span>
+        <span class="meta-chip">⏱ No timer</span>
+      </div>
+      <a href="level-0.html" class="level-btn orange">Start Little Sparks →</a>
+    </div>
+
+    <!-- LEVEL 1 -->
+    <div class="level-card active">
+      <div class="level-top">
+        <div class="level-icon l1">🧮</div>
+        <div>
+          <span class="level-tag tag-level1">Level 1</span>
+          <div class="level-title">Full Practice Test</div>
+          <div class="level-sub">Timed test covering audio abacus, mental math, and visual long sums — just like a real assessment.</div>
+        </div>
+      </div>
+      <div class="level-meta">
+        <span class="meta-chip">🧑 Ages 6–14</span>
+        <span class="meta-chip">📝 200 marks</span>
+        <span class="meta-chip">⏱ 80 minutes</span>
+      </div>
+      <a href="level-1.html" class="level-btn navy">Start Level 1 Test →</a>
+    </div>
+
+    <!-- COMING SOON -->
+    <div class="level-card soon full-width">
+      <div class="soon-ribbon">Coming Soon</div>
+      <div class="level-top">
+        <div class="level-icon soon">🚀</div>
+        <div>
+          <span class="level-tag tag-soon">Level 2 &amp; Beyond</span>
+          <div class="level-title">More Levels on the Way</div>
+          <div class="level-sub">We're building practice tests for Level 2, Level 3, and beyond. Stay tuned for more challenges!</div>
+        </div>
+      </div>
+      <div class="level-btn disabled">Coming Soon</div>
+    </div>
+
+  </div>
+
+  <div class="info-strip">📞 Want personalized guidance? <a href="../index.html#contact" style="color:var(--orange);font-weight:800;text-decoration:none;">Contact us</a> to learn about our classes for all levels.</div>
+
+</div>
+
+</body>
+</html>

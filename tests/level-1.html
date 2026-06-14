@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+╔══════════════════════════════════════════════════════════════════╗
+║           ABACUS LEVEL 1 TEST — PRODUCTION BUILD                ║
+║           Senior Full-Stack EdTech — Single File App            ║
+╠══════════════════════════════════════════════════════════════════╣
+║  HOW TO SET UP GOOGLE SHEETS INTEGRATION                        ║
+║                                                                  ║
+║  STEP 1: Create a new Google Sheet with these column headers    ║
+║    A: Timestamp  B: Student Name  C: Phone  D: Sec1  E: Sec2   ║
+║    F: Sec3  G: Total  H: Percentage  I: Grade                   ║
+║                                                                  ║
+║  STEP 2: In Google Sheets → Extensions → Apps Script            ║
+║    Paste the universal hybrid script and deploy as a Web App     ║
+║                                                                  ║
+║  STEP 3: Deploy → New deployment → Web App                      ║
+║    Execute as: Me | Who has access: Anyone                      ║
+║    Copy the deployment URL                                       ║
+║                                                                  ║
+║  STEP 4: Paste the URL below replacing PASTE_YOUR_URL_HERE      ║
+╚══════════════════════════════════════════════════════════════════╝
+-->
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>MindSpark Abacus Level 1 Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ── DESIGN TOKENS ─────────────────────────────────────────────── */
+:root {
+  --ink:      #1a1a2e;
+  --bg:       #fdf9f4;
+  --surface:  #FFFFFF;
+  --warm:     #f3f4f6;
+  --border:   #E2D5B0;
+  --muted:    #6b7280;
+  --orange:   #E8751A;
+  --orange-d: #B85A0F;
+  --blue:     #1B3A6B;
+  --blue-d:   #122a52;
+  --green:    #0F7B3C;
+  --green-d:  #085C2B;
+  --red:      #DC2626;
+  --amber:    #D97706;
+  --r-sm:     8px;
+  --r-md:     14px;
+  --r-lg:     20px;
+  --r-xl:     28px;
+  --shadow:   0 1px 3px rgba(26,18,0,.08), 0 4px 16px rgba(26,18,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow-x:hidden;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  background-image: radial-gradient(circle at 20% 10%, rgba(232,117,26,.06) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 90%, rgba(27,58,107,.05) 0%, transparent 50%);
+}
+
+/* ── TOP BAR ───────────────────────────────────────────────────── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(253,249,244,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1.5px solid var(--border);
+  padding:10px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;
+}
+.topbar-brand{font-family:'Playfair Display',serif;font-weight:900;font-size:18px;color:var(--orange);letter-spacing:.02em;}
+.topbar-back{
+  font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;
+  color:var(--blue);text-decoration:none;flex-shrink:0;
+  padding:6px 10px;border-radius:999px;transition:background .15s;
+  white-space:nowrap;
+}
+.topbar-back:hover{background:var(--warm);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.timer-pill{
+  background:var(--warm);border:1.5px solid var(--border);
+  border-radius:999px;padding:6px 16px;
+  font-family:'Playfair Display',serif;font-size:19px;
+  color:var(--ink);min-width:88px;text-align:center;
+  transition:background .3s,color .3s,border-color .3s;
+}
+.timer-pill.warn{background:#FEF3C7;border-color:#F59E0B;color:#92400E;}
+.timer-pill.urgent{background:#FEE2E2;border-color:var(--red);color:var(--red);animation:throb 1s ease-in-out infinite;}
+@keyframes throb{0%,100%{opacity:1}50%{opacity:.6}}
+.save-dot{width:8px;height:8px;border-radius:50%;background:#10B981;box-shadow:0 0 0 2px #D1FAE5;flex-shrink:0;}
+
+/* ── LAYOUT ────────────────────────────────────────────────────── */
+.wrap{max-width:700px;margin:0 auto;padding:20px 14px 120px;}
+.screen{display:none;animation:fadeUp .22s ease both;}
+.screen.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── TYPOGRAPHY ────────────────────────────────────────────────── */
+.page-title{font-family:'Playfair Display',serif;font-size:30px;color:var(--ink);line-height:1.15;margin-bottom:4px;}
+.page-sub{font-size:14px;color:var(--muted);font-weight:600;}
+.label-caps{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:7px;}
+
+/* ── CARDS ─────────────────────────────────────────────────────── */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);}
+.card-warm{background:var(--warm);border-color:var(--border);}
+
+/* ── SECTION PILLS ──────────────────────────────────────────────── */
+.sec-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;padding:4px 12px;border-radius:999px;letter-spacing:.04em;}
+.sec-tag.s1{background:#FEE2E2;color:#B91C1C;}
+.sec-tag.s2{background:#FEF3C7;color:#92400E;}
+.sec-tag.s3{background:#DCFCE7;color:#065F46;}
+.chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;}
+.chip-r{background:#FEE2E2;color:#B91C1C;}
+.chip-b{background:#DBEAFE;color:#1E40AF;}
+.chip-a{background:#FEF3C7;color:#92400E;}
+.chip-g{background:#DCFCE7;color:#065F46;}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+
+/* ── HOME HERO ──────────────────────────────────────────────────── */
+.hero{text-align:center;padding:28px 0 20px;}
+.hero-icon{font-size:64px;margin-bottom:10px;display:block;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.sec-row{display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:start;}
+.sec-circle{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:22px;flex-shrink:0;}
+.sec-circle.s1{background:#FEE2E2;color:#B91C1C;}
+.sec-circle.s2{background:#FEF3C7;color:#92400E;}
+.sec-circle.s3{background:#DCFCE7;color:#065F46;}
+
+/* ── INPUTS ─────────────────────────────────────────────────────── */
+.name-input{
+  width:100%;font-family:'DM Sans',sans-serif;font-size:18px;font-weight:700;
+  padding:12px 16px;border:2px solid var(--border);border-radius:var(--r-md);
+  background:var(--warm);color:var(--ink);outline:none;transition:border-color .2s;
+}
+.name-input:focus{border-color:var(--orange);background:#fff;}
+
+/* ── BUTTONS ─────────────────────────────────────────────────────── */
+.btn{
+  font-family:'DM Sans',sans-serif;font-weight:800;font-size:15px;
+  padding:12px 26px;border-radius:999px;border:none;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px;
+  transition:transform .1s,box-shadow .1s,opacity .15s;
+  user-select:none;
+}
+.btn:active{transform:scale(.96);}
+.btn-orange{background:var(--orange);color:#fff;box-shadow:0 4px 0 var(--orange-d);}
+.btn-orange:hover{box-shadow:0 2px 0 var(--orange-d);transform:translateY(2px);}
+.btn-blue{background:var(--blue);color:#fff;box-shadow:0 4px 0 var(--blue-d);}
+.btn-blue:hover{box-shadow:0 2px 0 var(--blue-d);transform:translateY(2px);}
+.btn-green{background:var(--green);color:#fff;box-shadow:0 4px 0 var(--green-d);}
+.btn-green:hover{box-shadow:0 2px 0 var(--green-d);transform:translateY(2px);}
+.btn-ghost{background:var(--surface);color:var(--ink);border:1.5px solid var(--border);box-shadow:0 2px 0 var(--border);}
+.btn-ghost:hover{background:var(--warm);}
+.btn-danger{background:var(--red);color:#fff;box-shadow:0 4px 0 #991B1B;}
+.btn-sm{font-size:13px;padding:8px 18px;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center;}
+
+/* ── PROGRESS ───────────────────────────────────────────────────── */
+.progress-track{background:var(--border);border-radius:999px;height:7px;overflow:hidden;margin-bottom:5px;}
+.progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--orange),#F59E0B);transition:width .35s ease;}
+.progress-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:12px;}
+
+/* ── QUESTION NAV ───────────────────────────────────────────────── */
+.qnav{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;}
+.qnav-dot{
+  width:28px;height:28px;border-radius:6px;font-size:10px;font-weight:800;
+  border:1.5px solid var(--border);background:var(--surface);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);transition:all .1s;
+}
+.qnav-dot.done{background:#DBEAFE;border-color:#93C5FD;color:#1E40AF;}
+.qnav-dot.curr{background:var(--orange);border-color:var(--orange);color:#fff;}
+
+/* ── AUDIO PLAYER ───────────────────────────────────────────────── */
+.audio-player{display:flex;align-items:center;gap:14px;}
+.play-btn{
+  width:62px;height:62px;border-radius:50%;background:var(--orange);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:24px;color:#fff;box-shadow:0 5px 0 var(--orange-d);
+  transition:transform .1s,box-shadow .1s;flex-shrink:0;
+}
+.play-btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--orange-d);}
+.play-btn.playing{background:var(--green);box-shadow:0 5px 0 var(--green-d);}
+.play-btn.done-play{background:var(--blue);box-shadow:0 5px 0 var(--blue-d);}
+.audio-status{font-size:13px;font-weight:700;color:var(--muted);margin-top:4px;}
+.num-dots{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.ndot{width:11px;height:11px;border-radius:50%;background:var(--border);transition:background .25s,transform .25s;}
+.ndot.played{background:var(--green);}
+.ndot.playing{background:var(--orange);transform:scale(1.4);}
+
+/* ── ON-SCREEN NUMPAD ───────────────────────────────────────────── */
+.numpad-display{
+  font-family:'Playfair Display',serif;font-size:42px;color:var(--ink);
+  background:var(--warm);border:2px solid var(--border);border-radius:var(--r-md);
+  padding:10px 20px;text-align:right;min-height:68px;margin-bottom:12px;
+  letter-spacing:2px;transition:border-color .2s;position:relative;
+  overflow:hidden;
+}
+.numpad-display.has-val{border-color:var(--orange);}
+.numpad-display::after{content:attr(data-cursor);animation:blink .8s step-end infinite;color:var(--orange);font-size:38px;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:260px;}
+.nk{
+  font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);
+  background:var(--surface);border:2px solid var(--border);border-radius:var(--r-md);
+  padding:16px 8px;cursor:pointer;text-align:center;
+  box-shadow:0 3px 0 var(--border);transition:transform .08s,box-shadow .08s;
+  user-select:none;
+}
+.nk:active{transform:translateY(2px);box-shadow:0 1px 0 var(--border);}
+.nk.nk-zero{grid-column:span 2;}
+.nk.nk-del{background:var(--warm);color:var(--red);border-color:#FCA5A5;}
+.nk.nk-del:active{box-shadow:0 1px 0 #FCA5A5;}
+
+/* ── ABACUS ─────────────────────────────────────────────────────── */
+.abacus-outer{background:#FEF3D6;border:2px solid #D4A84B;border-radius:var(--r-lg);padding:16px 10px 12px;margin-bottom:14px;}
+.abacus-frame{display:flex;gap:12px;justify-content:center;padding:4px 0;}
+.rod-unit{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.rod-lbl{font-size:10px;font-weight:900;color:#8B6914;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.rod-col{display:flex;flex-direction:column;align-items:center;position:relative;}
+.rod-spine{width:5px;background:#A07830;border-radius:3px;position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);z-index:0;}
+.rod-heaven{display:flex;flex-direction:column;gap:4px;z-index:1;position:relative;padding:4px 0;}
+.rod-bar{width:58px;height:5px;background:#6B4F12;border-radius:3px;position:relative;z-index:2;margin:3px 0;}
+.rod-earth{display:flex;flex-direction:column;gap:4px;z-index:1;position:relative;padding:4px 0;}
+.bead{width:42px;height:21px;border-radius:999px;cursor:pointer;border:none;outline:none;transition:all .14s;position:relative;z-index:1;-webkit-tap-highlight-color:transparent;}
+.bead-h{background:#F5C189;border:2.5px solid #C07830;}
+.bead-h.on{background:var(--orange);border-color:var(--orange-d);transform:scale(1.06);}
+.bead-e{background:#A8D4F5;border:2.5px solid #3B82F6;}
+.bead-e.on{background:var(--blue);border-color:var(--blue-d);transform:scale(1.06);}
+.abacus-readout{text-align:center;font-family:'Playfair Display',serif;font-size:20px;color:var(--blue);margin-top:10px;}
+.abacus-use-btn{width:100%;margin-top:10px;}
+
+/* ── SUM DISPLAY (SEC 3) ────────────────────────────────────────── */
+.sum-col{font-family:'Playfair Display',serif;font-size:42px;text-align:right;display:inline-block;line-height:1.3;min-width:160px;}
+.sum-row{display:block;}
+.sum-op-sym{font-size:32px;color:var(--muted);margin-right:6px;}
+.sum-hr{border:none;border-top:3px solid var(--ink);margin:6px 0;}
+.sum-wrap{display:flex;justify-content:center;padding:10px 0;}
+
+/* ── RESULTS ─────────────────────────────────────────────────────── */
+.result-hero{text-align:center;padding:24px 0 16px;}
+.score-big{font-family:'Playfair Display',serif;font-size:88px;line-height:1;}
+.score-denom{font-size:20px;color:var(--muted);font-weight:700;margin-top:2px;}
+.grade-pill{display:inline-block;font-size:18px;font-weight:800;padding:10px 28px;border-radius:999px;margin-top:12px;}
+.score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0;}
+.score-cell{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-md);padding:14px;text-align:center;}
+.score-cell .sv{font-family:'Playfair Display',serif;font-size:30px;}
+.score-cell .sl{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.score-cell .sd{font-size:11px;color:var(--muted);margin-top:2px;}
+.dot-grid{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.rdot{width:26px;height:26px;border-radius:5px;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:default;}
+.rdot.ok{background:#DCFCE7;color:#065F46;}
+.rdot.ng{background:#FEE2E2;color:#B91C1C;}
+.rdot.sk{background:var(--warm);color:var(--muted);}
+
+/* ── EXPORT BOX ─────────────────────────────────────────────────── */
+.export-box{background:#F0FDF4;border:2px solid #6EE7B7;border-radius:var(--r-lg);padding:18px;margin-top:14px;}
+.export-box h3{font-weight:800;font-size:15px;color:#065F46;margin-bottom:5px;}
+.result-text{
+  background:#fff;border:1.5px solid #6EE7B7;border-radius:10px;
+  padding:14px;font-family:'Courier New',monospace;font-size:12.5px;
+  white-space:pre;overflow-x:auto;max-height:180px;overflow-y:auto;
+  line-height:1.7;margin:10px 0;color:var(--ink);
+}
+
+/* ── TOAST ───────────────────────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--ink);color:#fff;padding:10px 24px;border-radius:999px;
+  font-size:14px;font-weight:700;z-index:9999;
+  transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* ── DIVIDER ─────────────────────────────────────────────────────── */
+.divider{height:1px;background:var(--border);margin:14px 0;}
+
+/* ── INFO BOX ────────────────────────────────────────────────────── */
+.info-box{background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:var(--r-md);padding:13px 15px;font-size:13px;color:#78350F;line-height:1.65;margin-bottom:16px;}
+
+/* ── AUDIO CHECK ─────────────────────────────────────────────────── */
+.audio-check-btn{display:flex;align-items:center;gap:10px;background:var(--warm);border:1.5px solid var(--border);border-radius:var(--r-md);padding:13px 16px;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;font-weight:700;font-size:14px;color:var(--ink);transition:background .15s;}
+.audio-check-btn:hover{background:#EDE0C0;}
+.audio-check-status{font-size:12px;font-weight:700;margin-top:6px;padding:5px 12px;border-radius:999px;display:inline-block;}
+.acs-idle{background:var(--warm);color:var(--muted);}
+.acs-ok{background:#D1FAE5;color:#065F46;}
+.acs-fail{background:#FEE2E2;color:#B91C1C;}
+
+/* ── SUBMIT OVERLAY ──────────────────────────────────────────────── */
+.overlay{position:fixed;inset:0;background:rgba(26,18,0,.55);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.overlay-card{background:var(--surface);border-radius:var(--r-xl);padding:28px 24px;max-width:360px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.overlay-icon{font-size:48px;margin-bottom:10px;}
+.overlay-title{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:6px;}
+.overlay-sub{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── RESUME BANNER ───────────────────────────────────────────────── */
+.resume-banner{background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:var(--r-md);padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.resume-banner p{font-size:14px;font-weight:700;color:#1E40AF;}
+.resume-banner small{font-size:12px;color:#3B82F6;display:block;margin-top:2px;}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="../index.html" class="topbar-back" title="Back to MindSpark Abacus site">← Back to Site</a>
+  <div class="topbar-brand">🧮 Level 1 Test</div>
+  <div class="topbar-right">
+    <div class="save-dot" id="save-dot" title="Progress auto-saved" style="display:none"></div>
+    <div class="timer-pill" id="top-timer" style="display:none">20:00</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- WRAP -->
+<div class="wrap">
+
+<!-- ════════════════════════ HOME ════════════════════════ -->
+<div id="screen-home" class="screen active">
+  <div class="hero">
+    <span class="hero-icon">🧮</span>
+    <div class="page-title">Level 1 Abacus Test</div>
+    <div class="page-sub">Big Friend &amp; Small Friend Formulas · Ages 6–14</div>
+  </div>
+
+  <!-- Resume Banner (shown if saved state exists) -->
+  <div class="resume-banner" id="resume-banner" style="display:none">
+    <div>
+      <p id="resume-name-text">Continue your test</p>
+      <small id="resume-detail-text">Saved progress found</small>
+    </div>
+    <div style="display:flex;gap:8px;flex-shrink:0;">
+      <button class="btn btn-blue btn-sm" onclick="resumeTest()">Resume ↗</button>
+      <button class="btn btn-ghost btn-sm" onclick="clearSave()">Clear</button>
+    </div>
+  </div>
+
+  <!-- Student Name -->
+  <div class="card">
+    <span class="label-caps">Your name</span>
+    <input class="name-input" id="student-name" type="text" placeholder="Type your full name..." autocomplete="name" autocorrect="off"/>
+  </div>
+
+  <!-- Parent's Contact Number -->
+  <div class="card">
+    <span class="label-caps">Parent's contact number</span>
+    <input class="name-input" id="student-phone" type="tel" placeholder="e.g. 9876543210" autocomplete="tel" inputmode="numeric" maxlength="15"/>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;">We'll use this only to share your child's results and follow up about classes.</p>
+  </div>
+
+  <!-- Audio Check -->
+  <div class="card">
+    <span class="label-caps">🔊 Pre-test audio check</span>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Sections 1 &amp; 2 require audio. Tap below to verify your device speaks clearly before you begin.</p>
+    <button class="audio-check-btn" onclick="runAudioCheck()">
+      <span style="font-size:22px;">🔊</span>
+      <span>Play audio test — "Plus 5, minus 3, plus 2"</span>
+    </button>
+    <div class="audio-check-status acs-idle" id="audio-check-status">Not tested yet — tap above</div>
+  </div>
+
+  <!-- Section Overview -->
+  <div class="card" style="margin-bottom:10px;">
+    <div class="sec-row" style="margin-bottom:14px;">
+      <div class="sec-circle s1">1</div>
+      <div>
+        <div style="font-weight:800;font-size:15px;margin-bottom:2px;">Hear &amp; Calculate on Abacus</div>
+        <div style="font-size:13px;color:var(--muted);">50 questions · 50 marks · 20 min</div>
+        <div class="chips"><span class="chip chip-r">🔊 Audio only</span><span class="chip chip-b">🧮 Virtual abacus</span></div>
+      </div>
+    </div>
+    <div class="sec-row" style="margin-bottom:14px;">
+      <div class="sec-circle s2">2</div>
+      <div>
+        <div style="font-weight:800;font-size:15px;margin-bottom:2px;">Hear &amp; Calculate Mentally</div>
+        <div style="font-size:13px;color:var(--muted);">50 questions · 50 marks · 20 min</div>
+        <div class="chips"><span class="chip chip-r">🔊 Audio only</span><span class="chip chip-a">🧠 Mental math</span></div>
+      </div>
+    </div>
+    <div class="sec-row">
+      <div class="sec-circle s3">3</div>
+      <div>
+        <div style="font-weight:800;font-size:15px;margin-bottom:2px;">Visual Long Sums</div>
+        <div style="font-size:13px;color:var(--muted);">100 questions · 100 marks · 40 min</div>
+        <div class="chips"><span class="chip chip-g">📝 On-screen numpad</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box">⏱ <strong>Total: 200 marks · 80 minutes.</strong> Sections play in order. Progress is auto-saved — if you refresh, you can resume. Results are sent to your teacher automatically.</div>
+  <div class="btn-row">
+    <button class="btn btn-orange" onclick="startFresh()">Begin Test ➜</button>
+  </div>
+</div>
+
+<!-- ════════════════════════ SECTION 1 ════════════════════════ -->
+<div id="screen-s1" class="screen">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+    <span class="sec-tag s1">Section 1 / 3</span>
+    <span style="font-size:13px;color:var(--muted);font-weight:700;">Hear &amp; Calculate on Abacus</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="s1-fill" style="width:0%"></div></div>
+  <div class="progress-label" id="s1-plbl">Question 1 of 50</div>
+  <div class="qnav" id="s1-nav"></div>
+
+  <div class="card">
+    <span class="label-caps">🔊 Listen to the numbers</span>
+    <div class="audio-player">
+      <button class="play-btn" id="s1-playbtn" onclick="playAudio('s1')">▶</button>
+      <div style="flex:1;">
+        <div style="font-weight:800;font-size:15px;">Press play to hear the sum</div>
+        <div class="audio-status" id="s1-astatus">Ready — press play</div>
+        <div class="num-dots" id="s1-ndots"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="label-caps">🧮 Abacus — click beads, then use value</span>
+    <div class="abacus-outer">
+      <div class="abacus-frame" id="abacus-frame"></div>
+      <div class="abacus-readout">Value: <strong id="abacus-val">0</strong></div>
+    </div>
+    <button class="btn btn-ghost abacus-use-btn" onclick="useAbacusVal()" style="width:100%;justify-content:center;">⬆ Use abacus value as my answer</button>
+  </div>
+
+  <div class="card">
+    <span class="label-caps">✏️ Your answer</span>
+    <div class="numpad-display" id="s1-display" data-cursor="|">_</div>
+    <div class="numpad" id="s1-numpad"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-orange" onclick="submitAnswer('s1')">Submit ➜</button>
+    <button class="btn btn-ghost" onclick="skipQ('s1')">Skip →</button>
+    <button class="btn btn-danger btn-sm" onclick="confirmFinish('s1')">End Section</button>
+  </div>
+</div>
+
+<!-- ════════════════════════ SECTION 2 ════════════════════════ -->
+<div id="screen-s2" class="screen">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+    <span class="sec-tag s2">Section 2 / 3</span>
+    <span style="font-size:13px;color:var(--muted);font-weight:700;">Hear &amp; Calculate Mentally</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="s2-fill" style="width:0%"></div></div>
+  <div class="progress-label" id="s2-plbl">Question 1 of 50</div>
+  <div class="qnav" id="s2-nav"></div>
+
+  <div class="card">
+    <span class="label-caps">🔊 Listen to the numbers</span>
+    <div class="audio-player">
+      <button class="play-btn" id="s2-playbtn" onclick="playAudio('s2')">▶</button>
+      <div style="flex:1;">
+        <div style="font-weight:800;font-size:15px;">Press play to hear the sum</div>
+        <div class="audio-status" id="s2-astatus">Ready — press play</div>
+        <div class="num-dots" id="s2-ndots"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="label-caps">🧠 Calculate mentally — enter your answer</span>
+    <div class="numpad-display" id="s2-display" data-cursor="|">_</div>
+    <div class="numpad" id="s2-numpad"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-orange" onclick="submitAnswer('s2')">Submit ➜</button>
+    <button class="btn btn-ghost" onclick="skipQ('s2')">Skip →</button>
+    <button class="btn btn-danger btn-sm" onclick="confirmFinish('s2')">End Section</button>
+  </div>
+</div>
+
+<!-- ════════════════════════ SECTION 3 ════════════════════════ -->
+<div id="screen-s3" class="screen">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+    <span class="sec-tag s3">Section 3 / 3</span>
+    <span style="font-size:13px;color:var(--muted);font-weight:700;">Visual Long Sums</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="s3-fill" style="width:0%"></div></div>
+  <div class="progress-label" id="s3-plbl">Question 1 of 100</div>
+  <div class="qnav" id="s3-nav"></div>
+
+  <div class="card">
+    <span class="label-caps">📝 Solve this sum</span>
+    <div class="sum-wrap"><div class="sum-col" id="s3-sum"></div></div>
+    <div class="divider"></div>
+    <span class="label-caps">✏️ Your answer</span>
+    <div class="numpad-display" id="s3-display" data-cursor="|">_</div>
+    <div class="numpad" id="s3-numpad"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-orange" onclick="submitAnswer('s3')">Submit ➜</button>
+    <button class="btn btn-ghost" onclick="skipQ('s3')">Skip →</button>
+    <button class="btn btn-danger btn-sm" onclick="confirmFinish('s3')">End Section</button>
+  </div>
+</div>
+
+<!-- ════════════════════════ RESULTS ════════════════════════ -->
+<div id="screen-results" class="screen">
+  <div class="result-hero">
+    <div style="font-size:56px;margin-bottom:8px;">🎉</div>
+    <div style="font-size:14px;font-weight:800;color:var(--muted);margin-bottom:4px;" id="res-name"></div>
+    <div class="score-big" id="res-total"></div>
+    <div class="score-denom">out of 200 marks</div>
+    <div id="res-grade"></div>
+  </div>
+
+  <div class="score-grid">
+    <div class="score-cell"><div class="sl">Section 1</div><div class="sv" id="res-s1"></div><div class="sd">/ 50</div></div>
+    <div class="score-cell"><div class="sl">Section 2</div><div class="sv" id="res-s2"></div><div class="sd">/ 50</div></div>
+    <div class="score-cell"><div class="sl">Section 3</div><div class="sv" id="res-s3"></div><div class="sd">/ 100</div></div>
+  </div>
+
+  <div class="export-box">
+    <h3>📤 Results sent to teacher</h3>
+    <p style="font-size:13px;color:#065F46;margin-bottom:8px;">Auto-submitted. Tap below to also copy and send via WhatsApp or email as a backup.</p>
+    <div class="result-text" id="res-text"></div>
+    <div class="btn-row">
+      <button class="btn btn-green" onclick="copyResults()" id="copy-btn">📋 Copy Results</button>
+      <button class="btn btn-ghost" onclick="resubmit()" id="resend-btn">↺ Re-send</button>
+    </div>
+  </div>
+
+  <div style="margin-top:18px;">
+    <div class="card"><span class="label-caps">Section 1 review (hover for details)</span><div class="dot-grid" id="rdots-s1"></div></div>
+    <div class="card"><span class="label-caps">Section 2 review</span><div class="dot-grid" id="rdots-s2"></div></div>
+    <div class="card"><span class="label-caps">Section 3 review</span><div class="dot-grid" id="rdots-s3"></div></div>
+  </div>
+
+  <div class="btn-row" style="margin-top:16px;">
+    <button class="btn btn-ghost" onclick="restart()">Start New Test</button>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   CONFIGURATION — edit GOOGLE_SCRIPT_URL with your Apps Script URL
+   ════════════════════════════════════════════════════════════════ */
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrrxM1JQ58HZojvc1S6isBiLSSMYtY6cPvHdwHYOQnUc6BuXOUekfbXemR5kVdg_o/exec';
+const SECRET_SALT = 'AbacusLvl1-2025-xK9p';
+const SAVE_KEY    = 'abacus_test_state_v2';
+
+/* ════════════════════════════════════════════════════════════════
+   CURRICULUM ENGINE — Level 1 Abacus Problem Generator
+   ════════════════════════════════════════════════════════════════ */
+function classifyMove(from, delta) {
+  const to = from + delta;
+  if (to < 0 || to > 99) return null;
+  const ones_f = from % 10;
+  const ones_t = to   % 10;
+  const tens_f = Math.floor(from / 10);
+  const tens_t = Math.floor(to   / 10);
+  if (tens_f === tens_t) return {type: delta > 0 ? 'direct_plus' : 'direct_minus', delta, from, to};
+  if (Math.abs(delta) <= 9) return {type: 'small_friend', delta, from, to};
+  return null;
+}
+
+function generateLvl1Question() {
+  const count  = randInt(3, 5);
+  const addends = [];
+  let running   = randInt(1, 9);
+  addends.push(running);
+
+  for (let i = 1; i < count; i++) {
+    let found = false;
+    for (let t = 0; t < 40; t++) {
+      const dir   = Math.random() < 0.55 ? 1 : -1;
+      const step  = randInt(1, 9);
+      const delta = dir * step;
+      const move  = classifyMove(running, delta);
+      if (move) {
+        addends.push(delta);
+        running += delta;
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      const safe = running <= 5 ? randInt(1,4) : -randInt(1,4);
+      const to   = running + safe;
+      if (to >= 0 && to <= 99) { addends.push(safe); running = to; }
+    }
+  }
+  const answer = addends.reduce((a, b) => a + b, 0);
+  if (answer < 0 || answer > 99) return generateLvl1Question();
+  return { addends, answer };
+}
+
+function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+
+/* ════════════════════════════════════════════════════════════════
+   STATE
+   ════════════════════════════════════════════════════════════════ */
+const CFG = { s1:{total:50,time:1200}, s2:{total:50,time:1200}, s3:{total:100,time:2400} };
+
+let G = {
+  name: '',
+  phone: '',
+  phase: 'home',
+  s1: { qs:[], ans:[], cur:0, elapsed:0 },
+  s2: { qs:[], ans:[], cur:0, elapsed:0 },
+  s3: { qs:[], ans:[], cur:0, elapsed:0 },
+  inputVals: { s1:'', s2:'', s3:'' }
+};
+
+let timers  = {};
+let abState = [];
+let synth   = window.speechSynthesis;
+let resultPayload = null;
+
+/* ════════════════════════════════════════════════════════════════
+   LOCAL STORAGE — auto-save & resume
+   ════════════════════════════════════════════════════════════════ */
+function saveState() {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(G)); } catch(e){}
+}
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(SAVE_KEY)); } catch(e){ return null; }
+}
+function clearSave() {
+  localStorage.removeItem(SAVE_KEY);
+  document.getElementById('resume-banner').style.display = 'none';
+  toast('Saved progress cleared');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  buildAbacus();
+  buildNumpad('s1'); buildNumpad('s2'); buildNumpad('s3');
+  const saved = loadState();
+  if (saved && saved.name && saved.phase && saved.phase !== 'home' && saved.phase !== 'results') {
+    document.getElementById('resume-banner').style.display   = 'flex';
+    document.getElementById('resume-name-text').textContent  = 'Resume ' + saved.name + "'s test";
+    document.getElementById('resume-detail-text').textContent = 'Section ' + saved.phase.toUpperCase().replace('S','') + ' — Q' + (saved[saved.phase].cur + 1);
+  }
+});
+
+function resumeTest() {
+  const saved = loadState();
+  if (!saved) return;
+  G = saved;
+  document.getElementById('student-name').value = G.name;
+  document.getElementById('student-phone').value = G.phone || '';
+  enterSection(G.phase);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   AUDIO CHECK
+   ════════════════════════════════════════════════════════════════ */
+function runAudioCheck() {
+  const el = document.getElementById('audio-check-status');
+  el.className = 'audio-check-status acs-idle';
+  el.textContent = 'Testing...';
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance('Plus 5, minus 3, plus 2');
+  u.rate = 0.85; u.lang = 'en-US';
+  u.onstart = () => { el.textContent = '🔊 Playing...'; };
+  u.onend   = () => { el.className = 'audio-check-status acs-ok'; el.textContent = '✓ Audio is working — you\'re ready!'; };
+  u.onerror = () => { el.className = 'audio-check-status acs-fail'; el.textContent = '✗ Audio failed. Check device volume/permissions.'; };
+  synth.speak(u);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SCREEN MANAGEMENT
+   ════════════════════════════════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   START / ENTER SECTION
+   ════════════════════════════════════════════════════════════════ */
+function startFresh() {
+  const name  = document.getElementById('student-name').value.trim();
+  const phone = document.getElementById('student-phone').value.trim();
+  if (!name) { toast('Please enter your name first!'); return; }
+  if (!phone || phone.replace(/\D/g,'').length < 10) { toast('Please enter a valid 10-digit contact number!'); return; }
+  G.name  = name;
+  G.phone = phone;
+  G.phase = 's1';
+  G.s1 = { qs: Array.from({length:50},  generateLvl1Question), ans: Array(50).fill(null),  cur:0, elapsed:0 };
+  G.s2 = { qs: Array.from({length:50},  generateLvl1Question), ans: Array(50).fill(null),  cur:0, elapsed:0 };
+  G.s3 = { qs: Array.from({length:100}, generateLvl1Question), ans: Array(100).fill(null), cur:0, elapsed:0 };
+  G.inputVals = { s1:'', s2:'', s3:'' };
+  saveState();
+  enterSection('s1');
+}
+
+function enterSection(sec) {
+  synth.cancel();
+  Object.keys(timers).forEach(k => clearInterval(timers[k]));
+  G.phase = sec;
+  document.getElementById('top-timer').style.display = 'block';
+  document.getElementById('save-dot').style.display  = 'block';
+  showScreen(sec);
+  renderQ(sec);
+  renderNav(sec);
+  startTimer(sec);
+  resetAbacus();
+  setInput(sec, G.inputVals[sec] || '');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TIMER
+   ════════════════════════════════════════════════════════════════ */
+function startTimer(sec) {
+  clearInterval(timers[sec]);
+  renderTimer(sec);
+  timers[sec] = setInterval(() => {
+    G[sec].elapsed++;
+    saveState();
+    renderTimer(sec);
+    const left = CFG[sec].time - G[sec].elapsed;
+    if (left <= 0) { clearInterval(timers[sec]); toast('Time up!'); finishSection(sec); }
+  }, 1000);
+}
+
+function renderTimer(sec) {
+  const left = Math.max(0, CFG[sec].time - G[sec].elapsed);
+  const m = String(Math.floor(left/60)).padStart(2,'0');
+  const s = String(left % 60).padStart(2,'0');
+  const el = document.getElementById('top-timer');
+  el.textContent = m + ':' + s;
+  el.className = 'timer-pill' + (left <= 60 ? ' urgent' : left <= 180 ? ' warn' : '');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   RENDER QUESTION
+   ════════════════════════════════════════════════════════════════ */
+function renderQ(sec) {
+  const q    = G[sec];
+  const qi   = q.cur;
+  const qu   = q.qs[qi];
+  const tot  = CFG[sec].total;
+  const pct  = Math.round(qi / tot * 100);
+
+  document.getElementById(sec + '-fill').style.width = pct + '%';
+  document.getElementById(sec + '-plbl').textContent = 'Question ' + (qi+1) + ' of ' + tot;
+
+  if (sec === 's3') {
+    const col = document.getElementById('s3-sum');
+    col.innerHTML = '';
+    qu.addends.forEach((n, i) => {
+      const row = document.createElement('div');
+      row.className = 'sum-row';
+      if (i === 0) { row.textContent = n; }
+      else {
+        const op = document.createElement('span');
+        op.className = 'sum-op-sym';
+        op.textContent = n >= 0 ? '+' : '−';
+        row.appendChild(op);
+        row.appendChild(document.createTextNode(Math.abs(n)));
+      }
+      col.appendChild(row);
+    });
+    const hr = document.createElement('hr');
+    hr.className = 'sum-hr';
+    col.appendChild(hr);
+  } else {
+    const dotsEl = document.getElementById(sec + '-ndots');
+    dotsEl.innerHTML = '';
+    qu.addends.forEach(() => {
+      const d = document.createElement('div');
+      d.className = 'ndot';
+      dotsEl.appendChild(d);
+    });
+    const btn = document.getElementById(sec + '-playbtn');
+    btn.classList.remove('playing','done-play');
+    btn.textContent = '▶';
+    document.getElementById(sec + '-astatus').textContent = 'Ready — press play';
+  }
+  setInput(sec, '');
+  if (sec === 's1') resetAbacus();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ON-SCREEN NUMPAD
+   ════════════════════════════════════════════════════════════════ */
+function buildNumpad(sec) {
+  const pad  = document.getElementById(sec + '-numpad');
+  const keys = [7,8,9,4,5,6,1,2,3,'DEL',0,'✓'];
+  pad.innerHTML = '';
+  keys.forEach(k => {
+    const btn = document.createElement('button');
+    btn.className = 'nk' + (k === 'DEL' ? ' nk-del' : '');
+    if (k === 0) btn.classList.add('nk-zero');
+    btn.textContent = k;
+    btn.type = 'button';
+    btn.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      numpadPress(sec, String(k));
+    });
+    pad.appendChild(btn);
+  });
+}
+
+function setInput(sec, val) {
+  G.inputVals[sec] = val;
+  const disp = document.getElementById(sec + '-display');
+  if (val === '') {
+    disp.textContent = '_';
+    disp.removeAttribute('data-val');
+    disp.classList.remove('has-val');
+    disp.setAttribute('data-cursor','|');
+  } else {
+    disp.textContent = val;
+    disp.setAttribute('data-val', val);
+    disp.classList.add('has-val');
+    disp.setAttribute('data-cursor','|');
+  }
+}
+
+function numpadPress(sec, key) {
+  const cur = G.inputVals[sec] || '';
+  if (key === 'DEL') {
+    setInput(sec, cur.slice(0, -1));
+  } else if (key === '✓') {
+    submitAnswer(sec);
+  } else {
+    if (cur.length >= 4) return;
+    const next = cur + key;
+    if (parseInt(next) > 9999) return;
+    setInput(sec, next);
+  }
+  saveState();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   AUDIO PLAYBACK
+   ════════════════════════════════════════════════════════════════ */
+function playAudio(sec) {
+  synth.cancel();
+  const qi       = G[sec].cur;
+  const addends  = G[sec].qs[qi].addends;
+  const btn      = document.getElementById(sec + '-playbtn');
+  const status   = document.getElementById(sec + '-astatus');
+  const dotsEl   = document.getElementById(sec + '-ndots');
+  const dots     = Array.from(dotsEl.querySelectorAll('.ndot'));
+
+  btn.classList.add('playing');
+  btn.textContent = '⏸';
+
+  let idx = 0;
+  function next() {
+    if (idx >= addends.length) {
+      btn.classList.remove('playing');
+      btn.classList.add('done-play');
+      btn.textContent = '↺';
+      status.textContent = 'Done — enter your answer below';
+      dots.forEach(d => d.className = 'ndot played');
+      return;
+    }
+    dots.forEach((d, i) => {
+      d.className = 'ndot' + (i < idx ? ' played' : i === idx ? ' playing' : '');
+    });
+    const n = addends[idx];
+    const phrase = idx === 0
+      ? String(Math.abs(n))
+      : (n >= 0 ? 'plus ' + n : 'minus ' + Math.abs(n));
+    status.textContent = 'Saying: "' + phrase + '"';
+    const u = new SpeechSynthesisUtterance(phrase);
+    u.rate = 0.78; u.pitch = 1.05; u.lang = 'en-US';
+    u.onend  = () => { idx++; setTimeout(next, 420); };
+    u.onerror = () => { idx++; next(); };
+    synth.speak(u);
+  }
+  next();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ANSWER SUBMISSION
+   ════════════════════════════════════════════════════════════════ */
+function submitAnswer(sec) {
+  const raw = G.inputVals[sec];
+  if (!raw || raw === '') { toast('Please enter an answer first!'); return; }
+  const val = parseInt(raw, 10);
+  if (isNaN(val)) { toast('Enter a valid number!'); return; }
+  synth.cancel();
+  G[sec].ans[G[sec].cur] = val;
+  saveState();
+  renderNav(sec);
+  nextQ(sec);
+}
+
+function skipQ(sec) {
+  synth.cancel();
+  if (G[sec].ans[G[sec].cur] === null) G[sec].ans[G[sec].cur] = undefined;
+  saveState();
+  renderNav(sec);
+  nextQ(sec);
+}
+
+function nextQ(sec) {
+  const total = CFG[sec].total;
+  if (G[sec].cur < total - 1) {
+    G[sec].cur++;
+    renderQ(sec);
+    renderNav(sec);
+  } else {
+    finishSection(sec);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   QUESTION NAV
+   ════════════════════════════════════════════════════════════════ */
+function renderNav(sec) {
+  const container = document.getElementById(sec + '-nav');
+  const q = G[sec]; const total = CFG[sec].total;
+  const start = Math.max(0, q.cur - 6);
+  const end   = Math.min(total - 1, start + 14);
+  container.innerHTML = '';
+  for (let i = start; i <= end; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'qnav-dot';
+    btn.textContent = i + 1;
+    if (i === q.cur) btn.classList.add('curr');
+    else if (q.ans[i] !== null && q.ans[i] !== undefined) btn.classList.add('done');
+    btn.addEventListener('click', (function(ii){ return function(){ synth.cancel(); G[sec].cur = ii; renderQ(sec); renderNav(sec); }; })(i));
+    container.appendChild(btn);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FINISH SECTION
+   ════════════════════════════════════════════════════════════════ */
+function confirmFinish(sec) {
+  const answered = G[sec].ans.filter(a => a !== null && a !== undefined).length;
+  const total    = CFG[sec].total;
+  if (!confirm('End section?\n\nAnswered: ' + answered + ' / ' + total + '\nUnanswered questions score 0.')) return;
+  finishSection(sec);
+}
+
+function finishSection(sec) {
+  synth.cancel();
+  clearInterval(timers[sec]);
+  saveState();
+  if (sec === 's1') {
+    alert('Section 1 complete! 🎉\n\nSection 2 starts now — listen carefully.');
+    enterSection('s2');
+  } else if (sec === 's2') {
+    alert('Section 2 complete! 🎉\n\nSection 3 starts now — written sums.');
+    enterSection('s3');
+  } else {
+    document.getElementById('top-timer').style.display = 'none';
+    buildResults();
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ABACUS WIDGET
+   ════════════════════════════════════════════════════════════════ */
+function buildAbacus() {
+  abState = Array.from({length:4}, () => ({ h:[false,false], e:[false,false,false,false,false] }));
+  const frame = document.getElementById('abacus-frame');
+  frame.innerHTML = '';
+  ['Th','H','T','U'].forEach((lbl, ri) => {
+    const rg  = document.createElement('div'); rg.className = 'rod-unit';
+    const rl  = document.createElement('div'); rl.className = 'rod-lbl'; rl.textContent = lbl; rg.appendChild(rl);
+    const rc  = document.createElement('div'); rc.className = 'rod-col';
+    const spine = document.createElement('div'); spine.className = 'rod-spine'; rc.appendChild(spine);
+    const bt  = document.createElement('div'); bt.className = 'rod-heaven';
+    for (let i = 0; i < 2; i++) {
+      const b = document.createElement('button'); b.className = 'bead bead-h'; b.type='button';
+      b.dataset.ri = ri; b.dataset.t = 'h'; b.dataset.bi = i;
+      b.addEventListener('pointerdown', e => { e.preventDefault(); toggleBead(ri,'h',i); });
+      bt.appendChild(b);
+    }
+    rc.appendChild(bt);
+    const bar = document.createElement('div'); bar.className = 'rod-bar'; rc.appendChild(bar);
+    const bb  = document.createElement('div'); bb.className = 'rod-earth';
+    for (let i = 0; i < 5; i++) {
+      const b = document.createElement('button'); b.className = 'bead bead-e'; b.type='button';
+      b.dataset.ri = ri; b.dataset.t = 'e'; b.dataset.bi = i;
+      b.addEventListener('pointerdown', e => { e.preventDefault(); toggleBead(ri,'e',i); });
+      bb.appendChild(b);
+    }
+    rc.appendChild(bb); rg.appendChild(rc); frame.appendChild(rg);
+  });
+}
+
+function toggleBead(ri, type, bi) {
+  abState[ri][type][bi] = !abState[ri][type][bi];
+  const b = document.querySelector(`.bead[data-ri="${ri}"][data-t="${type}"][data-bi="${bi}"]`);
+  if (b) { if (abState[ri][type][bi]) b.classList.add('on'); else b.classList.remove('on'); }
+  const mult = [1000,100,10,1];
+  const val  = abState.reduce((s,rod,i) => s + (rod.h.filter(Boolean).length*5 + rod.e.filter(Boolean).length) * mult[i], 0);
+  document.getElementById('abacus-val').textContent = val;
+}
+
+function resetAbacus() {
+  abState.forEach((rod,ri) => {
+    ['h','e'].forEach(t => rod[t].forEach((_,bi) => {
+      rod[t][bi] = false;
+      const b = document.querySelector(`.bead[data-ri="${ri}"][data-t="${t}"][data-bi="${bi}"]`);
+      if (b) b.classList.remove('on');
+    }));
+  });
+  const el = document.getElementById('abacus-val');
+  if (el) el.textContent = '0';
+}
+
+function useAbacusVal() {
+  const val = document.getElementById('abacus-val').textContent;
+  setInput('s1', val);
+  toast('Abacus value used: ' + val);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   VERIFICATION HASH (anti-cheat)
+   ════════════════════════════════════════════════════════════════ */
+async function generateHash(name, s1, s2, s3, total) {
+  const raw = SECRET_SALT + '|' + name + '|' + s1 + '|' + s2 + '|' + s3 + '|' + total;
+  try {
+    const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('').slice(0,16).toUpperCase();
+  } catch(e) {
+    let h = 5381;
+    for (let i = 0; i < raw.length; i++) h = ((h << 5) + h) ^ raw.charCodeAt(i);
+    return Math.abs(h).toString(16).toUpperCase().padStart(8,'0');
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   GOOGLE SHEETS SUBMISSION
+   ════════════════════════════════════════════════════════════════ */
+async function submitToSheets(data) {
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_YOUR')) {
+    console.warn('Google Script URL not configured. Skipping submission.');
+    return { ok: false, reason: 'URL not configured' };
+  }
+  try {
+    const resp = await fetch(GOOGLE_SCRIPT_URL, {
+      method:  'POST',
+      mode:    'cors', 
+      headers: { 'Content-Type': 'text/plain' },
+      body:    JSON.stringify(data)
+    });
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, reason: e.message };
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BUILD RESULTS
+   ════════════════════════════════════════════════════════════════ */
+async function buildResults() {
+  G.phase = 'results';
+  saveState();
+  showScreen('results');
+
+  let s1=0, s2=0, s3=0;
+  G.s1.qs.forEach((q,i) => { if (G.s1.ans[i] === q.answer) s1++; });
+  G.s2.qs.forEach((q,i) => { if (G.s2.ans[i] === q.answer) s2++; });
+  G.s3.qs.forEach((q,i) => { if (G.s3.ans[i] === q.answer) s3++; });
+  const total = s1 + s2 + s3;
+  const pct   = Math.round(total / 200 * 100);
+
+  let grade, gbg, gcol;
+  if      (pct >= 90) { grade='A+ Excellent!'; gbg='#DCFCE7'; gcol='#065F46'; }
+  else if (pct >= 75) { grade='B Good Work!';  gbg='#DBEAFE'; gcol='#1E40AF'; }
+  else if (pct >= 60) { grade='C Pass';         gbg='#FEF3C7'; gcol='#78350F'; }
+  else                { grade='D Needs Practice'; gbg='#FEE2E2'; gcol='#B91C1C'; }
+
+  const hash = await generateHash(G.name, s1, s2, s3, total);
+
+  const now = new Date();
+  const ds  = now.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  const ts  = now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+
+  const resultText =
+'╔══════════════════════════════════╗\n'+
+'║   ABACUS LEVEL 1 — RESULT       ║\n'+
+'╚══════════════════════════════════╝\n'+
+' Student  : ' + G.name + '\n'+
+' Contact  : ' + G.phone + '\n'+
+' Date     : ' + ds + '\n'+
+' Time     : ' + ts + '\n'+
+'──────────────────────────────────\n'+
+' Sec 1 (Abacus)   : ' + s1 + ' / 50\n'+
+' Sec 2 (Mental)   : ' + s2 + ' / 50\n'+
+' Sec 3 (Long Sum) : ' + s3 + ' / 100\n'+
+'──────────────────────────────────\n'+
+' TOTAL      : ' + total + ' / 200\n'+
+' PERCENTAGE : ' + pct + '%\n'+
+' GRADE      : ' + grade + '\n'+
+'──────────────────────────────────\n'+
+' Verify hash: ' + hash + '\n'+
+'══════════════════════════════════';
+
+  document.getElementById('res-name').textContent  = G.name;
+  document.getElementById('res-total').textContent = total;
+  document.getElementById('res-s1').textContent    = s1;
+  document.getElementById('res-s2').textContent    = s2;
+  document.getElementById('res-s3').textContent    = s3;
+  document.getElementById('res-grade').innerHTML   = '<span class="grade-pill" style="background:'+gbg+';color:'+gcol+'">'+grade+' · '+pct+'%</span>';
+  document.getElementById('res-text').textContent  = resultText;
+
+  resultPayload = { name:G.name, phone:G.phone, s1, s2, s3, total, pct, grade, hash, date:ds, time:ts };
+
+  ['s1','s2','s3'].forEach(sec => {
+    const g = document.getElementById('rdots-' + sec);
+    g.innerHTML = '';
+    G[sec].qs.forEach((q, i) => {
+      const d = document.createElement('div'); d.className = 'rdot';
+      const a = G[sec].ans[i];
+      if      (a === null || a === undefined) { d.classList.add('sk'); d.textContent='–'; d.title='Q'+(i+1)+': Skipped (ans:'+q.answer+')'; }
+      else if (a === q.answer)                { d.classList.add('ok'); d.textContent=i+1; d.title='Q'+(i+1)+': Correct! ('+q.answer+')'; }
+      else                                    { d.classList.add('ng'); d.textContent=i+1; d.title='Q'+(i+1)+': You: '+a+' · Correct: '+q.answer; }
+      g.appendChild(d);
+    });
+  });
+
+  submitToSheets(resultPayload).then(res => {
+    if (res.ok) toast('✓ Results sent to teacher!');
+    else toast('Auto-send not configured — please copy & share manually');
+  });
+
+  localStorage.removeItem(SAVE_KEY);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   COPY & RESEND
+   ════════════════════════════════════════════════════════════════ */
+function copyResults() {
+  const txt = document.getElementById('res-text').textContent;
+  const btn = document.getElementById('copy-btn');
+  const fallback = () => {
+    const ta = document.createElement('textarea'); ta.value = txt;
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  };
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(() => { btn.textContent='✓ Copied!'; setTimeout(()=>btn.textContent='📋 Copy Results',2500); }).catch(fallback);
+  } else { fallback(); btn.textContent='✓ Copied!'; setTimeout(()=>btn.textContent='📋 Copy Results',2500); }
+}
+
+async function resubmit() {
+  if (!resultPayload) return;
+  const btn = document.getElementById('resend-btn');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  const res = await submitToSheets(resultPayload);
+  btn.textContent = '↺ Re-send';
+  btn.disabled = false;
+  toast(res.ok ? '✓ Re-sent successfully!' : 'Could not reach server. Check URL in file.');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   RESTART
+   ════════════════════════════════════════════════════════════════ */
+function restart() {
+  synth.cancel();
+  Object.values(timers).forEach(clearInterval);
+  G = { name:'', phone:'', phase:'home', s1:{qs:[],ans:[],cur:0,elapsed:0}, s2:{qs:[],ans:[],cur:0,elapsed:0}, s3:{qs:[],ans:[],cur:0,elapsed:0}, inputVals:{s1:'',s2:'',s3:''} };
+  document.getElementById('student-name').value = '';
+  document.getElementById('student-phone').value = '';
+  document.getElementById('top-timer').style.display = 'none';
+  document.getElementById('save-dot').style.display  = 'none';
+  resetAbacus();
+  showScreen('home');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TOAST UTILITY
+   ════════════════════════════════════════════════════════════════ */
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   KEYBOARD SUPPORT
+   ════════════════════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  const sec = G.phase;
+  if (!['s1','s2','s3'].includes(sec)) return;
+  if (e.key >= '0' && e.key <= '9') { numpadPress(sec, e.key); e.preventDefault(); }
+  else if (e.key === 'Backspace')    { numpadPress(sec, 'DEL'); e.preventDefault(); }
+  else if (e.key === 'Enter')        { submitAnswer(sec); e.preventDefault(); }
+});
+</script>
+</body>
+</html>

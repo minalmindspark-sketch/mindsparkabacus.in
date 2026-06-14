@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>Little Sparks – MindSpark Abacus</title>
+<meta name="description" content="A fun, free abacus playground for little learners aged 5-6. Tap, count, and play with Sparky!"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#1a1a2e;
+  --bg:#fdf9f4;
+  --surface:#FFFFFF;
+  --warm:#f3f4f6;
+  --border:#ECE3D6;
+  --muted:#6b7280;
+  --orange:#E8751A;
+  --orange-light:#f28c3a;
+  --orange-d:#B85A0F;
+  --navy:#1B3A6B;
+  --navy-light:#2a4f8a;
+  --green:#0F9D58;
+  --green-d:#0b7a44;
+  --r-md:14px;
+  --r-lg:22px;
+  --r-xl:32px;
+  --shadow: 0 4px 16px rgba(27,58,107,.08), 0 1px 3px rgba(27,58,107,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow-x:hidden;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  background-image:
+    radial-gradient(circle at 15% 8%, rgba(232,117,26,.07) 0%, transparent 45%),
+    radial-gradient(circle at 85% 92%, rgba(27,58,107,.06) 0%, transparent 45%);
+}
+
+/* ── TOPBAR ─────────────────────────────────────────────────────── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(253,249,244,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1.5px solid var(--border);
+  padding:12px 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.topbar-back{
+  font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;
+  color:var(--navy);text-decoration:none;flex-shrink:0;
+  padding:7px 12px;border-radius:999px;transition:background .15s;
+  white-space:nowrap;
+}
+.topbar-back:hover{background:var(--warm);}
+.topbar-brand{
+  font-family:'Playfair Display',serif;font-weight:900;font-size:19px;
+  color:var(--orange);letter-spacing:.01em;display:flex;align-items:center;gap:8px;
+}
+.topbar-brand .spark-emoji{font-size:22px;}
+.topbar-right{width:90px;flex-shrink:0;}
+
+/* ── LAYOUT ─────────────────────────────────────────────────────── */
+.wrap{max-width:720px;margin:0 auto;padding:28px 16px 80px;}
+.screen{display:none;animation:fadeUp .25s ease both;}
+.screen.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ── HERO / HOME ────────────────────────────────────────────────── */
+.hero{text-align:center;padding:18px 0 28px;}
+.sparky-wrap{display:flex;justify-content:center;margin-bottom:8px;}
+.sparky{width:148px;height:148px;animation:bob 3s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+.hero h1{
+  font-family:'Playfair Display',serif;font-weight:900;
+  font-size:clamp(2rem,7vw,2.9rem);color:var(--navy);line-height:1.15;margin-bottom:8px;
+}
+.hero h1 .accent{color:var(--orange);}
+.hero p{font-size:16px;color:var(--muted);font-weight:500;max-width:440px;margin:0 auto;line-height:1.6;}
+
+/* ── CARDS ──────────────────────────────────────────────────────── */
+.card{
+  background:var(--surface);border:2px solid var(--border);
+  border-radius:var(--r-lg);padding:22px;margin-bottom:18px;box-shadow:var(--shadow);
+}
+
+/* ── ENTRY FORM ─────────────────────────────────────────────────── */
+.field-label{
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:800;color:var(--navy);
+  text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:8px;
+}
+.big-input{
+  width:100%;font-family:'DM Sans',sans-serif;font-size:19px;font-weight:700;
+  padding:15px 18px;border:2.5px solid var(--border);border-radius:var(--r-md);
+  background:var(--warm);color:var(--ink);outline:none;transition:border-color .2s,background .2s;
+}
+.big-input:focus{border-color:var(--orange);background:#fff;}
+.field-note{font-size:12.5px;color:var(--muted);margin-top:8px;line-height:1.5;}
+.field-gap{margin-bottom:16px;}
+
+/* ── MODE CARDS ─────────────────────────────────────────────────── */
+.mode-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:6px;}
+.mode-card{
+  display:flex;align-items:center;gap:16px;
+  background:var(--surface);border:2.5px solid var(--border);
+  border-radius:var(--r-lg);padding:18px;cursor:pointer;
+  transition:transform .12s,border-color .15s,box-shadow .15s;text-align:left;width:100%;
+  font-family:'DM Sans',sans-serif;box-shadow:var(--shadow);
+}
+.mode-card:hover{border-color:var(--orange);transform:translateY(-2px);}
+.mode-card:active{transform:translateY(1px) scale(.99);}
+.mode-icon{
+  width:64px;height:64px;border-radius:18px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:34px;
+}
+.mode-icon.learn{background:#FFF1E3;}
+.mode-icon.play{background:#E8EEF8;}
+.mode-title{font-family:'Playfair Display',serif;font-weight:900;font-size:19px;color:var(--navy);margin-bottom:3px;}
+.mode-sub{font-size:13.5px;color:var(--muted);font-weight:500;line-height:1.5;}
+.mode-arrow{font-size:22px;color:var(--orange);flex-shrink:0;margin-left:auto;}
+
+/* ── BUTTONS ────────────────────────────────────────────────────── */
+.btn{
+  font-family:'DM Sans',sans-serif;font-weight:800;font-size:16px;
+  padding:15px 30px;border-radius:999px;border:none;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  transition:transform .1s,box-shadow .1s;user-select:none;width:100%;
+}
+.btn:active{transform:scale(.97);}
+.btn-orange{background:var(--orange);color:#fff;box-shadow:0 5px 0 var(--orange-d);}
+.btn-orange:hover{box-shadow:0 2px 0 var(--orange-d);transform:translateY(3px);}
+.btn-navy{background:var(--navy);color:#fff;box-shadow:0 5px 0 var(--navy-light);}
+.btn-navy:hover{box-shadow:0 2px 0 var(--navy-light);transform:translateY(3px);}
+.btn-ghost{background:var(--surface);color:var(--navy);border:2.5px solid var(--border);box-shadow:0 3px 0 var(--border);}
+.btn-ghost:hover{background:var(--warm);}
+.btn-green{background:var(--green);color:#fff;box-shadow:0 5px 0 var(--green-d);}
+.btn-green:hover{box-shadow:0 2px 0 var(--green-d);transform:translateY(3px);}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;}
+.btn-row .btn{flex:1;min-width:140px;}
+
+/* ── SCREEN HEADER (Learn/Play) ────────────────────────────────── */
+.screen-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;}
+.screen-header h2{
+  font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.5rem,5vw,2rem);color:var(--navy);
+}
+.exit-btn{
+  font-size:13px;font-weight:800;color:var(--navy);background:var(--warm);
+  border:2px solid var(--border);border-radius:999px;padding:9px 16px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;white-space:nowrap;transition:background .15s;
+}
+.exit-btn:hover{background:#fff;}
+
+/* ── ABACUS (BIG, KID-FRIENDLY) ─────────────────────────────────── */
+.abacus-outer{
+  background:linear-gradient(180deg,#FFF6E5,#FDEFD4);
+  border:3px solid #E8C988;border-radius:var(--r-xl);
+  padding:24px 12px 18px;margin-bottom:18px;box-shadow:var(--shadow);
+}
+.abacus-frame{display:flex;gap:18px;justify-content:center;padding:6px 0;}
+.rod-unit{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.rod-lbl{
+  font-family:'Playfair Display',serif;font-weight:900;font-size:13px;color:#9B7327;
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;
+}
+.rod-col{display:flex;flex-direction:column;align-items:center;position:relative;}
+.rod-spine{width:7px;background:#B8923F;border-radius:4px;position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);z-index:0;}
+.rod-heaven{display:flex;flex-direction:column;gap:6px;z-index:1;position:relative;padding:6px 0;}
+.rod-bar{width:78px;height:7px;background:#7A5816;border-radius:4px;position:relative;z-index:2;margin:5px 0;}
+.rod-earth{display:flex;flex-direction:column;gap:6px;z-index:1;position:relative;padding:6px 0;}
+.bead{
+  width:60px;height:30px;border-radius:999px;cursor:pointer;border:none;outline:none;
+  transition:background .15s, border-color .15s, box-shadow .15s;position:relative;z-index:1;
+}
+.bead-h{background:#F8D2A4;border:3px solid #D4A24E;}
+.bead-h.on{background:var(--orange);border-color:var(--orange-d);box-shadow:0 0 14px rgba(232,117,26,.5);}
+.bead-e{background:#B9D6F2;border:3px solid #5B8FD0;}
+.bead-e.on{background:var(--navy);border-color:var(--navy-light);box-shadow:0 0 14px rgba(27,58,107,.4);}
+.bead:active{transform:scale(.95);}
+@keyframes beadBounce{0%{transform:scale(1)}30%{transform:scale(1.28) translateY(-5px)}60%{transform:scale(.94) translateY(2px)}80%{transform:scale(1.06) translateY(-2px)}100%{transform:scale(1)}}
+.bead.bounce{animation:beadBounce .38s cubic-bezier(.34,1.56,.64,1) both;}
+
+/* ── BUILD MODE ─────────────────────────────────────────────────── */
+.build-target{
+  text-align:center;margin-bottom:16px;
+}
+.build-number{
+  font-family:'Playfair Display',serif;font-weight:900;
+  font-size:88px;color:var(--orange);line-height:1;
+  text-shadow:0 4px 0 var(--orange-d);
+}
+.build-label{font-size:14px;font-weight:700;color:var(--muted);margin-top:4px;}
+.build-feedback{
+  text-align:center;font-size:40px;min-height:52px;margin-bottom:8px;
+  transition:opacity .2s;
+}
+
+/* ── BADGES ─────────────────────────────────────────────────────── */
+.badges-section{margin:18px 0 6px;text-align:center;}
+.badges-title{font-family:'Playfair Display',serif;font-weight:900;font-size:17px;color:var(--navy);margin-bottom:10px;}
+.badge-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;}
+.badge{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  background:var(--surface);border:2.5px solid var(--border);
+  border-radius:18px;padding:14px 16px;min-width:100px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+  transition:transform .15s,border-color .2s;
+}
+.badge.earned{border-color:var(--orange);}
+.badge.earned::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(232,117,26,.08),transparent);
+}
+.badge-icon{font-size:38px;line-height:1;filter:grayscale(1);opacity:.35;transition:filter .3s,opacity .3s;}
+.badge.earned .badge-icon{filter:none;opacity:1;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes badgePop{from{transform:scale(0) rotate(-20deg)}to{transform:scale(1) rotate(0deg)}}
+.badge-name{font-size:12px;font-weight:800;color:var(--navy);text-align:center;line-height:1.3;}
+.badge-desc{font-size:11px;color:var(--muted);font-weight:600;text-align:center;line-height:1.3;}
+.badge-locked{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;}
+.abacus-readout{
+  text-align:center;font-family:'Playfair Display',serif;font-weight:900;
+  font-size:48px;color:var(--navy);margin-top:14px;line-height:1;
+}
+.abacus-readout .val-label{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;}
+
+/* ── SPARKY SPEECH BUBBLE ───────────────────────────────────────── */
+.sparky-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.sparky-small{width:64px;height:64px;flex-shrink:0;}
+.speech-bubble{
+  background:var(--surface);border:2.5px solid var(--border);border-radius:var(--r-lg);
+  padding:14px 18px;flex:1;font-size:15px;font-weight:700;color:var(--navy);
+  position:relative;box-shadow:var(--shadow);min-height:24px;display:flex;align-items:center;
+}
+.speech-bubble::before{
+  content:'';position:absolute;left:-9px;top:50%;transform:translateY(-50%);
+  width:0;height:0;border:9px solid transparent;border-right-color:var(--border);
+}
+.speech-bubble::after{
+  content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);
+  width:0;height:0;border:8px solid transparent;border-right-color:var(--surface);
+}
+
+/* ── QUICK ACTIONS (LEARN MODE) ────────────────────────────────── */
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
+.quick-btn{
+  font-family:'Playfair Display',serif;font-weight:900;font-size:17px;color:var(--navy);
+  background:var(--surface);border:2.5px solid var(--border);border-radius:var(--r-md);
+  padding:14px 10px;cursor:pointer;box-shadow:0 3px 0 var(--border);
+  transition:transform .1s,box-shadow .1s;
+}
+.quick-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--border);}
+
+/* ── PLAY/QUIZ MODE ─────────────────────────────────────────────── */
+.progress-track{background:var(--border);border-radius:999px;height:10px;overflow:hidden;margin-bottom:8px;}
+.progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--orange),var(--orange-light));transition:width .35s ease;}
+.progress-label{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:18px;text-align:center;}
+.quiz-question{
+  text-align:center;font-family:'Playfair Display',serif;font-weight:900;
+  font-size:clamp(1.4rem,5vw,1.9rem);color:var(--navy);margin-bottom:18px;line-height:1.4;
+}
+.quiz-question .hl{color:var(--orange);}
+.option-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.option-btn{
+  font-family:'Playfair Display',serif;font-weight:900;font-size:38px;color:var(--navy);
+  background:var(--surface);border:3px solid var(--border);border-radius:var(--r-lg);
+  padding:24px 10px;cursor:pointer;box-shadow:0 5px 0 var(--border);
+  transition:transform .1s,box-shadow .1s,border-color .15s,background .15s;
+}
+.option-btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--border);}
+.option-btn.correct{background:#E7F8EF;border-color:var(--green);color:var(--green-d);box-shadow:0 5px 0 var(--green);}
+.option-btn.wrong{background:#FDECEC;border-color:#E0635A;color:#C0392B;box-shadow:0 5px 0 #E0635A;}
+.option-btn.disabled{pointer-events:none;}
+
+/* ── RESULTS ────────────────────────────────────────────────────── */
+.result-hero{text-align:center;padding:14px 0 8px;}
+.result-sparky{width:140px;height:140px;margin:0 auto 6px;display:block;animation:celebrate 1.2s ease-in-out infinite;}
+@keyframes celebrate{0%,100%{transform:rotate(-6deg) scale(1)}50%{transform:rotate(6deg) scale(1.06)}}
+.score-big{font-family:'Playfair Display',serif;font-weight:900;font-size:64px;color:var(--orange);line-height:1;margin-top:8px;}
+.score-denom{font-size:18px;color:var(--muted);font-weight:700;margin-top:2px;}
+.star-row{display:flex;justify-content:center;gap:6px;font-size:34px;margin:14px 0;}
+.star-row span{opacity:.25;}
+.star-row span.lit{opacity:1;animation:pop .4s ease backwards;}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* ── TOAST ──────────────────────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--navy);color:#fff;padding:12px 26px;border-radius:999px;
+  font-size:14px;font-weight:700;z-index:9999;
+  transition:transform .3s ease,opacity .3s ease;opacity:0;pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* ── INFO STRIP ─────────────────────────────────────────────────── */
+.info-strip{
+  background:#EFF3FB;border:2px solid #D6E2F5;border-radius:var(--r-md);
+  padding:14px 16px;font-size:13.5px;color:var(--navy);line-height:1.6;
+  margin-bottom:18px;font-weight:600;
+}
+
+@media (max-width:380px){
+  .bead{width:48px;height:26px;}
+  .rod-bar{width:62px;}
+  .abacus-readout{font-size:38px;}
+  .option-btn{font-size:30px;padding:20px 8px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="../index.html" class="topbar-back">← Back to Site</a>
+  <div class="topbar-brand"><span class="spark-emoji">✨</span> Little Sparks</div>
+  <div class="topbar-right"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="wrap">
+
+  <!-- ═══════════════ HOME ═══════════════ -->
+  <div id="screen-home" class="screen active">
+    <div class="hero">
+      <div class="sparky-wrap">
+        <svg class="sparky" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- Sparky: a friendly abacus-bead character -->
+          <ellipse cx="100" cy="180" rx="58" ry="10" fill="#1B3A6B" opacity="0.08"/>
+          <!-- frame -->
+          <rect x="35" y="40" width="130" height="120" rx="18" fill="#FDEFD4" stroke="#E8C988" stroke-width="5"/>
+          <line x1="100" y1="50" x2="100" y2="150" stroke="#B8923F" stroke-width="6" stroke-linecap="round"/>
+          <!-- body bead -->
+          <ellipse cx="100" cy="100" rx="52" ry="46" fill="#E8751A"/>
+          <ellipse cx="100" cy="100" rx="52" ry="46" fill="url(#shine)" opacity="0.5"/>
+          <!-- eyes -->
+          <circle cx="80" cy="92" r="9" fill="#fff"/>
+          <circle cx="120" cy="92" r="9" fill="#fff"/>
+          <circle cx="82" cy="94" r="4.5" fill="#1a1a2e"/>
+          <circle cx="122" cy="94" r="4.5" fill="#1a1a2e"/>
+          <!-- smile -->
+          <path d="M82 112 Q100 128 118 112" stroke="#1a1a2e" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+          <!-- cheeks -->
+          <circle cx="68" cy="106" r="6" fill="#fff" opacity="0.35"/>
+          <circle cx="132" cy="106" r="6" fill="#fff" opacity="0.35"/>
+          <!-- side beads -->
+          <ellipse cx="38" cy="100" rx="14" ry="9" fill="#1B3A6B"/>
+          <ellipse cx="162" cy="100" rx="14" ry="9" fill="#1B3A6B"/>
+          <!-- arms -->
+          <path d="M52 100 Q40 100 38 100" stroke="#1B3A6B" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M148 100 Q160 100 162 100" stroke="#1B3A6B" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <!-- sparkle -->
+          <path d="M158 50 l5 12 12 5 -12 5 -5 12 -5-12 -12-5 12-5 z" fill="#E8751A"/>
+          <defs>
+            <radialGradient id="shine" cx="35%" cy="30%" r="60%">
+              <stop offset="0%" stop-color="#fff"/>
+              <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      </div>
+      <h1>Meet Sparky &amp;<br/><span class="accent">Learn the Abacus!</span></h1>
+      <p>A free, friendly play space for little learners aged 5–6 to discover numbers, beads, and counting fun.</p>
+    </div>
+
+    <div class="card">
+      <div class="field-gap">
+        <span class="field-label">🧒 Child's name</span>
+        <input class="big-input" id="child-name" type="text" placeholder="What's your name?" autocomplete="given-name" autocorrect="off"/>
+      </div>
+      <div>
+        <span class="field-label">📱 Parent's contact number</span>
+        <input class="big-input" id="parent-phone" type="tel" placeholder="e.g. 9876543210" autocomplete="tel" inputmode="numeric" maxlength="15"/>
+        <p class="field-note">We'll use this only to share your child's progress and let you know about classes.</p>
+      </div>
+    </div>
+
+    <div class="mode-grid">
+      <button class="mode-card" onclick="goToMode('learn')">
+        <div class="mode-icon learn">🧮</div>
+        <div>
+          <div class="mode-title">Learn &amp; Play</div>
+          <div class="mode-sub">Tap the beads, watch numbers change, and explore freely with Sparky.</div>
+        </div>
+        <div class="mode-arrow">→</div>
+      </button>
+      <button class="mode-card" onclick="goToMode('build')">
+        <div class="mode-icon" style="background:#E8F5E9;">🏗️</div>
+        <div>
+          <div class="mode-title">Build a Number</div>
+          <div class="mode-sub">See a number, then set the abacus beads to match it — you're in control!</div>
+        </div>
+        <div class="mode-arrow">→</div>
+      </button>
+      <button class="mode-card" onclick="goToMode('quiz')">
+        <div class="mode-icon play">🎯</div>
+        <div>
+          <div class="mode-title">Counting Quiz</div>
+          <div class="mode-sub">10 fun and easy questions — count the beads and pick the right number!</div>
+        </div>
+        <div class="mode-arrow">→</div>
+      </button>
+    </div>
+
+    <div class="info-strip">🌟 No timers, no pressure — just fun! Perfect for little hands and curious minds.</div>
+  </div>
+
+  <!-- ═══════════════ LEARN & PLAY ═══════════════ -->
+  <div id="screen-learn" class="screen">
+    <div class="screen-header">
+      <h2>🧮 Learn &amp; Play</h2>
+      <button class="exit-btn" onclick="goHome()">🏠 Home</button>
+    </div>
+
+    <div class="sparky-row">
+      <svg class="sparky-small" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <use href="#sparky-face"/>
+      </svg>
+      <div class="speech-bubble" id="learn-speech">Tap the beads to make a number!</div>
+    </div>
+
+    <div class="abacus-outer">
+      <div class="abacus-frame" id="abacus-frame-learn"></div>
+      <div class="abacus-readout">
+        <span class="val-label">The number is</span>
+        <span id="abacus-val-learn">0</span>
+      </div>
+    </div>
+
+    <div class="quick-grid" id="quick-grid"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="resetAbacusLearn(true)">🔄 Clear Abacus</button>
+      <button class="btn btn-orange" onclick="goToMode('quiz')">Try the Quiz →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ COUNTING QUIZ ═══════════════ -->
+  <div id="screen-quiz" class="screen">
+    <div class="screen-header">
+      <h2>🎯 Counting Quiz</h2>
+      <button class="exit-btn" onclick="goHome()">🏠 Home</button>
+    </div>
+
+    <div class="progress-track"><div class="progress-fill" id="quiz-fill" style="width:0%"></div></div>
+    <div class="progress-label" id="quiz-plbl">Question 1 of 10</div>
+
+    <div class="sparky-row">
+      <svg class="sparky-small" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <use href="#sparky-face"/>
+      </svg>
+      <div class="speech-bubble" id="quiz-speech">Let's count together!</div>
+    </div>
+
+    <div class="abacus-outer">
+      <div class="abacus-frame" id="abacus-frame-quiz"></div>
+    </div>
+
+    <div class="quiz-question" id="quiz-question">How many beads are glowing?</div>
+    <div class="option-grid" id="option-grid"></div>
+  </div>
+
+  <!-- ═══════════════ BUILD A NUMBER ═══════════════ -->
+  <div id="screen-build" class="screen">
+    <div class="screen-header">
+      <h2>🏗️ Build a Number</h2>
+      <button class="exit-btn" onclick="goHome()">🏠 Home</button>
+    </div>
+
+    <div class="progress-track"><div class="progress-fill" id="build-fill" style="width:0%"></div></div>
+    <div class="progress-label" id="build-plbl">Question 1 of 8</div>
+
+    <div class="sparky-row">
+      <svg class="sparky-small" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <use href="#sparky-face"/>
+      </svg>
+      <div class="speech-bubble" id="build-speech">Can you build this number?</div>
+    </div>
+
+    <div class="build-target">
+      <div class="build-number" id="build-target-num">3</div>
+      <div class="build-label">Set the abacus beads to show this number!</div>
+    </div>
+
+    <div class="abacus-outer">
+      <div class="abacus-frame" id="abacus-frame-build"></div>
+      <div class="abacus-readout" id="build-readout" style="visibility:hidden;">
+        <span class="val-label">Your number</span>
+        <span id="abacus-val-build">0</span>
+      </div>
+    </div>
+
+    <div class="build-feedback" id="build-feedback"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="resetBuildAbacus()">🔄 Clear</button>
+      <button class="btn btn-green" onclick="checkBuildAnswer()">✅ Check!</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ RESULTS ═══════════════ -->
+  <div id="screen-results" class="screen">
+    <div class="result-hero">
+      <svg class="result-sparky" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <use href="#sparky-face"/>
+      </svg>
+      <h2 style="font-family:'Playfair Display',serif;font-weight:900;font-size:26px;color:var(--navy);">Great job, <span id="res-name" style="color:var(--orange);"></span>!</h2>
+      <div class="score-big" id="res-score">0</div>
+      <div class="score-denom" id="res-denom">out of 10 correct</div>
+      <div class="star-row" id="star-row"></div>
+      <p id="res-message" style="font-size:15px;color:var(--muted);font-weight:600;max-width:380px;margin:0 auto;line-height:1.6;"></p>
+    </div>
+
+    <div class="badges-section">
+      <div class="badges-title">🏅 Your Badges</div>
+      <div class="badge-row" id="badge-row"></div>
+    </div>
+
+    <div class="btn-row" style="margin-top:8px;">
+      <button class="btn btn-ghost" onclick="goToMode('quiz')">🔁 Play Again</button>
+      <button class="btn btn-navy" onclick="goToLevel1()">⭐ Try Level 1</button>
+    </div>
+    <button class="btn btn-orange" style="margin-top:12px;" onclick="goHome()">🏠 Back to Home</button>
+  </div>
+
+</div>
+
+<!-- Hidden sparky face for reuse via <use> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="sparky-face">
+      <ellipse cx="100" cy="100" rx="52" ry="46" fill="#E8751A"/>
+      <ellipse cx="100" cy="100" rx="52" ry="46" fill="url(#shine2)" opacity="0.5"/>
+      <circle cx="80" cy="92" r="9" fill="#fff"/>
+      <circle cx="120" cy="92" r="9" fill="#fff"/>
+      <circle cx="82" cy="94" r="4.5" fill="#1a1a2e"/>
+      <circle cx="122" cy="94" r="4.5" fill="#1a1a2e"/>
+      <path d="M82 112 Q100 128 118 112" stroke="#1a1a2e" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <circle cx="68" cy="106" r="6" fill="#fff" opacity="0.35"/>
+      <circle cx="132" cy="106" r="6" fill="#fff" opacity="0.35"/>
+    </g>
+    <radialGradient id="shine2" cx="35%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#fff"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   AUDIO ENGINE (Web Audio API — no external files)
+   ════════════════════════════════════════════════════════════════ */
+let _audioCtx = null;
+function getAudioCtx(){
+  if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (_audioCtx.state === 'suspended') _audioCtx.resume();
+  return _audioCtx;
+}
+function playTone(freq, type, dur, vol, delayMs=0){
+  try {
+    const ctx = getAudioCtx();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = type; o.frequency.value = freq;
+    const t = ctx.currentTime + delayMs/1000;
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.start(t); o.stop(t + dur);
+  } catch(e){}
+}
+function sfxBead(){
+  // light woody click
+  playTone(320, 'triangle', 0.08, 0.3);
+  playTone(180, 'sine', 0.07, 0.15);
+}
+function sfxCorrect(){
+  [523, 659, 784, 1047].forEach((f, i) => playTone(f, 'sine', 0.22, 0.28, i*85));
+}
+function sfxWrong(){
+  playTone(220, 'sawtooth', 0.12, 0.18);
+  playTone(180, 'sawtooth', 0.10, 0.14, 90);
+}
+function sfxBadge(){
+  [440, 554, 659, 880].forEach((f, i) => playTone(f, 'triangle', 0.3, 0.35, i*100));
+}
+
+/* ════════════════════════════════════════════════════════════════
+   STATE
+   ════════════════════════════════════════════════════════════════ */
+let G = { name:'', phone:'', quizAnswers:[], quizIdx:0, score:0, mode:'quiz' };
+let abLearn = [];
+let abQuiz  = [];
+let abBuild = [];
+let buildQ  = { target:0, idx:0, score:0, total:8, answered:false };
+
+const SPEECH_LINES = [
+  "Tap a bead to make it glow! ✨",
+  "Wow, look at that number! 🎉",
+  "You're doing great! 🌟",
+  "Try making a bigger number!",
+  "Beads on top are worth 5 each!",
+  "Beads on the bottom are worth 1 each!"
+];
+
+/* ════════════════════════════════════════════════════════════════
+   NAVIGATION
+   ════════════════════════════════════════════════════════════════ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goHome(){ showScreen('home'); }
+
+function goToMode(mode){
+  const name  = document.getElementById('child-name').value.trim();
+  const phone = document.getElementById('parent-phone').value.trim();
+  if (!name) { toast("Please tell us the child's name! 🧒"); return; }
+  if (!phone || phone.replace(/\D/g,'').length < 10) { toast('Please enter a valid 10-digit contact number! 📱'); return; }
+  G.name = name; G.phone = phone;
+  G.mode = mode;
+
+  if (mode === 'learn') {
+    showScreen('learn');
+    buildAbacus('abacus-frame-learn', abLearn = freshAbacus(), 'learn');
+    setLearnSpeech(0);
+    buildQuickGrid();
+  } else if (mode === 'build') {
+    startBuildMode();
+  } else {
+    startQuiz();
+  }
+}
+
+function goToLevel1(){
+  window.location.href = 'level-1.html';
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ABACUS (shared builder)
+   ════════════════════════════════════════════════════════════════ */
+function freshAbacus(){
+  // Standard single rod: 1 heaven bead (worth 5) + 4 earth beads (worth 1 each) = max 9
+  return { h:[false], e:[false,false,false,false] };
+}
+
+function buildAbacus(frameId, state, mode){
+  const frame = document.getElementById(frameId);
+  frame.innerHTML = '';
+  const rg = document.createElement('div'); rg.className='rod-unit';
+  const rl = document.createElement('div'); rl.className='rod-lbl'; rl.textContent='Ones'; rg.appendChild(rl);
+  const rc = document.createElement('div'); rc.className='rod-col';
+  const spine = document.createElement('div'); spine.className='rod-spine'; rc.appendChild(spine);
+
+  const bt = document.createElement('div'); bt.className='rod-heaven';
+  for(let i=0;i<1;i++){
+    const b=document.createElement('button'); b.className='bead bead-h'+(state.h[i]?' on':''); b.type='button';
+    b.dataset.t='h'; b.dataset.bi=i;
+    b.addEventListener('pointerdown', e=>{
+      e.preventDefault();
+      if(mode==='learn') toggleBeadLearn('h',i);
+      else if(mode==='build') toggleBeadBuild('h',i);
+    });
+    bt.appendChild(b);
+  }
+  rc.appendChild(bt);
+
+  const bar=document.createElement('div'); bar.className='rod-bar'; rc.appendChild(bar);
+
+  const bb=document.createElement('div'); bb.className='rod-earth';
+  for(let i=0;i<4;i++){
+    const b=document.createElement('button'); b.className='bead bead-e'+(state.e[i]?' on':''); b.type='button';
+    b.dataset.t='e'; b.dataset.bi=i;
+    b.addEventListener('pointerdown', e=>{
+      e.preventDefault();
+      if(mode==='learn') toggleBeadLearn('e',i);
+      else if(mode==='build') toggleBeadBuild('e',i);
+    });
+    bb.appendChild(b);
+  }
+  rc.appendChild(bb);
+  rg.appendChild(rc); frame.appendChild(rg);
+}
+
+function abacusValue(state){
+  return state.h.filter(Boolean).length*5 + state.e.filter(Boolean).length;
+}
+
+/* ── Learn mode interactions ───────────────────────────────────── */
+function toggleBeadLearn(type,bi){
+  abLearn[type][bi] = !abLearn[type][bi];
+  const b = document.querySelector(`#abacus-frame-learn .bead[data-t="${type}"][data-bi="${bi}"]`);
+  if (b) {
+    b.classList.toggle('on', abLearn[type][bi]);
+    b.classList.remove('bounce');
+    void b.offsetWidth; // reflow to restart animation
+    b.classList.add('bounce');
+    sfxBead();
+  }
+  const val = abacusValue(abLearn);
+  document.getElementById('abacus-val-learn').textContent = val;
+  if (val === 0) setLearnSpeech(0);
+  else if (val === 9) setLearnSpeech(99, "Wow, that's the biggest number here — 9! 🎉");
+  else setLearnSpeech(Math.floor(Math.random()*4)+1);
+}
+
+function resetAbacusLearn(showMsg){
+  abLearn = freshAbacus();
+  buildAbacus('abacus-frame-learn', abLearn, 'learn');
+  document.getElementById('abacus-val-learn').textContent = '0';
+  if (showMsg) setLearnSpeech(0);
+}
+
+function setLearnSpeech(idx, custom){
+  document.getElementById('learn-speech').textContent = custom || SPEECH_LINES[idx % SPEECH_LINES.length];
+}
+
+/* ── Quick number buttons (Learn mode) ───────────────────────────── */
+function buildQuickGrid(){
+  const grid = document.getElementById('quick-grid');
+  grid.innerHTML = '';
+  [2,4,5,6,8,9].forEach(n=>{
+    const btn = document.createElement('button');
+    btn.className = 'quick-btn';
+    btn.textContent = 'Show ' + n;
+    btn.type='button';
+    btn.addEventListener('click', ()=> setAbacusToNumber(n));
+    grid.appendChild(btn);
+  });
+}
+
+function setAbacusToNumber(n){
+  n = Math.max(0, Math.min(9, n));
+  const heaven = n >= 5 ? 1 : 0;
+  const earth  = n - heaven*5;
+  abLearn = { h:[heaven>=1], e:[earth>=1, earth>=2, earth>=3, earth>=4] };
+  buildAbacus('abacus-frame-learn', abLearn, 'learn');
+  document.getElementById('abacus-val-learn').textContent = n;
+  setLearnSpeech(0, `Here's ${n}! Can you count the glowing beads?`);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   COUNTING QUIZ
+   ════════════════════════════════════════════════════════════════ */
+const QUIZ_SPEECH_CORRECT = ["Yay! That's right! 🎉","Super! You got it! ⭐","Amazing counting! 🌟","Perfect! 🥳","You're a star! ✨"];
+const QUIZ_SPEECH_WRONG   = ["Almost! Let's try the next one. 💪","Good try! Keep counting. 😊","Nice effort! On to the next!"];
+
+function startQuiz(){
+  G.quizIdx = 0;
+  G.score = 0;
+  G.quizAnswers = [];
+  showScreen('quiz');
+  renderQuizQuestion();
+}
+
+function generateQuizQuestion(){
+  const n = Math.floor(Math.random()*8) + 1; // 1..8, leaves room for distractors up to 9
+  const heaven = n >= 5 ? 1 : 0;
+  const earth  = n - heaven*5;
+  const state  = { h:[heaven>=1], e:[earth>=1, earth>=2, earth>=3, earth>=4] };
+  // generate 4 unique options including n, within 0-9
+  const opts = new Set([n]);
+  while (opts.size < 4) {
+    let candidate = n + (Math.floor(Math.random()*7) - 3); // +-3
+    if (candidate < 0) candidate = n + opts.size + 1;
+    if (candidate > 9) candidate = n - opts.size - 1;
+    if (candidate >= 0 && candidate <= 9) opts.add(candidate);
+  }
+  const options = Array.from(opts);
+  // shuffle
+  for (let i=options.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [options[i],options[j]]=[options[j],options[i]]; }
+  return { n, state, options };
+}
+
+let currentQ = null;
+
+function renderQuizQuestion(){
+  const total = 10;
+  const idx = G.quizIdx;
+  document.getElementById('quiz-fill').style.width = (idx/total*100) + '%';
+  document.getElementById('quiz-plbl').textContent = 'Question ' + (idx+1) + ' of ' + total;
+  document.getElementById('quiz-speech').textContent = "Let's count together!";
+
+  currentQ = generateQuizQuestion();
+  buildAbacus('abacus-frame-quiz', currentQ.state, 'quiz');
+  document.getElementById('quiz-question').innerHTML = 'How many beads are <span class="hl">glowing</span>?';
+
+  const grid = document.getElementById('option-grid');
+  grid.innerHTML = '';
+  currentQ.options.forEach(opt=>{
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.type = 'button';
+    btn.addEventListener('click', ()=> selectAnswer(btn, opt));
+    grid.appendChild(btn);
+  });
+}
+
+function selectAnswer(btn, opt){
+  const correct = opt === currentQ.n;
+  const allBtns = document.querySelectorAll('#option-grid .option-btn');
+  allBtns.forEach(b=>b.classList.add('disabled'));
+
+  if (correct){
+    btn.classList.add('correct');
+    G.score++;
+    sfxCorrect();
+    document.getElementById('quiz-speech').textContent = QUIZ_SPEECH_CORRECT[Math.floor(Math.random()*QUIZ_SPEECH_CORRECT.length)];
+  } else {
+    btn.classList.add('wrong');
+    sfxWrong();
+    allBtns.forEach(b=>{ if(parseInt(b.textContent)===currentQ.n) b.classList.add('correct'); });
+    document.getElementById('quiz-speech').textContent = QUIZ_SPEECH_WRONG[Math.floor(Math.random()*QUIZ_SPEECH_WRONG.length)];
+  }
+  G.quizAnswers.push({ q: currentQ.n, given: opt, correct });
+
+  setTimeout(()=>{
+    G.quizIdx++;
+    if (G.quizIdx >= 10) finishQuiz();
+    else renderQuizQuestion();
+  }, 1100);
+}
+
+function finishQuiz(){
+  document.getElementById('quiz-fill').style.width = '100%';
+  showResults(G.score, 10, 'quiz');
+  submitLead();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BUILD A NUMBER MODE
+   ════════════════════════════════════════════════════════════════ */
+const BUILD_SPEECH_CORRECT = ["Amazing! You built it! 🎉","Perfect! 🌟","You're a builder! ⭐","Brilliant! 🥳","Spot on! ✨"];
+const BUILD_SPEECH_WRONG   = ["Almost! The beads weren't quite right. Try again? 💪","Good effort! Let's try the next one. 😊"];
+const BUILD_TARGETS = [1,2,3,4,5,6,7,8].sort(()=>Math.random()-.5);
+
+function startBuildMode(){
+  buildQ = { target:0, idx:0, score:0, total:8, answered:false };
+  G.score = 0;
+  showScreen('build');
+  abBuild = freshAbacus();
+  buildAbacus('abacus-frame-build', abBuild, 'build');
+  document.getElementById('abacus-val-build').textContent = '0';
+  renderBuildQuestion();
+}
+
+function renderBuildQuestion(){
+  const total = buildQ.total;
+  buildQ.answered = false;
+  buildQ.target = BUILD_TARGETS[buildQ.idx % BUILD_TARGETS.length];
+  document.getElementById('build-fill').style.width = (buildQ.idx/total*100) + '%';
+  document.getElementById('build-plbl').textContent = 'Question ' + (buildQ.idx+1) + ' of ' + total;
+  document.getElementById('build-target-num').textContent = buildQ.target;
+  document.getElementById('build-feedback').textContent = '';
+  document.getElementById('build-speech').textContent = 'Set the beads to show this number!';
+  resetBuildAbacus();
+}
+
+function resetBuildAbacus(){
+  abBuild = freshAbacus();
+  buildAbacus('abacus-frame-build', abBuild, 'build');
+  document.getElementById('abacus-val-build').textContent = '0';
+  document.getElementById('build-readout').style.visibility = 'hidden';
+  document.getElementById('build-feedback').textContent = '';
+}
+
+function toggleBeadBuild(type, bi){
+  if (buildQ.answered) return;
+  abBuild[type][bi] = !abBuild[type][bi];
+  const b = document.querySelector(`#abacus-frame-build .bead[data-t="${type}"][data-bi="${bi}"]`);
+  if (b) {
+    b.classList.toggle('on', abBuild[type][bi]);
+    b.classList.remove('bounce');
+    void b.offsetWidth;
+    b.classList.add('bounce');
+    sfxBead();
+  }
+}
+
+function checkBuildAnswer(){
+  if (buildQ.answered) return;
+  const val = abacusValue(abBuild);
+  const correct = val === buildQ.target;
+  buildQ.answered = true;
+
+  // Reveal the number readout now
+  document.getElementById('build-readout').style.visibility = 'visible';
+  document.getElementById('abacus-val-build').textContent = val;
+
+  const fb = document.getElementById('build-feedback');
+  if (correct){
+    sfxCorrect();
+    fb.textContent = '🎉 Yes! That\'s ' + buildQ.target + '!';
+    document.getElementById('build-speech').textContent = BUILD_SPEECH_CORRECT[Math.floor(Math.random()*BUILD_SPEECH_CORRECT.length)];
+    buildQ.score++;
+    G.score = buildQ.score;
+  } else {
+    sfxWrong();
+    fb.textContent = '❌ Not quite — it shows ' + val + ', not ' + buildQ.target;
+    document.getElementById('build-speech').textContent = BUILD_SPEECH_WRONG[Math.floor(Math.random()*BUILD_SPEECH_WRONG.length)];
+    // Show correct answer briefly
+    setAbacusToBuildTarget(buildQ.target);
+  }
+
+  buildQ.idx++;
+  setTimeout(()=>{
+    if (buildQ.idx >= buildQ.total) {
+      document.getElementById('build-fill').style.width = '100%';
+      showResults(buildQ.score, buildQ.total, 'build');
+      submitLead();
+    } else {
+      renderBuildQuestion();
+    }
+  }, 1400);
+}
+
+function setAbacusToBuildTarget(n){
+  const heaven = n >= 5 ? 1 : 0;
+  const earth  = n - heaven*5;
+  abBuild = { h:[heaven>=1], e:[earth>=1, earth>=2, earth>=3, earth>=4] };
+  buildAbacus('abacus-frame-build', abBuild, 'build');
+  document.getElementById('abacus-val-build').textContent = n;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SHARED RESULTS + BADGES
+   ════════════════════════════════════════════════════════════════ */
+const BADGES = [
+  { id:'first',   icon:'🌱', name:'First Steps',    desc:'You played your first game!',   condition:(s,t,m)=>true },
+  { id:'star',    icon:'⭐', name:'Counting Star',   desc:'Score 5+ in Counting Quiz',     condition:(s,t,m)=>m==='quiz' && s>=5 },
+  { id:'builder', icon:'🏗️', name:'Bead Builder',   desc:'Score 5+ in Build a Number',   condition:(s,t,m)=>m==='build' && s>=5 },
+  { id:'master',  icon:'🏆', name:'Bead Master',    desc:'Score 8+ in any mode',          condition:(s,t,m)=>s>=8 },
+  { id:'perfect', icon:'💎', name:'Perfect!',        desc:'Score full marks!',              condition:(s,t,m)=>s>=t },
+];
+
+function showResults(score, total, mode){
+  showScreen('results');
+  document.getElementById('res-name').textContent = G.name;
+  document.getElementById('res-score').textContent = score;
+  document.getElementById('res-denom').textContent = 'out of ' + total + ' correct';
+
+  const stars = document.getElementById('star-row');
+  stars.innerHTML = '';
+  const starCount = Math.max(1, Math.round(score/total*5));
+  for(let i=1;i<=5;i++){
+    const s = document.createElement('span');
+    s.textContent = '⭐';
+    if (i<=starCount){ s.classList.add('lit'); s.style.animationDelay = (i*0.12)+'s'; }
+    stars.appendChild(s);
+  }
+
+  const msg = document.getElementById('res-message');
+  const pct = score/total;
+  if (pct >= 0.8) msg.textContent = "Sparky is so proud of you! You're ready for bigger challenges. 🚀";
+  else if (pct >= 0.5) msg.textContent = "Great job! A little more practice and you'll be a champion! 💪";
+  else msg.textContent = "Nice try! Keep playing with the abacus to get even better. 🌱";
+
+  // Badges
+  const earned = BADGES.filter(b => b.condition(score, total, mode));
+  const badgeRow = document.getElementById('badge-row');
+  badgeRow.innerHTML = '';
+  let badgeDelay = 300;
+  BADGES.forEach(b => {
+    const isEarned = earned.includes(b);
+    const el = document.createElement('div');
+    el.className = 'badge' + (isEarned ? ' earned' : '');
+    if (isEarned){
+      el.style.animationDelay = badgeDelay + 'ms';
+      badgeDelay += 180;
+      setTimeout(()=>{ if(isEarned) sfxBadge(); }, badgeDelay);
+    }
+    el.innerHTML = `<div class="badge-icon">${b.icon}</div>
+      <div class="badge-name">${b.name}</div>
+      <div class="badge-desc">${isEarned ? b.desc : '🔒 Not yet earned'}</div>`;
+    badgeRow.appendChild(el);
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   LEAD SUBMISSION (Google Sheets via Apps Script)
+   ════════════════════════════════════════════════════════════════ */
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrrxM1JQ58HZojvc1S6isBiLSSMYtY6cPvHdwHYOQnUc6BuXOUekfbXemR5kVdg_o/exec';
+
+async function submitLead(){
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_YOUR')) return;
+  try{
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name:G.name, phone:G.phone, level:'Little Sparks (' + G.mode + ')', score:G.score, total: G.mode==='build'?8:10 })
+    });
+  }catch(e){ /* silent */ }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TOAST
+   ════════════════════════════════════════════════════════════════ */
+let toastTimer;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2600);
+}
+</script>
+</body>
+</html>
