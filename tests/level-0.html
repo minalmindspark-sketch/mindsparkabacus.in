@@ -171,15 +171,27 @@ body{
 .rod-earth{display:flex;flex-direction:column;gap:6px;z-index:1;position:relative;padding:6px 0;}
 .bead{
   width:60px;height:30px;border-radius:999px;cursor:pointer;border:none;outline:none;
-  transition:background .15s, border-color .15s, box-shadow .15s;position:relative;z-index:1;
+  transition:background .15s, border-color .15s, box-shadow .15s, transform .15s;position:relative;z-index:1;
 }
 .bead-h{background:#F8D2A4;border:3px solid #D4A24E;}
-.bead-h.on{background:var(--orange);border-color:var(--orange-d);box-shadow:0 0 14px rgba(232,117,26,.5);}
+.bead-h.on{
+  background:var(--orange);border-color:var(--orange-d);
+  box-shadow:0 0 0 4px rgba(232,117,26,.25), 0 0 18px rgba(232,117,26,.6);
+  transform:scale(1.08);
+}
+.bead-h.on::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:900;}
 .bead-e{background:#B9D6F2;border:3px solid #5B8FD0;}
-.bead-e.on{background:var(--navy);border-color:var(--navy-light);box-shadow:0 0 14px rgba(27,58,107,.4);}
+.bead-e.on{
+  background:var(--navy);border-color:var(--navy-light);
+  box-shadow:0 0 0 4px rgba(27,58,107,.22), 0 0 18px rgba(27,58,107,.55);
+  transform:scale(1.08);
+}
+.bead-e.on::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:900;}
 .bead:active{transform:scale(.95);}
-@keyframes beadBounce{0%{transform:scale(1)}30%{transform:scale(1.28) translateY(-5px)}60%{transform:scale(.94) translateY(2px)}80%{transform:scale(1.06) translateY(-2px)}100%{transform:scale(1)}}
-.bead.bounce{animation:beadBounce .38s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes beadBounce{0%{transform:scale(1)}30%{transform:scale(1.28) translateY(-5px)}60%{transform:scale(.94) translateY(2px)}80%{transform:scale(1.06) translateY(-2px)}100%{transform:scale(1.08)}}
+.bead.on.bounce{animation:beadBounce .38s cubic-bezier(.34,1.56,.64,1) both;}
+.bead:not(.on).bounce{animation:beadBounceOff .38s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes beadBounceOff{0%{transform:scale(1.08)}30%{transform:scale(.85) translateY(3px)}60%{transform:scale(1.04) translateY(-2px)}100%{transform:scale(1)}}
 
 /* ── BUILD MODE ─────────────────────────────────────────────────── */
 .build-target{
@@ -218,6 +230,100 @@ body{
 .badge-name{font-size:12px;font-weight:800;color:var(--navy);text-align:center;line-height:1.3;}
 .badge-desc{font-size:11px;color:var(--muted);font-weight:600;text-align:center;line-height:1.3;}
 .badge-locked{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;}
+
+/* ── TREASURE HUNT MODE ─────────────────────────────────────────── */
+.treasure-banner{
+  background:linear-gradient(135deg,#FBE8E0,#FDF1E8);
+  border:2.5px solid #E8B89A;border-radius:var(--r-lg);
+  padding:18px 20px;margin-bottom:16px;text-align:center;
+}
+.treasure-stage-label{
+  font-size:12px;font-weight:800;color:var(--orange-d);text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:6px;
+}
+.treasure-trail{display:flex;justify-content:center;gap:8px;margin-bottom:10px;}
+.trail-dot{
+  width:30px;height:30px;border-radius:50%;background:var(--surface);
+  border:2.5px solid var(--border);display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:800;color:var(--muted);transition:all .25s;
+}
+.trail-dot.done{background:var(--green);border-color:var(--green-d);color:#fff;}
+.trail-dot.current{background:var(--orange);border-color:var(--orange-d);color:#fff;transform:scale(1.15);box-shadow:0 0 0 4px rgba(232,117,26,.2);}
+.treasure-story{
+  font-family:'Playfair Display',serif;font-weight:700;font-size:17px;color:var(--navy);
+  line-height:1.5;margin-bottom:4px;
+}
+.treasure-icon-big{font-size:54px;line-height:1;margin-bottom:6px;animation:treasureFloat 2.4s ease-in-out infinite;}
+@keyframes treasureFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
+.tens-ones-row{display:flex;gap:24px;justify-content:center;}
+
+/* ── SUPERPOWER GAME ─────────────────────────────────────────────── */
+.power-round-banner{
+  background:linear-gradient(135deg,#F3E8FB,#FBF0FD);
+  border:2.5px solid #D9B8EE;border-radius:var(--r-lg);
+  padding:16px 20px;margin-bottom:16px;text-align:center;
+}
+.power-round-label{font-size:12px;font-weight:800;color:#8B4FB8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.power-round-title{font-family:'Playfair Display',serif;font-weight:900;font-size:20px;color:var(--navy);}
+.power-sub-dots{display:flex;justify-content:center;gap:6px;margin-top:8px;}
+.power-sub-dot{width:9px;height:9px;border-radius:50%;background:var(--border);transition:background .2s,transform .2s;}
+.power-sub-dot.done{background:#8B4FB8;}
+.power-sub-dot.current{background:#8B4FB8;transform:scale(1.4);}
+
+.power-stage{min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:20px 0;}
+.power-instruction{font-size:15px;font-weight:700;color:var(--navy);text-align:center;min-height:22px;}
+.power-countdown{font-family:'Playfair Display',serif;font-weight:900;font-size:64px;color:#8B4FB8;}
+@keyframes countdownPop{0%{transform:scale(.5);opacity:0}50%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
+.power-countdown.pop{animation:countdownPop .5s cubic-bezier(.34,1.56,.64,1) both;}
+
+.dot-burst{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:280px;}
+.dot-burst .dot{width:34px;height:34px;border-radius:50%;background:var(--orange);box-shadow:0 3px 0 var(--orange-d);}
+
+.count-options{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;max-width:360px;}
+.count-options .opt-btn{
+  font-family:'Playfair Display',serif;font-weight:900;font-size:26px;color:var(--navy);
+  background:var(--surface);border:3px solid var(--border);border-radius:var(--r-md);
+  padding:16px 4px;cursor:pointer;box-shadow:0 4px 0 var(--border);
+  transition:transform .1s,box-shadow .1s;
+}
+.count-options .opt-btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--border);}
+.count-options .opt-btn.correct{background:#E7F8EF;border-color:var(--green);color:var(--green-d);box-shadow:0 4px 0 var(--green);}
+.count-options .opt-btn.wrong{background:#FDECEC;border-color:#E0635A;color:#C0392B;box-shadow:0 4px 0 #E0635A;}
+
+.pattern-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;}
+.pattern-chip{width:46px;height:46px;border-radius:50%;flex-shrink:0;}
+.pattern-chip.c-orange{background:var(--orange);}
+.pattern-chip.c-navy{background:var(--navy);}
+.pattern-chip.q{
+  width:46px;height:46px;border-radius:50%;border:3px dashed var(--muted);
+  display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--muted);font-size:20px;
+}
+.pattern-options{display:flex;gap:16px;justify-content:center;margin-top:8px;}
+.pattern-options .opt-chip{
+  width:58px;height:58px;border-radius:50%;cursor:pointer;border:3px solid var(--border);
+  box-shadow:0 4px 0 var(--border);transition:transform .1s,box-shadow .1s;
+}
+.pattern-options .opt-chip:active{transform:translateY(2px);box-shadow:0 2px 0 var(--border);}
+.pattern-options .opt-chip.correct{border-color:var(--green);box-shadow:0 4px 0 var(--green);}
+.pattern-options .opt-chip.wrong{border-color:#E0635A;box-shadow:0 4px 0 #E0635A;}
+
+.memory-rod-wrap{display:flex;justify-content:center;padding:10px 0;}
+
+/* ── POWER RESULTS ───────────────────────────────────────────────── */
+.power-results-hero{text-align:center;padding:10px 0 6px;}
+.trait-bars{max-width:360px;margin:18px auto;}
+.trait-bar-row{margin-bottom:14px;}
+.trait-bar-label{display:flex;justify-content:space-between;font-size:14px;font-weight:800;color:var(--navy);margin-bottom:6px;}
+.trait-bar-track{background:var(--warm);border-radius:999px;height:16px;overflow:hidden;}
+.trait-bar-fill{height:100%;border-radius:999px;transition:width 1s cubic-bezier(.22,1,.36,1);}
+.trait-bar-fill.memory{background:linear-gradient(90deg,#8B4FB8,#B07FD4);}
+.trait-bar-fill.counter{background:linear-gradient(90deg,var(--orange),var(--orange-light));}
+.trait-bar-fill.pattern{background:linear-gradient(90deg,var(--navy),var(--navy-light));}
+.power-phone-card{
+  background:var(--surface);border:2.5px solid var(--border);border-radius:var(--r-lg);
+  padding:20px;margin:18px 0;box-shadow:var(--shadow);text-align:center;
+}
+.power-phone-card .field-label{text-align:left;}
 .abacus-readout{
   text-align:center;font-family:'Playfair Display',serif;font-weight:900;
   font-size:48px;color:var(--navy);margin-top:14px;line-height:1;
@@ -400,6 +506,22 @@ body{
         </div>
         <div class="mode-arrow">→</div>
       </button>
+      <button class="mode-card" onclick="goToMode('treasure')">
+        <div class="mode-icon" style="background:#FBE8E0;">🗺️</div>
+        <div>
+          <div class="mode-title">Sparky's Treasure Hunt</div>
+          <div class="mode-sub">A 5-stage adventure! Build bigger 2-digit numbers using Tens and Ones beads.</div>
+        </div>
+        <div class="mode-arrow">→</div>
+      </button>
+      <button class="mode-card" onclick="goToMode('power')">
+        <div class="mode-icon" style="background:#F3E8FB;">🏆</div>
+        <div>
+          <div class="mode-title">Sparky's Superpower Game</div>
+          <div class="mode-sub">3 quick mini-games to discover your child's memory, speed, and pattern superpowers!</div>
+        </div>
+        <div class="mode-arrow">→</div>
+      </button>
     </div>
 
     <div class="info-strip">🌟 No timers, no pressure — just fun! Perfect for little hands and curious minds.</div>
@@ -499,6 +621,87 @@ body{
   </div>
 
   <!-- ═══════════════ RESULTS ═══════════════ -->
+  <div id="screen-treasure" class="screen">
+    <div class="screen-header">
+      <h2>🗺️ Treasure Hunt</h2>
+      <button class="exit-btn" onclick="goHome()">🏠 Home</button>
+    </div>
+
+    <div class="treasure-trail" id="treasure-trail"></div>
+
+    <div class="treasure-banner">
+      <div class="treasure-stage-label" id="treasure-stage-label">Stage 1 of 5</div>
+      <div class="treasure-icon-big" id="treasure-icon">🐾</div>
+      <div class="treasure-story" id="treasure-story">Sparky found a map! Help count 12 footprints to follow the trail.</div>
+    </div>
+
+    <div class="build-target">
+      <div class="build-number" id="treasure-target-num">12</div>
+      <div class="build-label">Build this number on the abacus!</div>
+    </div>
+
+    <div class="abacus-outer">
+      <div class="abacus-frame tens-ones-row" id="abacus-frame-treasure"></div>
+      <div class="abacus-readout" id="treasure-readout" style="visibility:hidden;">
+        <span class="val-label">Your number</span>
+        <span id="abacus-val-treasure">0</span>
+      </div>
+    </div>
+
+    <div class="build-feedback" id="treasure-feedback"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="resetTreasureAbacus()">🔄 Clear</button>
+      <button class="btn btn-green" onclick="checkTreasureAnswer()">✅ Check!</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SUPERPOWER GAME ═══════════════ -->
+  <div id="screen-power" class="screen">
+    <div class="screen-header">
+      <h2>🏆 Superpower Game</h2>
+      <button class="exit-btn" onclick="goHome()">🏠 Home</button>
+    </div>
+
+    <div class="power-round-banner">
+      <div class="power-round-label" id="power-round-label">Round 1 of 3</div>
+      <div class="power-round-title" id="power-round-title">🌟 Bead Flash</div>
+      <div class="power-sub-dots" id="power-sub-dots"></div>
+    </div>
+
+    <div class="abacus-outer">
+      <div class="power-stage" id="power-stage"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SUPERPOWER RESULTS ═══════════════ -->
+  <div id="screen-power-results" class="screen">
+    <div class="power-results-hero">
+      <svg class="result-sparky" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <use href="#sparky-face"/>
+      </svg>
+      <h2 style="font-family:'Playfair Display',serif;font-weight:900;font-size:24px;color:var(--navy);"><span id="power-res-name"></span>'s Superpowers!</h2>
+      <p style="font-size:14px;color:var(--muted);font-weight:600;margin-top:6px;">Based on 3 quick brain games 🧠</p>
+    </div>
+
+    <div class="trait-bars" id="trait-bars"></div>
+
+    <p id="power-res-message" style="font-size:15px;color:var(--navy);font-weight:600;max-width:420px;margin:0 auto;line-height:1.65;text-align:center;"></p>
+
+    <div class="power-phone-card" id="power-phone-card">
+      <span class="field-label">📱 Get personalized class tips</span>
+      <input class="big-input field-gap" id="power-phone" type="tel" placeholder="Parent's contact number" autocomplete="tel" inputmode="numeric" maxlength="15" style="margin-top:8px;"/>
+      <button class="btn btn-orange" onclick="submitPowerLead()">Save My Results →</button>
+    </div>
+
+    <div class="btn-row" id="power-after-save" style="margin-top:8px;display:none;">
+      <button class="btn btn-ghost" onclick="goToMode('power')">🔁 Play Again</button>
+      <button class="btn btn-navy" onclick="goToLevel1()">⭐ Try Level 1</button>
+    </div>
+    <button class="btn btn-orange" style="margin-top:12px;" onclick="goHome()">🏠 Back to Home</button>
+  </div>
+
+  <!-- ═══════════════ RESULTS ═══════════════ -->
   <div id="screen-results" class="screen">
     <div class="result-hero">
       <svg class="result-sparky" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -517,7 +720,7 @@ body{
     </div>
 
     <div class="btn-row" style="margin-top:8px;">
-      <button class="btn btn-ghost" onclick="goToMode('quiz')">🔁 Play Again</button>
+      <button class="btn btn-ghost" onclick="playAgain()">🔁 Play Again</button>
       <button class="btn btn-navy" onclick="goToLevel1()">⭐ Try Level 1</button>
     </div>
     <button class="btn btn-orange" style="margin-top:12px;" onclick="goHome()">🏠 Back to Home</button>
@@ -618,10 +821,24 @@ function goToMode(mode){
   const name  = document.getElementById('child-name').value.trim();
   const phone = document.getElementById('parent-phone').value.trim();
   if (!name) { toast("Please tell us the child's name! 🧒"); return; }
-  if (!phone || phone.replace(/\D/g,'').length < 10) { toast('Please enter a valid 10-digit contact number! 📱'); return; }
-  G.name = name; G.phone = phone;
+  // Superpower Game only needs the child's name up front — phone is captured
+  // later on its own results screen, right before revealing the score.
+  if (mode !== 'power') {
+    if (!phone || phone.replace(/\D/g,'').length < 10) { toast('Please enter a valid 10-digit contact number! 📱'); return; }
+    G.phone = phone;
+  }
+  G.name = name;
   G.mode = mode;
+  launchMode(mode);
+}
 
+function playAgain(){
+  // Reuses the name/phone already captured at the start of this session —
+  // results screen has no name/phone fields to re-read.
+  launchMode(G.mode);
+}
+
+function launchMode(mode){
   if (mode === 'learn') {
     showScreen('learn');
     buildAbacus('abacus-frame-learn', abLearn = freshAbacus(), 'learn');
@@ -629,6 +846,10 @@ function goToMode(mode){
     buildQuickGrid();
   } else if (mode === 'build') {
     startBuildMode();
+  } else if (mode === 'treasure') {
+    startTreasureMode();
+  } else if (mode === 'power') {
+    startPowerGame();
   } else {
     startQuiz();
   }
@@ -651,6 +872,7 @@ function buildAbacus(frameId, state, mode){
   frame.innerHTML = '';
   const rg = document.createElement('div'); rg.className='rod-unit';
   const rl = document.createElement('div'); rl.className='rod-lbl'; rl.textContent='Ones'; rg.appendChild(rl);
+  if (mode === 'memorypreview') rl.style.visibility = 'hidden';
   const rc = document.createElement('div'); rc.className='rod-col';
   const spine = document.createElement('div'); spine.className='rod-spine'; rc.appendChild(spine);
 
@@ -686,6 +908,64 @@ function buildAbacus(frameId, state, mode){
 
 function abacusValue(state){
   return state.h.filter(Boolean).length*5 + state.e.filter(Boolean).length;
+}
+
+/* ── 2-Rod (Tens + Ones) Abacus for Treasure Hunt ─────────────────── */
+function fresh2DigitAbacus(){
+  return {
+    tens: { h:[false], e:[false,false,false,false] },
+    ones: { h:[false], e:[false,false,false,false] }
+  };
+}
+
+function value2Digit(state){
+  return abacusValue(state.tens)*10 + abacusValue(state.ones);
+}
+
+function buildOneRod(parent, rodState, label, rodKey, mode, onToggle){
+  const rg = document.createElement('div'); rg.className='rod-unit';
+  const rl = document.createElement('div'); rl.className='rod-lbl'; rl.textContent=label; rg.appendChild(rl);
+  const rc = document.createElement('div'); rc.className='rod-col';
+  const spine = document.createElement('div'); spine.className='rod-spine'; rc.appendChild(spine);
+
+  const bt = document.createElement('div'); bt.className='rod-heaven';
+  for(let i=0;i<1;i++){
+    const b=document.createElement('button'); b.className='bead bead-h'+(rodState.h[i]?' on':''); b.type='button';
+    b.dataset.t='h'; b.dataset.bi=i; b.dataset.rod=rodKey;
+    b.addEventListener('pointerdown', e=>{ e.preventDefault(); onToggle(rodKey,'h',i); });
+    bt.appendChild(b);
+  }
+  rc.appendChild(bt);
+
+  const bar=document.createElement('div'); bar.className='rod-bar'; rc.appendChild(bar);
+
+  const bb=document.createElement('div'); bb.className='rod-earth';
+  for(let i=0;i<4;i++){
+    const b=document.createElement('button'); b.className='bead bead-e'+(rodState.e[i]?' on':''); b.type='button';
+    b.dataset.t='e'; b.dataset.bi=i; b.dataset.rod=rodKey;
+    b.addEventListener('pointerdown', e=>{ e.preventDefault(); onToggle(rodKey,'e',i); });
+    bb.appendChild(b);
+  }
+  rc.appendChild(bb);
+  rg.appendChild(rc); parent.appendChild(rg);
+}
+
+function build2DigitAbacus(frameId, state, onToggle){
+  const frame = document.getElementById(frameId);
+  frame.innerHTML = '';
+  buildOneRod(frame, state.tens, 'Tens', 'tens', 'treasure', onToggle);
+  buildOneRod(frame, state.ones, 'Ones', 'ones', 'treasure', onToggle);
+}
+
+function flashBead(rodKey, type, bi, isOn){
+  const b = document.querySelector(`#abacus-frame-treasure .bead[data-rod="${rodKey}"][data-t="${type}"][data-bi="${bi}"]`);
+  if (b) {
+    b.classList.toggle('on', isOn);
+    b.classList.remove('bounce');
+    void b.offsetWidth;
+    b.classList.add('bounce');
+  }
+  sfxBead();
 }
 
 /* ── Learn mode interactions ───────────────────────────────────── */
@@ -926,12 +1206,492 @@ function setAbacusToBuildTarget(n){
 }
 
 /* ════════════════════════════════════════════════════════════════
+   SPARKY'S TREASURE HUNT (2-digit numbers, story mode)
+   ════════════════════════════════════════════════════════════════ */
+const TREASURE_STAGE_TEMPLATES = [
+  { icon:'🐾', story:n => `Sparky found a map! Help count ${n} footprints to follow the trail.`, range:[11,19] },
+  { icon:'🌉', story:n => `A wobbly bridge needs ${n} stones to cross safely. Can you place them?`, range:[11,19] },
+  { icon:'💎', story:n => `A sparkly gate is locked with ${n} gems. Build the number to open it!`, round:true },
+  { icon:'💰', story:n => `An old chest holds ${n} shiny coins. Count them all out!`, range:[21,59] },
+  { icon:'👑', story:n => `You found it — the treasure! It's worth ${n} jewels. Show the final number!`, range:[40,89] }
+];
+const TREASURE_SPEECH_CORRECT = ["You found it! 🎉","Treasure secured! ⭐","Sparky cheers for you! 🥳","Amazing counting! ✨"];
+const TREASURE_SPEECH_WRONG   = ["So close! Check your beads and try again. 💪","Almost had it! One more try. 😊"];
+
+function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+function generateTreasureStages(){
+  return TREASURE_STAGE_TEMPLATES.map(t => {
+    let n;
+    if (t.round) {
+      n = randInt(2,9)*10; // round tens: 20,30,...90
+    } else {
+      n = randInt(t.range[0], t.range[1]);
+    }
+    return { num:n, icon:t.icon, story:t.story(n) };
+  });
+}
+
+let TREASURE_STAGES = generateTreasureStages();
+
+let abTreasure = fresh2DigitAbacus();
+let treasureQ = { idx:0, score:0, total:5, answered:false };
+
+function startTreasureMode(){
+  TREASURE_STAGES = generateTreasureStages();
+  treasureQ = { idx:0, score:0, total:5, answered:false };
+  G.score = 0;
+  showScreen('treasure');
+  renderTreasureTrail();
+  renderTreasureStage();
+}
+
+function renderTreasureTrail(){
+  const trail = document.getElementById('treasure-trail');
+  trail.innerHTML = '';
+  for(let i=0;i<TREASURE_STAGES.length;i++){
+    const dot = document.createElement('div');
+    dot.className = 'trail-dot';
+    if (i < treasureQ.idx) dot.classList.add('done');
+    else if (i === treasureQ.idx) dot.classList.add('current');
+    dot.textContent = i < treasureQ.idx ? '✓' : (i+1);
+    trail.appendChild(dot);
+  }
+}
+
+function renderTreasureStage(){
+  treasureQ.answered = false;
+  const stage = TREASURE_STAGES[treasureQ.idx];
+  document.getElementById('treasure-stage-label').textContent = 'Stage ' + (treasureQ.idx+1) + ' of ' + TREASURE_STAGES.length;
+  document.getElementById('treasure-icon').textContent = stage.icon;
+  document.getElementById('treasure-story').textContent = stage.story;
+  document.getElementById('treasure-target-num').textContent = stage.num;
+  document.getElementById('treasure-feedback').textContent = '';
+  renderTreasureTrail();
+  resetTreasureAbacus();
+}
+
+function resetTreasureAbacus(){
+  abTreasure = fresh2DigitAbacus();
+  build2DigitAbacus('abacus-frame-treasure', abTreasure, toggleBeadTreasure);
+  document.getElementById('abacus-val-treasure').textContent = '0';
+  document.getElementById('treasure-readout').style.visibility = 'hidden';
+  document.getElementById('treasure-feedback').textContent = '';
+}
+
+function toggleBeadTreasure(rodKey, type, bi){
+  if (treasureQ.answered) return;
+  abTreasure[rodKey][type][bi] = !abTreasure[rodKey][type][bi];
+  flashBead(rodKey, type, bi, abTreasure[rodKey][type][bi]);
+}
+
+function checkTreasureAnswer(){
+  if (treasureQ.answered) return;
+  const val = value2Digit(abTreasure);
+  const stage = TREASURE_STAGES[treasureQ.idx];
+  const correct = val === stage.num;
+  treasureQ.answered = true;
+
+  document.getElementById('treasure-readout').style.visibility = 'visible';
+  document.getElementById('abacus-val-treasure').textContent = val;
+
+  const fb = document.getElementById('treasure-feedback');
+  if (correct){
+    sfxCorrect();
+    fb.textContent = '🎉 Yes! ' + stage.num + ' is correct!';
+    treasureQ.score++;
+    G.score = treasureQ.score;
+  } else {
+    sfxWrong();
+    fb.textContent = '❌ Not quite — your abacus shows ' + val + ', not ' + stage.num;
+    setTreasureToTarget(stage.num);
+  }
+
+  treasureQ.idx++;
+  setTimeout(()=>{
+    if (treasureQ.idx >= treasureQ.total) {
+      showResults(treasureQ.score, treasureQ.total, 'treasure');
+      submitLead();
+    } else {
+      renderTreasureStage();
+    }
+  }, 1600);
+}
+
+function setTreasureToTarget(n){
+  const tensDigit = Math.floor(n/10);
+  const onesDigit = n % 10;
+  const mk = d => {
+    const heaven = d >= 5 ? 1 : 0;
+    const earth = d - heaven*5;
+    return { h:[heaven>=1], e:[earth>=1, earth>=2, earth>=3, earth>=4] };
+  };
+  abTreasure = { tens: mk(tensDigit), ones: mk(onesDigit) };
+  build2DigitAbacus('abacus-frame-treasure', abTreasure, toggleBeadTreasure);
+  document.getElementById('abacus-val-treasure').textContent = n;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SPARKY'S SUPERPOWER GAME (3 rounds x 3 sub-rounds, timed scoring)
+   ════════════════════════════════════════════════════════════════ */
+const POWER_ROUNDS = [
+  { key:'memory',  title:'🌟 Bead Flash',   label:'Memory' },
+  { key:'counter', title:'🔢 Quick Count',  label:'Quick Counter' },
+  { key:'pattern', title:'🧩 Pattern Match',label:'Pattern Spotter' }
+];
+
+let powerG = {
+  roundIdx: 0,      // 0,1,2 -> memory, counter, pattern
+  subIdx: 0,        // 0,1,2 within a round
+  scores: { memory:[], counter:[], pattern:[] },
+  flashStart: 0,
+  locked: false
+};
+
+function startPowerGame(){
+  powerG = { roundIdx:0, subIdx:0, scores:{memory:[],counter:[],pattern:[]}, flashStart:0, locked:false };
+  showScreen('power');
+  renderPowerRoundBanner();
+  runReadyCountdown();
+}
+
+function runReadyCountdown(){
+  const stage = document.getElementById('power-stage');
+  stage.innerHTML = `<div class="power-instruction">Get ready, ${G.name}! 🌟</div><div class="power-countdown pop" id="power-countdown">3</div>`;
+  const el = document.getElementById('power-countdown');
+  let n = 3;
+  const tick = () => {
+    n--;
+    if (n > 0) {
+      el.textContent = n;
+      el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+      sfxBead();
+      setTimeout(tick, 700);
+    } else {
+      el.textContent = 'Go!';
+      el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+      sfxCorrect();
+      setTimeout(runPowerSubRound, 600);
+    }
+  };
+  setTimeout(tick, 700);
+}
+
+function renderPowerRoundBanner(){
+  const r = POWER_ROUNDS[powerG.roundIdx];
+  document.getElementById('power-round-label').textContent = 'Round ' + (powerG.roundIdx+1) + ' of 3';
+  document.getElementById('power-round-title').textContent = r.title;
+  const dotsWrap = document.getElementById('power-sub-dots');
+  dotsWrap.innerHTML = '';
+  for(let i=0;i<3;i++){
+    const d = document.createElement('div');
+    d.className = 'power-sub-dot' + (i<powerG.subIdx?' done':(i===powerG.subIdx?' current':''));
+    dotsWrap.appendChild(d);
+  }
+}
+
+function runPowerSubRound(){
+  powerG.locked = false;
+  const roundKey = POWER_ROUNDS[powerG.roundIdx].key;
+  renderPowerRoundBanner();
+  if (roundKey === 'memory')  runMemorySubRound(powerG.subIdx);
+  if (roundKey === 'counter') runCounterSubRound(powerG.subIdx);
+  if (roundKey === 'pattern') runPatternSubRound(powerG.subIdx);
+}
+
+function advancePowerGame(score){
+  const roundKey = POWER_ROUNDS[powerG.roundIdx].key;
+  powerG.scores[roundKey].push(score);
+  powerG.subIdx++;
+  if (powerG.subIdx >= 3){
+    powerG.subIdx = 0;
+    powerG.roundIdx++;
+  }
+  if (powerG.roundIdx >= 3){
+    setTimeout(finishPowerGame, 2500);
+  } else {
+    setTimeout(runPowerSubRound, 2500);
+  }
+}
+
+/* ── Round 1: Bead Flash (Memory) ─────────────────────────────────── */
+const MEMORY_CONFIG = [
+  { beadCount:2, flashMs:2000 },
+  { beadCount:3, flashMs:1500 },
+  { beadCount:4, flashMs:1200 }
+];
+
+function runMemorySubRound(idx){
+  const cfg = MEMORY_CONFIG[idx];
+  const stage = document.getElementById('power-stage');
+  stage.innerHTML = `<div class="power-instruction">Watch closely! 👀</div><div class="memory-rod-wrap" id="memory-rod"></div>`;
+
+  // pick random unique bead positions out of 5 total slots (1 heaven + 4 earth)
+  const allSlots = [['h',0],['e',0],['e',1],['e',2],['e',3]];
+  for (let i=allSlots.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [allSlots[i],allSlots[j]]=[allSlots[j],allSlots[i]]; }
+  const target = allSlots.slice(0, cfg.beadCount);
+
+  const state = { h:[false], e:[false,false,false,false] };
+  target.forEach(([t,i]) => state[t][i] = true);
+  buildAbacus('memory-rod', state, 'memorypreview');
+
+  setTimeout(()=>{
+    // hide beads, ask child to recreate
+    const blank = { h:[false], e:[false,false,false,false] };
+    buildAbacus('memory-rod', blank, 'memorypreview');
+    document.querySelector('#screen-power .power-instruction').textContent = 'Tap the beads you saw!';
+    powerG.flashStart = Date.now();
+    wireMemoryTaps(target, cfg.beadCount);
+  }, cfg.flashMs);
+}
+
+function wireMemoryTaps(target, neededCount){
+  const selected = new Set();
+  const targetKeys = new Set(target.map(([t,i])=>t+i));
+  const beads = document.querySelectorAll('#memory-rod .bead');
+  beads.forEach(b=>{
+    b.addEventListener('pointerdown', e=>{
+      e.preventDefault();
+      if (powerG.locked) return;
+      const key = b.dataset.t + b.dataset.bi;
+      if (selected.has(key)) return;
+      selected.add(key);
+      b.classList.add('on');
+      b.classList.remove('bounce'); void b.offsetWidth; b.classList.add('bounce');
+      sfxBead();
+      if (selected.size === neededCount){
+        powerG.locked = true;
+        const elapsed = Date.now() - powerG.flashStart;
+        let correctCount = 0;
+        selected.forEach(k => { if (targetKeys.has(k)) correctCount++; });
+        const allCorrect = correctCount === neededCount;
+        let score;
+        if (allCorrect && elapsed < 3000) score = 100;
+        else if (allCorrect) score = 70;
+        else score = 30;
+        if (allCorrect) sfxCorrect(); else sfxWrong();
+        // reveal correct beads briefly
+        const revealState = { h:[false], e:[false,false,false,false] };
+        target.forEach(([t,i]) => revealState[t][i] = true);
+        buildAbacus('memory-rod', revealState, 'memorypreview');
+        advancePowerGame(score);
+      }
+    });
+  });
+}
+
+/* ── Round 2: Quick Count ─────────────────────────────────────────── */
+function randIntPower(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+function getCounterConfig(idx){
+  const table = [
+    { count: randIntPower(3,4), flashMs:1500, spread:1 },
+    { count: randIntPower(5,6), flashMs:1200, spread:2 },
+    { count: randIntPower(7,9), flashMs:1000, spread:2 }
+  ];
+  return table[idx];
+}
+
+function runCounterSubRound(idx){
+  const cfg = getCounterConfig(idx);
+  const stage = document.getElementById('power-stage');
+  const dots = Array.from({length:cfg.count}).map(()=>'<div class="dot"></div>').join('');
+  stage.innerHTML = `<div class="power-instruction">Count the dots! 👀</div><div class="dot-burst" id="dot-burst">${dots}</div>`;
+
+  setTimeout(()=>{
+    document.getElementById('dot-burst').style.visibility = 'hidden';
+    document.querySelector('#screen-power .power-instruction').textContent = 'How many were there?';
+    const opts = buildCountOptions(cfg.count, cfg.spread);
+    const optWrap = document.createElement('div');
+    optWrap.className = 'count-options';
+    optWrap.id = 'count-options';
+    stage.appendChild(optWrap);
+    powerG.flashStart = Date.now();
+    opts.forEach(n=>{
+      const b = document.createElement('button');
+      b.className = 'opt-btn'; b.type='button'; b.textContent = n;
+      b.addEventListener('click', ()=> handleCounterAnswer(b, n, cfg.count));
+      optWrap.appendChild(b);
+    });
+  }, cfg.flashMs);
+}
+
+function buildCountOptions(correct, spread){
+  const opts = new Set([correct]);
+  let guard = 0;
+  while (opts.size < 4 && guard < 50){
+    guard++;
+    let c = correct + (Math.floor(Math.random()*(spread*2+1)) - spread);
+    if (c < 2) c = correct + opts.size + 1;
+    if (c > 12) c = correct - opts.size - 1;
+    if (c >= 2 && c <= 12) opts.add(c);
+  }
+  const arr = Array.from(opts);
+  for (let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr;
+}
+
+function handleCounterAnswer(btn, val, correctVal){
+  if (powerG.locked) return;
+  powerG.locked = true;
+  const elapsed = Date.now() - powerG.flashStart;
+  const correct = val === correctVal;
+  document.querySelectorAll('#count-options .opt-btn').forEach(b=>{
+    if (parseInt(b.textContent) === correctVal) b.classList.add('correct');
+  });
+  if (!correct) btn.classList.add('wrong');
+  if (correct) sfxCorrect(); else sfxWrong();
+  let score;
+  if (correct && elapsed < 2000) score = 100;
+  else if (correct) score = 75;
+  else score = 30;
+  advancePowerGame(score);
+}
+
+/* ── Round 3: Pattern Match ───────────────────────────────────────── */
+const PATTERN_CONFIG = [
+  { seq:['orange','navy','orange'], next:'navy', distractor:'orange' },
+  { seq:['orange','navy','orange','orange','navy'], next:'orange', distractor:'navy' },
+  { seq:['orange','orange','navy','orange','orange'], next:'navy', distractor:'orange' }
+];
+
+function runPatternSubRound(idx){
+  const cfg = PATTERN_CONFIG[idx];
+  const stage = document.getElementById('power-stage');
+  const chips = cfg.seq.map(c => `<div class="pattern-chip c-${c}"></div>`).join('');
+  stage.innerHTML = `
+    <div class="power-instruction">What comes next?</div>
+    <div class="pattern-row">${chips}<div class="q">?</div></div>
+    <div class="pattern-options" id="pattern-options"></div>
+  `;
+  const options = Math.random() < 0.5 ? [cfg.next, cfg.distractor] : [cfg.distractor, cfg.next];
+  powerG.flashStart = Date.now();
+  const optWrap = document.getElementById('pattern-options');
+  options.forEach(color=>{
+    const b = document.createElement('button');
+    b.className = 'opt-chip c-' + color; b.type='button';
+    b.style.background = color === 'orange' ? 'var(--orange)' : 'var(--navy)';
+    b.addEventListener('click', ()=> handlePatternAnswer(b, color, cfg.next));
+    optWrap.appendChild(b);
+  });
+}
+
+function handlePatternAnswer(btn, chosen, correctColor){
+  if (powerG.locked) return;
+  powerG.locked = true;
+  const elapsed = Date.now() - powerG.flashStart;
+  const correct = chosen === correctColor;
+  if (correct) btn.classList.add('correct'); else btn.classList.add('wrong');
+  if (correct) sfxCorrect(); else sfxWrong();
+  let score;
+  if (correct && elapsed < 3000) score = 100;
+  else if (correct) score = 75;
+  else score = 30;
+  advancePowerGame(score);
+}
+
+/* ── Final scoring + results ──────────────────────────────────────── */
+function avg(arr){ return arr.reduce((a,b)=>a+b,0) / arr.length; }
+
+function finishPowerGame(){
+  const roundScores = {
+    memory:  Math.round(avg(powerG.scores.memory)),
+    counter: Math.round(avg(powerG.scores.counter)),
+    pattern: Math.round(avg(powerG.scores.pattern))
+  };
+  const sorted = Object.entries(roundScores).sort((a,b)=>b[1]-a[1]);
+  const [topKey, topScore] = sorted[0];
+  const [secondKey, secondScore] = sorted[1];
+
+  // Each bar shows the child's real, independent score for that trait
+  // (e.g. two perfect rounds both show 100%, not a forced 50/50 split).
+  G.powerResult = {
+    traits: [
+      { key:topKey, pct:topScore },
+      { key:secondKey, pct:secondScore }
+    ]
+  };
+  renderPowerResults();
+}
+
+const TRAIT_META = {
+  memory:  { name:'Memory Star',    emoji:'🌟', cls:'memory'  },
+  counter: { name:'Quick Counter',  emoji:'🔢', cls:'counter' },
+  pattern: { name:'Pattern Spotter',emoji:'🧩', cls:'pattern' }
+};
+
+function renderPowerResults(){
+  showScreen('power-results');
+  document.getElementById('power-res-name').textContent = G.name;
+
+  const wrap = document.getElementById('trait-bars');
+  wrap.innerHTML = '';
+  G.powerResult.traits.forEach(t=>{
+    const meta = TRAIT_META[t.key];
+    const row = document.createElement('div');
+    row.className = 'trait-bar-row';
+    row.innerHTML = `
+      <div class="trait-bar-label"><span>${meta.emoji} ${meta.name}</span><span>${t.pct}%</span></div>
+      <div class="trait-bar-track"><div class="trait-bar-fill ${meta.cls}" style="width:0%"></div></div>
+    `;
+    wrap.appendChild(row);
+  });
+  // animate bars in after paint
+  setTimeout(()=>{
+    document.querySelectorAll('.trait-bar-fill').forEach((el,i)=>{
+      el.style.width = G.powerResult.traits[i].pct + '%';
+    });
+  }, 100);
+
+  const top = G.powerResult.traits[0];
+  const second = G.powerResult.traits[1];
+  const topMeta = TRAIT_META[top.key];
+  const secondMeta = TRAIT_META[second.key];
+  document.getElementById('power-res-message').textContent =
+    `${G.name} showed a great mix of ${topMeta.name.toLowerCase()} and ${secondMeta.name.toLowerCase()} skills! This combo is a fantastic foundation for abacus learning.`;
+
+  // reset phone capture UI state
+  document.getElementById('power-phone-card').style.display = '';
+  document.getElementById('power-after-save').style.display = 'none';
+  document.getElementById('power-phone').value = '';
+}
+
+function submitPowerLead(){
+  const phone = document.getElementById('power-phone').value.trim();
+  if (!phone || phone.replace(/\D/g,'').length < 10) { toast('Please enter a valid 10-digit contact number! 📱'); return; }
+  G.phone = phone;
+
+  const top = G.powerResult.traits[0];
+  const second = G.powerResult.traits[1];
+  const topMeta = TRAIT_META[top.key];
+  const secondMeta = TRAIT_META[second.key];
+
+  submitPowerToSheet(`${topMeta.name} ${top.pct}% + ${secondMeta.name} ${second.pct}%`);
+
+  document.getElementById('power-phone-card').style.display = 'none';
+  document.getElementById('power-after-save').style.display = 'flex';
+  toast('Saved! 🎉');
+}
+
+async function submitPowerToSheet(resultSummary){
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_YOUR')) return;
+  try{
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name:G.name, phone:G.phone, level:'Little Sparks (power)', score:resultSummary, total:'' })
+    });
+  }catch(e){ /* silent */ }
+}
+
+/* ════════════════════════════════════════════════════════════════
    SHARED RESULTS + BADGES
    ════════════════════════════════════════════════════════════════ */
 const BADGES = [
   { id:'first',   icon:'🌱', name:'First Steps',    desc:'You played your first game!',   condition:(s,t,m)=>true },
   { id:'star',    icon:'⭐', name:'Counting Star',   desc:'Score 5+ in Counting Quiz',     condition:(s,t,m)=>m==='quiz' && s>=5 },
   { id:'builder', icon:'🏗️', name:'Bead Builder',   desc:'Score 5+ in Build a Number',   condition:(s,t,m)=>m==='build' && s>=5 },
+  { id:'treasure',icon:'🗺️', name:'Treasure Hunter',desc:'Completed the Treasure Hunt!', condition:(s,t,m)=>m==='treasure' && s>=3 },
   { id:'master',  icon:'🏆', name:'Bead Master',    desc:'Score 8+ in any mode',          condition:(s,t,m)=>s>=8 },
   { id:'perfect', icon:'💎', name:'Perfect!',        desc:'Score full marks!',              condition:(s,t,m)=>s>=t },
 ];
@@ -990,7 +1750,7 @@ async function submitLead(){
     await fetch(GOOGLE_SCRIPT_URL, {
       method:'POST', mode:'no-cors',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ name:G.name, phone:G.phone, level:'Little Sparks (' + G.mode + ')', score:G.score, total: G.mode==='build'?8:10 })
+      body: JSON.stringify({ name:G.name, phone:G.phone, level:'Little Sparks (' + G.mode + ')', score:G.score, total: G.mode==='build' ? 8 : (G.mode==='treasure' ? 5 : 10) })
     });
   }catch(e){ /* silent */ }
 }
