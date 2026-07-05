@@ -324,6 +324,141 @@ body{
   padding:20px;margin:18px 0;box-shadow:var(--shadow);text-align:center;
 }
 .power-phone-card .field-label{text-align:left;}
+
+/* ══════════════════════════════════════════════
+   BUBBLE POP MATH
+══════════════════════════════════════════════ */
+#screen-bubble{
+  display:none;
+  background:linear-gradient(180deg,#0d1b4b 0%,#1B3A6B 40%,#2a5298 100%);
+}
+#screen-bubble.active{
+  display:flex;flex-direction:column;
+  position:fixed;inset:0;width:100%;height:100%;
+  z-index:500;overflow:hidden;
+}
+.bubble-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px 6px;flex-shrink:0;
+}
+.bubble-score-pill{
+  background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
+  border-radius:999px;padding:5px 14px;font-size:13px;font-weight:800;color:#fff;
+}
+.bubble-exit{
+  background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);
+  border-radius:999px;padding:5px 12px;font-size:13px;font-weight:800;color:#fff;cursor:pointer;
+}
+.bubble-equation-wrap{
+  text-align:center;padding:6px 16px 10px;flex-shrink:0;
+}
+.bubble-equation{
+  font-family:'Playfair Display',serif;font-weight:900;
+  font-size:clamp(26px,8vw,40px);color:#fff;letter-spacing:.02em;
+  text-shadow:0 3px 0 rgba(0,0,0,.35);
+}
+.bubble-question-lbl{
+  font-size:12px;font-weight:800;color:rgba(255,255,255,.55);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px;
+}
+.bubble-arena{
+  flex:1;position:relative;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 120%,rgba(232,117,26,.18) 0%,transparent 70%);
+}
+
+/* stars background */
+.bubble-arena::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    radial-gradient(circle,rgba(255,255,255,.8) 1px,transparent 1px),
+    radial-gradient(circle,rgba(255,255,255,.5) 1px,transparent 1px);
+  background-size:120px 120px,80px 80px;
+  background-position:0 0,40px 40px;
+  animation:starsDrift 20s linear infinite;
+  pointer-events:none;
+}
+@keyframes starsDrift{from{transform:translateY(0)}to{transform:translateY(40px)}}
+
+/* bubbles */
+.bubble{
+  position:absolute;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-weight:900;font-size:26px;color:#fff;
+  box-shadow:inset -6px -6px 12px rgba(0,0,0,.25),inset 4px 4px 8px rgba(255,255,255,.3),0 6px 20px rgba(0,0,0,.3);
+  transition:transform .1s;user-select:none;
+  width:72px;height:72px;
+}
+/* tap affordance — bubbles are now directly tappable */
+.bubble{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.bubble:active{transform:scale(.9);}
+@keyframes bubbleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.bubble.resting{animation:bubbleFloat 2.4s ease-in-out infinite;}
+.bubble.b-orange{background:radial-gradient(circle at 35% 35%,#f5a251,#E8751A,#B85A0F);}
+.bubble.b-green {background:radial-gradient(circle at 35% 35%,#6ee78c,#27ae60,#1a7a42);}
+.bubble.b-purple{background:radial-gradient(circle at 35% 35%,#c084fc,#8B4FB8,#5b2d8a);}
+.bubble.b-teal  {background:radial-gradient(circle at 35% 35%,#5eead4,#0d9488,#065f46);}
+
+@keyframes bubblePop{
+  0%{transform:scale(1);opacity:1}
+  30%{transform:scale(1.4);opacity:.8}
+  60%{transform:scale(.6);opacity:.4}
+  100%{transform:scale(0);opacity:0}
+}
+.bubble.popping{animation:bubblePop .35s ease-out forwards;}
+@keyframes correctPulse{0%,100%{box-shadow:0 0 0 0 rgba(39,174,96,.7),inset -6px -6px 12px rgba(0,0,0,.25),inset 4px 4px 8px rgba(255,255,255,.3);}50%{box-shadow:0 0 0 10px rgba(39,174,96,0),inset -6px -6px 12px rgba(0,0,0,.25),inset 4px 4px 8px rgba(255,255,255,.3);}}
+.bubble.correct-highlight{animation:correctPulse .6s ease-out 2,bubbleFloat 2.4s ease-in-out infinite;border:3px solid #27ae60;}
+
+/* particle burst */
+.burst-particle{
+  position:absolute;border-radius:50%;pointer-events:none;
+  animation:particleFly .5s ease-out forwards;
+}
+@keyframes particleFly{
+  0%{transform:translate(0,0) scale(1);opacity:1}
+  100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}
+}
+
+/* miss flash */
+@keyframes arenaFlash{0%,100%{background:transparent}50%{background:rgba(255,50,50,.15)}}
+.bubble-arena.flash-wrong{animation:arenaFlash .4s ease;}
+
+/* results screen buttons */
+.bres-btn{
+  flex:1;height:56px;border-radius:var(--r-lg);border:none;cursor:pointer;
+  font-size:15px;font-weight:800;color:#fff;
+  box-shadow:0 5px 0 rgba(0,0,0,.3);
+  transition:transform .1s,box-shadow .1s;
+}
+.bres-btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.3);}
+.bres-btn-navy{background:linear-gradient(135deg,#2a5298,#1B3A6B);}
+.bres-btn-orange{background:linear-gradient(135deg,#f28c3a,#E8751A);}
+
+/* progress dots */
+.bubble-progress{
+  display:flex;gap:5px;justify-content:center;padding:0 16px 4px;flex-shrink:0;
+}
+.bprog-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .2s;}
+.bprog-dot.done{background:#27ae60;}
+.bprog-dot.current{background:#E8751A;transform:scale(1.3);}
+
+/* bubble results */
+.bubble-results-wrap{
+  background:linear-gradient(180deg,#0d1b4b,#1B3A6B);
+  min-height:100vh;padding:32px 20px 60px;
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  color:#fff;
+}
+.bubble-score-big{
+  font-family:'Playfair Display',serif;font-weight:900;
+  font-size:88px;color:#E8751A;line-height:1;
+  text-shadow:0 6px 0 #B85A0F;
+}
+.bubble-star-row{display:flex;gap:6px;font-size:32px;margin:4px 0;}
+.bubble-res-card{
+  background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);
+  border-radius:var(--r-lg);padding:20px;width:100%;max-width:380px;text-align:center;
+}
+.bubble-res-msg{font-size:15px;font-weight:700;line-height:1.6;color:rgba(255,255,255,.9);}
+.bubble-btn-row{display:flex;gap:12px;width:100%;max-width:380px;}
 .abacus-readout{
   text-align:center;font-family:'Playfair Display',serif;font-weight:900;
   font-size:48px;color:var(--navy);margin-top:14px;line-height:1;
@@ -514,6 +649,14 @@ body{
         </div>
         <div class="mode-arrow">→</div>
       </button>
+      <button class="mode-card" onclick="goToMode('bubble')">
+        <div class="mode-icon" style="background:#DFF3FA;">🎈</div>
+        <div>
+          <div class="mode-title">Bubble Pop Math</div>
+          <div class="mode-sub">Tap the bubble with the right answer before it floats away! Addition & subtraction arcade fun.</div>
+        </div>
+        <div class="mode-arrow">→</div>
+      </button>
       <button class="mode-card" onclick="goToMode('power')">
         <div class="mode-icon" style="background:#F3E8FB;">🏆</div>
         <div>
@@ -653,6 +796,45 @@ body{
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="resetTreasureAbacus()">🔄 Clear</button>
       <button class="btn btn-green" onclick="checkTreasureAnswer()">✅ Check!</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ BUBBLE POP MATH ═══════════════ -->
+  <div id="screen-bubble" class="screen">
+
+    <div class="bubble-topbar">
+      <div class="bubble-score-pill">⭐ <span id="bp-score">0</span> / 10</div>
+      <div style="color:#fff;font-weight:800;font-size:14px;" id="bp-qlbl">Q 1</div>
+      <button class="bubble-exit" onclick="stopBubbleGame()">✕ Exit</button>
+    </div>
+
+    <div class="bubble-progress" id="bp-progress"></div>
+
+    <div class="bubble-equation-wrap">
+      <div class="bubble-question-lbl">Pop the correct answer!</div>
+      <div class="bubble-equation" id="bp-equation">3 + 2 - 1 = ?</div>
+    </div>
+
+    <div class="bubble-arena" id="bp-arena"></div>
+  </div>
+
+  <!-- ═══════════════ BUBBLE RESULTS ═══════════════ -->
+  <div id="screen-bubble-results" class="screen">
+    <div class="bubble-results-wrap">
+      <div style="font-size:52px;">🎈</div>
+      <h2 style="font-family:'Playfair Display',serif;font-weight:900;font-size:26px;text-align:center;">
+        Great job, <span id="bres-name" style="color:#E8751A;"></span>!
+      </h2>
+      <div class="bubble-score-big" id="bres-score">0</div>
+      <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,.6);">out of 10 bubbles popped</div>
+      <div class="bubble-star-row" id="bres-stars"></div>
+      <div class="bubble-res-card">
+        <div class="bubble-res-msg" id="bres-msg"></div>
+      </div>
+      <div class="bubble-btn-row">
+        <button class="bres-btn bres-btn-navy" onclick="playAgain()">🔁 Play Again</button>
+        <button class="bres-btn bres-btn-orange" onclick="goHome()">🏠 Home</button>
+      </div>
     </div>
   </div>
 
@@ -850,6 +1032,8 @@ function launchMode(mode){
     startTreasureMode();
   } else if (mode === 'power') {
     startPowerGame();
+  } else if (mode === 'bubble') {
+    startBubbleGame();
   } else {
     startQuiz();
   }
@@ -1682,6 +1866,299 @@ async function submitPowerToSheet(resultSummary){
       body: JSON.stringify({ name:G.name, phone:G.phone, level:'Little Sparks (power)', score:resultSummary, total:'' })
     });
   }catch(e){ /* silent */ }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BUBBLE POP MATH — arcade game engine
+   Pure div-based, requestAnimationFrame, no canvas needed.
+   Mechanic: bubbles fall — child TAPS the correct answer bubble.
+   ════════════════════════════════════════════════════════════════ */
+
+const BUBBLE_COLORS = ['b-orange','b-green','b-purple','b-teal'];
+
+function sfxPop(){
+  try{
+    const ctx=getAudioCtx();
+    const o=ctx.createOscillator(); const g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type='triangle'; o.frequency.value=600;
+    g.gain.setValueAtTime(.3,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.08);
+    o.start(); o.stop(ctx.currentTime+.08);
+  }catch(e){}
+}
+
+// Question generator — 3 operands, 2 operators (+/-), result 0-9
+function generateBubbleQuestion(){
+  let a,b,c,op1,op2,answer;
+  let tries=0;
+  do{
+    a=randInt(1,7); b=randInt(1,5); c=randInt(1,5);
+    op1=Math.random()<.6?'+':'-';
+    op2=Math.random()<.6?'+':'-';
+    answer=a + (op1==='+'?b:-b) + (op2==='+'?c:-c);
+    tries++;
+  }while((answer<0||answer>9) && tries<50);
+  if(answer<0||answer>9){a=2;b=3;c=1;op1='+';op2='+';answer=6;}
+  const eq=`${a} ${op1} ${b} ${op2} ${c} = ?`;
+  return {eq,answer};
+}
+
+// Generate 3 unique wrong-adjacent options
+function generateBubbleOptions(answer, isHard){
+  const spread=isHard?2:3;
+  const opts=new Set([answer]);
+  let guard=0;
+  while(opts.size<3&&guard<80){
+    guard++;
+    let c=answer+(Math.floor(Math.random()*(spread*2+1))-spread);
+    if(c<0)c=answer+opts.size+1;
+    if(c>9)c=answer-opts.size-1;
+    if(c>=0&&c<=9&&c!==answer)opts.add(c);
+  }
+  for(let i=0;opts.size<3&&i<10;i++){
+    const c=(answer+i+1)%10;
+    if(c!==answer)opts.add(c);
+  }
+  const arr=Array.from(opts);
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+
+// ── Game state ────────────────────────────────────────────────────
+let BG = {
+  running:false, qIdx:0, score:0,
+  answer:0, bubbles:[],
+  rafId:null, arenaW:0, arenaH:0,
+  locked:false
+};
+
+function startBubbleGame(){
+  if(BG.rafId) cancelAnimationFrame(BG.rafId);
+  BG={running:true,qIdx:0,score:0,answer:0,bubbles:[],rafId:null,arenaW:0,arenaH:0,locked:false};
+  showScreen('bubble');
+  G.mode='bubble';
+  buildBubbleProgress();
+  // measure arena after paint (fixed-overlay screen is now sized to real viewport)
+  requestAnimationFrame(()=>{
+    const arena=document.getElementById('bp-arena');
+    BG.arenaW=arena.clientWidth; BG.arenaH=arena.clientHeight;
+    nextBubbleQuestion();
+  });
+}
+
+function stopBubbleGame(){
+  BG.running=false;
+  if(BG.rafId){cancelAnimationFrame(BG.rafId);BG.rafId=null;}
+  goHome();
+}
+
+// ── Progress bar ──────────────────────────────────────────────────
+function buildBubbleProgress(){
+  const wrap=document.getElementById('bp-progress');
+  wrap.innerHTML='';
+  for(let i=0;i<10;i++){
+    const d=document.createElement('div'); d.className='bprog-dot';
+    if(i===0)d.classList.add('current');
+    wrap.appendChild(d);
+  }
+}
+function updateBubbleProgress(){
+  const dots=document.querySelectorAll('#bp-progress .bprog-dot');
+  dots.forEach((d,i)=>{
+    d.className='bprog-dot';
+    if(i<BG.qIdx)d.classList.add('done');
+    else if(i===BG.qIdx)d.classList.add('current');
+  });
+  document.getElementById('bp-score').textContent=BG.score;
+  document.getElementById('bp-qlbl').textContent='Q '+(BG.qIdx+1);
+}
+
+// ── Question setup ────────────────────────────────────────────────
+function nextBubbleQuestion(){
+  if(!BG.running)return;
+  if(BG.qIdx>=10){endBubbleGame();return;}
+  clearBubbleArena();
+  BG.locked=false;
+  const isHard=BG.qIdx>=5; // still ramps distractor difficulty, no time pressure involved
+  const {eq,answer}=generateBubbleQuestion();
+  BG.answer=answer;
+  const options=generateBubbleOptions(answer,isHard);
+  document.getElementById('bp-equation').textContent=eq;
+  updateBubbleProgress();
+  spawnBubbles(options,isHard);
+  BG.rafId=requestAnimationFrame(bubbleGameLoop);
+}
+
+function clearBubbleArena(){
+  if(BG.rafId){cancelAnimationFrame(BG.rafId);BG.rafId=null;}
+  const arena=document.getElementById('bp-arena');
+  arena.innerHTML='';
+  BG.bubbles=[];
+}
+
+// ── Bubble spawning ────────────────────────────────────────────────
+// Bubbles rise from the top and settle into a resting row in the
+// middle of the arena — no falling, no timer, no penalty for waiting.
+function spawnBubbles(options,isHard){
+  const arena=document.getElementById('bp-arena');
+  const cols=options.length; // 3
+  const segW=BG.arenaW/cols;
+  const speed=0.9; // px per frame — just the rise-in animation speed, not a countdown
+  const colors=[...BUBBLE_COLORS].sort(()=>Math.random()-.5);
+  const BSIZE=76;
+  const restY = Math.max(40, BG.arenaH*0.42 - BSIZE/2);
+  options.forEach((val,i)=>{
+    const el=document.createElement('div');
+    el.className=`bubble ${colors[i%colors.length]}`;
+    el.textContent=val;
+    const x=segW*i+segW/2-BSIZE/2+randInt(-10,10);
+    const stagger=i*120; // ms offset so they rise in one after another
+    el.style.left=x+'px';
+    el.style.top=(BG.arenaH+BSIZE)+'px'; // start just below the visible arena
+    el.style.width=BSIZE+'px'; el.style.height=BSIZE+'px';
+    const bubbleObj={
+      el, val,
+      x, y:BG.arenaH+BSIZE,
+      restY, resting:false,
+      startDelay: stagger,
+      elapsed: 0,
+      speed,
+      popped:false, BSIZE
+    };
+    el.addEventListener('pointerdown', e=>{
+      e.preventDefault();
+      handleBubbleTap(bubbleObj);
+    });
+    arena.appendChild(el);
+    BG.bubbles.push(bubbleObj);
+  });
+}
+
+// ── Main game loop — bubbles rise and settle, then wait for a tap ───
+function bubbleGameLoop(){
+  if(!BG.running)return;
+
+  let stillMoving=false;
+  BG.bubbles.forEach(b=>{
+    if(b.popped||b.resting)return;
+    b.elapsed+=16; // approx ms per frame
+    if(b.elapsed<b.startDelay)return; // staggered start
+    stillMoving=true;
+    b.y-=b.speed;
+    if(b.y<=b.restY){
+      b.y=b.restY;
+      b.resting=true;
+      b.el.classList.add('resting');
+    }
+    b.el.style.top=b.y+'px';
+  });
+
+  if(stillMoving){
+    BG.rafId=requestAnimationFrame(bubbleGameLoop);
+  } else {
+    // all bubbles have settled — no need to keep animating, just wait for taps
+    BG.rafId=null;
+  }
+}
+
+// ── Tap handling ──────────────────────────────────────────────────
+function handleBubbleTap(b){
+  if(BG.locked || b.popped) return;
+  const correct = b.val===BG.answer;
+  BG.locked=true; // any tap (right or wrong) locks this round — one guess per question
+  popBubble(b, correct);
+}
+
+// ── Bubble pop & burst particles ───────────────────────────────────
+function popBubble(b, correct){
+  b.popped=true;
+  b.el.classList.add('popping');
+  spawnBurst(b.x+b.BSIZE/2, b.y+b.BSIZE/2, correct);
+
+  if(BG.rafId){cancelAnimationFrame(BG.rafId);BG.rafId=null;}
+
+  if(correct){
+    sfxCorrect(); sfxPop();
+    BG.score++;
+    BG.qIdx++;
+    setTimeout(nextBubbleQuestion,1200);
+  } else {
+    sfxWrong();
+    const arena=document.getElementById('bp-arena');
+    arena.classList.add('flash-wrong');
+    setTimeout(()=>arena.classList.remove('flash-wrong'),400);
+    // pop every OTHER wrong bubble too — only the correct one stays hanging
+    BG.bubbles.forEach(bb=>{
+      if(bb===b || bb.popped) return; // already popped (the tapped one) or gone
+      if(bb.val!==BG.answer){
+        bb.popped=true;
+        bb.el.classList.add('popping');
+        spawnBurst(bb.x+bb.BSIZE/2, bb.y+bb.BSIZE/2, false);
+      } else {
+        // this is the correct bubble — leave it visible, just highlight it
+        bb.el.classList.add('correct-highlight');
+      }
+    });
+    // this question counts as incorrect — no score++ — move on after a beat
+    BG.qIdx++;
+    setTimeout(nextBubbleQuestion,1600);
+  }
+}
+
+function spawnBurst(cx,cy,correct){
+  const arena=document.getElementById('bp-arena');
+  const count=8;
+  const color=correct?'#27ae60':'#e74c3c';
+  for(let i=0;i<count;i++){
+    const p=document.createElement('div');
+    p.className='burst-particle';
+    const angle=(i/count)*Math.PI*2;
+    const dist=40+randInt(0,30);
+    const tx=Math.cos(angle)*dist; const ty=Math.sin(angle)*dist;
+    const sz=6+randInt(0,6);
+    p.style.cssText=`width:${sz}px;height:${sz}px;background:${color};left:${cx-sz/2}px;top:${cy-sz/2}px;--tx:${tx}px;--ty:${ty}px;`;
+    arena.appendChild(p);
+    setTimeout(()=>p.remove(),500);
+  }
+}
+
+// ── End game ───────────────────────────────────────────────────────
+function endBubbleGame(){
+  BG.running=false;
+  if(BG.rafId){cancelAnimationFrame(BG.rafId);BG.rafId=null;}
+  showScreen('bubble-results');
+  document.getElementById('bres-name').textContent=G.name;
+  document.getElementById('bres-score').textContent=BG.score;
+  // stars
+  const starRow=document.getElementById('bres-stars');
+  starRow.innerHTML='';
+  const starCount=Math.max(1,Math.round(BG.score/10*5));
+  for(let i=1;i<=5;i++){
+    const s=document.createElement('span');
+    s.textContent='⭐';
+    s.style.opacity= i<=starCount?'1':'0.25';
+    s.style.animationDelay=(i*.12)+'s';
+    starRow.appendChild(s);
+  }
+  // message
+  const msg=document.getElementById('bres-msg');
+  if(BG.score>=8) msg.textContent=`Incredible! ${G.name} is a Bubble Pop champion! 🏆 Ready for Level 1?`;
+  else if(BG.score>=5) msg.textContent=`Great popping, ${G.name}! A bit more practice and you'll pop every bubble! 💪`;
+  else msg.textContent=`Nice try, ${G.name}! Play again to beat your score! The bubbles won't escape next time! 🎈`;
+  // submit to sheet
+  submitBubbleLead();
+}
+
+async function submitBubbleLead(){
+  if(!GOOGLE_SCRIPT_URL||GOOGLE_SCRIPT_URL.includes('PASTE_YOUR'))return;
+  try{
+    await fetch(GOOGLE_SCRIPT_URL,{
+      method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:G.name,phone:G.phone||'',level:'Little Sparks (bubble)',score:BG.score,total:10})
+    });
+  }catch(e){}
 }
 
 /* ════════════════════════════════════════════════════════════════
