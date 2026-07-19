@@ -134,6 +134,7 @@ body{
 .btn-navy{background:var(--navy);color:#fff;box-shadow:0 5px 0 var(--navy-light);}
 .btn-navy:hover{box-shadow:0 2px 0 var(--navy-light);transform:translateY(3px);}
 .btn-ghost{background:var(--surface);color:var(--navy);border:2.5px solid var(--border);box-shadow:0 3px 0 var(--border);}
+.btn:disabled{opacity:.45;cursor:default;pointer-events:none;}
 .btn-ghost:hover{background:var(--warm);}
 .btn-green{background:var(--green);color:#fff;box-shadow:0 5px 0 var(--green-d);}
 .btn-green:hover{box-shadow:0 2px 0 var(--green-d);transform:translateY(3px);}
@@ -546,6 +547,86 @@ body{
   .abacus-readout{font-size:38px;}
   .option-btn{font-size:30px;padding:20px 8px;}
 }
+/* ══════════════════════════════════════════════
+   1-DIGIT CALCULATION TEST (t1c)
+══════════════════════════════════════════════ */
+.info-box{
+  background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:var(--r-md);
+  padding:14px 16px;font-size:13.5px;color:#1E40AF;line-height:1.6;margin-bottom:16px;font-weight:600;
+}
+.label-caps{display:block;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+.divider{height:1.5px;background:var(--border);margin:16px 0;}
+
+.sec-tag{font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px;color:#fff;white-space:nowrap;}
+.sec-tag.t1c-a{background:var(--orange);}
+.sec-tag.t1c-b{background:var(--navy);}
+.sec-tag.t1c-c{background:#8B4FB8;}
+
+.timer-pill{
+  font-family:'DM Sans',sans-serif;font-weight:800;font-size:14px;color:#fff;
+  background:var(--navy);border-radius:999px;padding:7px 16px;white-space:nowrap;
+}
+.timer-pill.warn{background:var(--orange);}
+.timer-pill.urgent{background:#DC2626;animation:timerPulse 1s ease-in-out infinite;}
+@keyframes timerPulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+.qnav{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:4px;-webkit-overflow-scrolling:touch;}
+.qnav-dot{
+  flex-shrink:0;width:30px;height:30px;border-radius:50%;border:2px solid var(--border);
+  background:var(--surface);font-size:12px;font-weight:800;color:var(--muted);cursor:pointer;
+}
+.qnav-dot.curr{background:var(--orange);border-color:var(--orange-d);color:#fff;}
+.qnav-dot.done{background:#E7F8EF;border-color:var(--green);color:var(--green-d);}
+
+.sum-wrap{display:flex;justify-content:center;padding:8px 0;}
+.sum-col{display:flex;flex-direction:column;align-items:flex-end;min-width:120px;}
+.sum-row{
+  font-family:'Playfair Display',serif;font-weight:900;font-size:30px;color:var(--navy);
+  padding:4px 0;display:flex;align-items:center;gap:8px;
+}
+.sum-op-sym{color:var(--orange);font-weight:900;}
+.sum-hr{border:none;border-top:3px solid var(--navy);width:100%;margin-top:6px;}
+
+.numpad-display{
+  font-family:'Playfair Display',serif;font-weight:900;font-size:36px;color:var(--navy);
+  background:var(--warm);border:2.5px solid var(--border);border-radius:var(--r-md);
+  padding:14px;text-align:center;margin-bottom:14px;letter-spacing:.05em;min-height:64px;
+}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.nk{
+  font-family:'DM Sans',sans-serif;font-weight:800;font-size:22px;color:var(--navy);
+  background:var(--surface);border:2.5px solid var(--border);border-radius:var(--r-md);
+  padding:16px 0;cursor:pointer;box-shadow:0 3px 0 var(--border);transition:transform .1s,box-shadow .1s;
+}
+.nk:active{transform:translateY(2px);box-shadow:0 1px 0 var(--border);}
+.nk-del{background:#FDECEC;border-color:#E0635A;color:#C0392B;}
+.nk-zero{grid-column:span 1;}
+
+.audio-player{display:flex;align-items:center;gap:16px;}
+.t1c-audio-icon{
+  width:56px;height:56px;border-radius:50%;flex-shrink:0;
+  background:#8B4FB8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;
+}
+.t1c-audio-icon.playing{animation:audioPulse 1s ease-in-out infinite;}
+@keyframes audioPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(139,79,184,.5)}50%{transform:scale(1.08);box-shadow:0 0 0 10px rgba(139,79,184,0)}}
+.audio-status{font-size:13px;color:var(--muted);font-weight:700;margin-top:4px;}
+.num-dots{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.ndot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:background .2s;}
+.ndot.playing{background:#8B4FB8;transform:scale(1.3);}
+.ndot.played{background:var(--green);}
+
+.grade-pill{display:inline-block;font-weight:800;font-size:14px;padding:8px 18px;border-radius:999px;}
+.rdot{
+  width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;cursor:default;
+}
+.rdot.ok{background:#E7F8EF;color:var(--green-d);border:1.5px solid var(--green);}
+.rdot.ng{background:#FDECEC;color:#C0392B;border:1.5px solid #E0635A;}
+.rdot.sk{background:var(--warm);color:var(--muted);border:1.5px solid var(--border);}
+.rdot-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+
+.t1c-result-hero{text-align:center;padding:10px 0 6px;}
+.t1c-score-big{font-family:'Playfair Display',serif;font-weight:900;font-size:64px;color:var(--orange);line-height:1;}
 </style>
 </head>
 <body>
@@ -665,9 +746,192 @@ body{
         </div>
         <div class="mode-arrow">→</div>
       </button>
+
+      <button class="mode-card" onclick="goToT1CIntro()">
+        <div class="mode-icon" style="background:#FFF3E0;">📝</div>
+        <div>
+          <div class="mode-title">Little Sparks Test</div>
+          <div class="mode-sub">A marked practice test — 50 questions, 1 hour. Add and subtract single-digit numbers, some shown, some heard!</div>
+        </div>
+        <div class="mode-arrow">→</div>
+      </button>
     </div>
 
-    <div class="info-strip">🌟 No timers, no pressure — just fun! Perfect for little hands and curious minds.</div>
+    <div class="info-strip">🌟 Most activities have no timers or pressure — just fun! Our Little Sparks Test at the bottom is the one timed, marked exercise, for kids ready for a bigger challenge.</div>
+  </div>
+
+  <!-- ═══════════════ 1-DIGIT CALCULATION TEST — INTRO ═══════════════ -->
+  <div id="screen-t1c-intro" class="screen">
+    <div class="screen-header">
+      <h2>📝 Little Sparks Test</h2>
+      <button class="exit-btn" onclick="goHome()">🏠 Home</button>
+    </div>
+
+    <div class="card">
+      <span class="label-caps">Test overview</span>
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;">
+        <span class="sec-tag t1c-a">A</span>
+        <div>
+          <div style="font-weight:800;font-size:15px;margin-bottom:2px;">Add &amp; subtract the numbers — shown on screen</div>
+          <div style="font-size:13px;color:var(--muted);">20 questions · columns of 2–3 numbers</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;">
+        <span class="sec-tag t1c-b">B</span>
+        <div>
+          <div style="font-weight:800;font-size:15px;margin-bottom:2px;">Add &amp; subtract the numbers — a bit harder</div>
+          <div style="font-size:13px;color:var(--muted);">15 questions · columns of 3–4 numbers</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <span class="sec-tag t1c-c">C</span>
+        <div>
+          <div style="font-weight:800;font-size:15px;margin-bottom:2px;">Hear &amp; Calculate</div>
+          <div style="font-size:13px;color:var(--muted);">15 questions · 1–4 numbers, read aloud once — listen carefully!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box">⏱ <strong>Total: 50 questions · 1 hour.</strong> One single timer runs for the whole test across all 3 sections. Every question is worth equal marks. Results are sent automatically once you finish.</div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goHome()">← Back</button>
+      <button class="btn btn-orange" onclick="t1cStartTest()">Begin Test ➜</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 1-DIGIT CALC — SECTION A ═══════════════ -->
+  <div id="screen-t1c-a" class="screen">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="sec-tag t1c-a">Section A</span>
+        <span style="font-size:13px;color:var(--muted);font-weight:700;">Add &amp; subtract the numbers</span>
+      </div>
+      <div class="timer-pill t1c-timer-pill" id="t1c-timer">60:00</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="t1c-a-fill" style="width:0%"></div></div>
+    <div class="progress-label" id="t1c-a-plbl">Question 1 of 20</div>
+    <div class="qnav" id="t1c-a-nav"></div>
+
+    <div class="card">
+      <span class="label-caps">📝 Calculate this</span>
+      <div class="sum-wrap"><div class="sum-col" id="t1c-a-sum"></div></div>
+      <div class="divider"></div>
+      <span class="label-caps">✏️ Your answer</span>
+      <div class="numpad-display" id="t1c-a-display" data-cursor="|">_</div>
+      <div class="numpad" id="t1c-a-numpad"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-orange" onclick="t1cSubmitAnswer('a')">Submit ➜</button>
+      <button class="btn btn-ghost" onclick="t1cSkipQuestion('a')">Skip →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 1-DIGIT CALC — SECTION B ═══════════════ -->
+  <div id="screen-t1c-b" class="screen">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="sec-tag t1c-b">Section B</span>
+        <span style="font-size:13px;color:var(--muted);font-weight:700;">Add &amp; subtract the numbers — harder</span>
+      </div>
+      <div class="timer-pill t1c-timer-pill" id="t1c-timer-b">60:00</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="t1c-b-fill" style="width:0%"></div></div>
+    <div class="progress-label" id="t1c-b-plbl">Question 1 of 15</div>
+    <div class="qnav" id="t1c-b-nav"></div>
+
+    <div class="card">
+      <span class="label-caps">📝 Calculate this</span>
+      <div class="sum-wrap"><div class="sum-col" id="t1c-b-sum"></div></div>
+      <div class="divider"></div>
+      <span class="label-caps">✏️ Your answer</span>
+      <div class="numpad-display" id="t1c-b-display" data-cursor="|">_</div>
+      <div class="numpad" id="t1c-b-numpad"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-orange" onclick="t1cSubmitAnswer('b')">Submit ➜</button>
+      <button class="btn btn-ghost" onclick="t1cSkipQuestion('b')">Skip →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 1-DIGIT CALC — SECTION C (audio) ═══════════════ -->
+  <div id="screen-t1c-c" class="screen">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="sec-tag t1c-c">Section C</span>
+        <span style="font-size:13px;color:var(--muted);font-weight:700;">Hear &amp; Calculate</span>
+      </div>
+      <div class="timer-pill t1c-timer-pill" id="t1c-timer-c">60:00</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="t1c-c-fill" style="width:0%"></div></div>
+    <div class="progress-label" id="t1c-c-plbl">Question 1 of 15</div>
+    <div class="qnav" id="t1c-c-nav"></div>
+
+    <div class="card">
+      <span class="label-caps">🔊 Listen carefully!</span>
+      <div class="audio-player">
+        <div class="t1c-audio-icon" id="t1c-c-audioicon">🔊</div>
+        <div style="flex:1;">
+          <div style="font-weight:800;font-size:15px;" id="t1c-c-audiotitle">Get ready...</div>
+          <div class="audio-status" id="t1c-c-astatus">Plays automatically...</div>
+          <div class="num-dots" id="t1c-c-ndots"></div>
+        </div>
+      </div>
+      <button class="btn btn-ghost t1c-replay-btn" id="t1c-c-replay" onclick="t1cReplayAudio()" style="margin-top:12px;width:100%;">🔁 Play Again</button>
+    </div>
+
+    <div class="card">
+      <span class="label-caps">✏️ Your answer</span>
+      <div class="numpad-display" id="t1c-c-display" data-cursor="|">_</div>
+      <div class="numpad" id="t1c-c-numpad"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-orange" onclick="t1cSubmitAnswer('c')">Submit ➜</button>
+      <button class="btn btn-ghost" onclick="t1cSkipQuestion('c')">Skip →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 1-DIGIT CALC — RESULTS ═══════════════ -->
+  <div id="screen-t1c-results" class="screen">
+    <div class="t1c-result-hero">
+      <svg class="result-sparky" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <use href="#sparky-face"/>
+      </svg>
+      <h2 style="font-family:'Playfair Display',serif;font-weight:900;font-size:24px;color:var(--navy);">Test complete, <span id="t1c-res-name" style="color:var(--orange);"></span>!</h2>
+      <div class="t1c-score-big" id="t1c-res-total">0</div>
+      <div style="font-size:14px;font-weight:700;color:var(--muted);">out of 200 marks</div>
+      <div id="t1c-res-grade" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="card">
+      <span class="label-caps">Section breakdown</span>
+      <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--navy);padding:6px 0;">
+        <span>Section A (Shown, 2–3 rows)</span><span id="t1c-res-a">0 / 80</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--navy);padding:6px 0;">
+        <span>Section B (Shown, 3–4 rows)</span><span id="t1c-res-b">0 / 60</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--navy);padding:6px 0;">
+        <span>Section C (Heard, 1–4 rows)</span><span id="t1c-res-c">0 / 60</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="label-caps">Review — Section A</span>
+      <div class="rdot-grid" id="t1c-rdots-a"></div>
+      <span class="label-caps">Review — Section B</span>
+      <div class="rdot-grid" id="t1c-rdots-b"></div>
+      <span class="label-caps">Review — Section C</span>
+      <div class="rdot-grid" id="t1c-rdots-c"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goToT1CIntro()">🔁 Retake Test</button>
+      <button class="btn btn-orange" onclick="goHome()">🏠 Home</button>
+    </div>
   </div>
 
   <!-- ═══════════════ LEARN & PLAY ═══════════════ -->
@@ -2159,6 +2423,355 @@ async function submitBubbleLead(){
       body:JSON.stringify({name:G.name,phone:G.phone||'',level:'Little Sparks (bubble)',score:BG.score,total:10})
     });
   }catch(e){}
+}
+
+/* ════════════════════════════════════════════════════════════════
+   1-DIGIT CALCULATION TEST (t1c) — marked, timed practice test
+   50 questions across 3 sections, single 1-hour timer, equal marks.
+   Namespaced with 't1c' prefix to avoid collisions with other modes.
+   ════════════════════════════════════════════════════════════════ */
+const T1C_CFG = {
+  a: { total:20, rowRange:[2,3] },
+  b: { total:15, rowRange:[3,4] },
+  c: { total:15, rowRange:[1,4] }
+};
+const T1C_MARKS_PER_Q = 4; // 50 questions x 4 marks = 200 total, equal weighting
+const T1C_TIME_TOTAL = 3600; // 1 hour, single countdown spanning all 3 sections
+const t1cSynth = window.speechSynthesis;
+
+let T1C = {
+  phase:'a', elapsed:0, timerId:null,
+  a:{ qs:[], ans:[], cur:0 },
+  b:{ qs:[], ans:[], cur:0 },
+  c:{ qs:[], ans:[], cur:0 },
+  inputVals:{ a:'', b:'', c:'' }
+};
+
+function t1cGenerateQuestion(rowRange){
+  const rows = randInt(rowRange[0], rowRange[1]);
+  const addends = [];
+  let running = randInt(1,9); // first number is always plain/positive — no operator before it
+  addends.push(running);
+
+  for (let i = 1; i < rows; i++){
+    let placed = false;
+    for (let tries = 0; tries < 30 && !placed; tries++){
+      const isPlus = Math.random() < 0.55; // slight bias toward addition, keeps sums friendly
+      const val = randInt(1,9);
+      const delta = isPlus ? val : -val;
+      const next = running + delta;
+      if (next >= 0){ // never let the running total go negative — keeps it age-appropriate
+        addends.push(delta);
+        running = next;
+        placed = true;
+      }
+    }
+    if (!placed){
+      // fallback: guaranteed-safe small addition so the row count is always met
+      const val = randInt(1,9);
+      addends.push(val);
+      running += val;
+    }
+  }
+  return { addends, answer: running };
+}
+
+/* ── Entry flow ────────────────────────────────────────────────── */
+function goToT1CIntro(){
+  const name  = document.getElementById('child-name').value.trim();
+  const phone = document.getElementById('parent-phone').value.trim();
+  if (!name) { toast("Please tell us the child's name! 🧒"); return; }
+  if (!phone || phone.replace(/\D/g,'').length < 10) { toast('Please enter a valid 10-digit contact number! 📱'); return; }
+  G.name = name; G.phone = phone;
+  showScreen('t1c-intro');
+}
+
+function t1cStartTest(){
+  T1C = {
+    phase:'a', elapsed:0, timerId:null,
+    a:{ qs:Array.from({length:T1C_CFG.a.total}, ()=>t1cGenerateQuestion(T1C_CFG.a.rowRange)), ans:Array(T1C_CFG.a.total).fill(null), cur:0 },
+    b:{ qs:Array.from({length:T1C_CFG.b.total}, ()=>t1cGenerateQuestion(T1C_CFG.b.rowRange)), ans:Array(T1C_CFG.b.total).fill(null), cur:0 },
+    c:{ qs:Array.from({length:T1C_CFG.c.total}, ()=>t1cGenerateQuestion(T1C_CFG.c.rowRange)), ans:Array(T1C_CFG.c.total).fill(null), cur:0 },
+    inputVals:{ a:'', b:'', c:'' }
+  };
+  t1cBuildNumpad('a'); t1cBuildNumpad('b'); t1cBuildNumpad('c');
+  t1cEnterSection('a');
+  t1cStartTimer();
+}
+
+function t1cEnterSection(sec){
+  T1C.phase = sec;
+  showScreen('t1c-'+sec);
+  t1cRenderQuestion(sec);
+  t1cRenderNav(sec);
+}
+
+/* ── Single global timer (spans all 3 sections, no reset) ────────── */
+function t1cStartTimer(){
+  if (T1C.timerId) clearInterval(T1C.timerId);
+  t1cRenderTimer();
+  T1C.timerId = setInterval(()=>{
+    T1C.elapsed++;
+    t1cRenderTimer();
+    const left = T1C_TIME_TOTAL - T1C.elapsed;
+    if (left <= 0){
+      clearInterval(T1C.timerId);
+      toast('Time up! ⏰');
+      t1cFinishTest();
+    }
+  }, 1000);
+}
+
+function t1cRenderTimer(){
+  const left = Math.max(0, T1C_TIME_TOTAL - T1C.elapsed);
+  const m = String(Math.floor(left/60)).padStart(2,'0');
+  const s = String(left%60).padStart(2,'0');
+  document.querySelectorAll('.t1c-timer-pill').forEach(el=>{
+    el.textContent = m+':'+s;
+    el.className = 'timer-pill t1c-timer-pill' + (left<=60?' urgent':left<=300?' warn':'');
+  });
+}
+
+/* ── Numpad (shared pattern across a/b/c) ─────────────────────────── */
+function t1cBuildNumpad(sec){
+  const pad = document.getElementById('t1c-'+sec+'-numpad');
+  const keys = [7,8,9,4,5,6,1,2,3,'DEL',0,'✓'];
+  pad.innerHTML = '';
+  keys.forEach(k=>{
+    const btn = document.createElement('button');
+    btn.className = 'nk' + (k==='DEL' ? ' nk-del' : '');
+    if (k===0) btn.classList.add('nk-zero');
+    btn.textContent = k;
+    btn.type = 'button';
+    btn.addEventListener('pointerdown', e=>{
+      e.preventDefault();
+      t1cNumpadPress(sec, String(k));
+    });
+    pad.appendChild(btn);
+  });
+}
+
+function t1cSetInput(sec, val){
+  T1C.inputVals[sec] = val;
+  document.getElementById('t1c-'+sec+'-display').textContent = val === '' ? '_' : val;
+}
+
+function t1cNumpadPress(sec, key){
+  const cur = T1C.inputVals[sec] || '';
+  if (key === 'DEL') { t1cSetInput(sec, cur.slice(0,-1)); return; }
+  if (key === '✓') { t1cSubmitAnswer(sec); return; }
+  if (cur.length >= 3) return; // max possible sum is 36 (4 rows x 9) — 3 digits is ample
+  t1cSetInput(sec, cur + key);
+}
+
+/* ── Question rendering ───────────────────────────────────────────── */
+function t1cRenderQuestion(sec){
+  const st  = T1C[sec];
+  const qi  = st.cur;
+  const qu  = st.qs[qi];
+  const tot = T1C_CFG[sec].total;
+  const pct = Math.round(qi/tot*100);
+
+  document.getElementById('t1c-'+sec+'-fill').style.width = pct+'%';
+  document.getElementById('t1c-'+sec+'-plbl').textContent = 'Question '+(qi+1)+' of '+tot;
+  t1cSetInput(sec, '');
+
+  if (sec === 'a' || sec === 'b'){
+    const col = document.getElementById('t1c-'+sec+'-sum');
+    col.innerHTML = '';
+    qu.addends.forEach((n,i)=>{
+      const row = document.createElement('div');
+      row.className = 'sum-row';
+      if (i===0){
+        row.textContent = n;
+      } else {
+        const op = document.createElement('span');
+        op.className = 'sum-op-sym';
+        op.textContent = n >= 0 ? '+' : '−';
+        row.appendChild(op);
+        row.appendChild(document.createTextNode(Math.abs(n)));
+      }
+      col.appendChild(row);
+    });
+    const hr = document.createElement('hr');
+    hr.className = 'sum-hr';
+    col.appendChild(hr);
+  } else {
+    // Section C — audio, auto-plays on load, replayable via button
+    const dotsEl = document.getElementById('t1c-c-ndots');
+    dotsEl.innerHTML = '';
+    qu.addends.forEach(()=>{
+      const d = document.createElement('div');
+      d.className = 'ndot';
+      dotsEl.appendChild(d);
+    });
+    document.getElementById('t1c-c-audiotitle').textContent = 'Get ready...';
+    document.getElementById('t1c-c-astatus').textContent = 'Plays automatically...';
+    document.getElementById('t1c-c-audioicon').classList.remove('playing');
+    document.getElementById('t1c-c-replay').disabled = true;
+    setTimeout(()=>t1cPlayAudioOnce(qi), 400); // small pause before speaking starts
+  }
+}
+
+function t1cReplayAudio(){
+  if (T1C.phase !== 'c') return;
+  t1cPlayAudioOnce(T1C.c.cur);
+}
+
+/* ── Audio playback for Section C — auto-plays, replayable, says "plus"/"minus" ── */
+function t1cPlayAudioOnce(qi){
+  if (T1C.phase !== 'c' || T1C.c.cur !== qi) return; // guard against stale calls
+  t1cSynth.cancel();
+  const addends = T1C.c.qs[qi].addends;
+  const icon    = document.getElementById('t1c-c-audioicon');
+  const status  = document.getElementById('t1c-c-astatus');
+  const title   = document.getElementById('t1c-c-audiotitle');
+  const dotsEl  = document.getElementById('t1c-c-ndots');
+  const replayBtn = document.getElementById('t1c-c-replay');
+  const dots    = Array.from(dotsEl.querySelectorAll('.ndot'));
+  icon.classList.add('playing');
+  replayBtn.disabled = true;
+
+  let idx = 0;
+  function next(){
+    if (T1C.c.cur !== qi) return; // question changed mid-speech — abort
+    if (idx >= addends.length){
+      icon.classList.remove('playing');
+      title.textContent = 'Done — enter your answer!';
+      status.textContent = 'Type what you heard, or tap Play Again';
+      dots.forEach(d=>d.className='ndot played');
+      replayBtn.disabled = false;
+      return;
+    }
+    dots.forEach((d,i)=>{ d.className = 'ndot'+(i<idx?' played':i===idx?' playing':''); });
+    const n = addends[idx];
+    const phrase = idx===0 ? String(n) : (n >= 0 ? 'plus '+n : 'minus '+Math.abs(n));
+    title.textContent = 'Saying: "'+phrase+'"';
+    const u = new SpeechSynthesisUtterance(phrase);
+    u.rate = 0.8; u.pitch = 1.05; u.lang = 'en-US';
+    u.onend   = ()=>{ idx++; setTimeout(next, 450); };
+    u.onerror = ()=>{ idx++; next(); };
+    t1cSynth.speak(u);
+  }
+  next();
+}
+
+/* ── Answer submission / navigation ───────────────────────────────── */
+function t1cSubmitAnswer(sec){
+  const raw = T1C.inputVals[sec];
+  if (!raw || raw === '') { toast('Please enter an answer first!'); return; }
+  const val = parseInt(raw, 10);
+  if (isNaN(val)) { toast('Enter a valid number!'); return; }
+  if (sec === 'c') t1cSynth.cancel();
+  T1C[sec].ans[T1C[sec].cur] = val;
+  t1cRenderNav(sec);
+  t1cNextQuestion(sec);
+}
+
+function t1cSkipQuestion(sec){
+  if (sec === 'c') t1cSynth.cancel();
+  if (T1C[sec].ans[T1C[sec].cur] === null) T1C[sec].ans[T1C[sec].cur] = undefined;
+  t1cRenderNav(sec);
+  t1cNextQuestion(sec);
+}
+
+function t1cNextQuestion(sec){
+  const total = T1C_CFG[sec].total;
+  if (T1C[sec].cur < total - 1){
+    T1C[sec].cur++;
+    t1cRenderQuestion(sec);
+    t1cRenderNav(sec);
+  } else {
+    t1cFinishSection(sec);
+  }
+}
+
+function t1cRenderNav(sec){
+  const container = document.getElementById('t1c-'+sec+'-nav');
+  const st = T1C[sec]; const total = T1C_CFG[sec].total;
+  const start = Math.max(0, st.cur - 6);
+  const end   = Math.min(total-1, start+14);
+  container.innerHTML = '';
+  for (let i=start;i<=end;i++){
+    const btn = document.createElement('button');
+    btn.className = 'qnav-dot';
+    btn.textContent = i+1;
+    if (i === st.cur) btn.classList.add('curr');
+    else if (st.ans[i] !== null && st.ans[i] !== undefined) btn.classList.add('done');
+    btn.addEventListener('click', (function(ii){ return function(){
+      if (sec === 'c') t1cSynth.cancel();
+      T1C[sec].cur = ii;
+      t1cRenderQuestion(sec);
+      t1cRenderNav(sec);
+    }; })(i));
+    container.appendChild(btn);
+  }
+}
+
+/* ── Section transitions (timer NEVER resets between sections) ────── */
+function t1cFinishSection(sec){
+  if (sec === 'a')      t1cEnterSection('b');
+  else if (sec === 'b') t1cEnterSection('c');
+  else                  t1cFinishTest();
+}
+
+/* ── Finish test / scoring / results ──────────────────────────────── */
+function t1cFinishTest(){
+  if (T1C.timerId) clearInterval(T1C.timerId);
+  t1cSynth.cancel();
+  T1C.phase = 'results';
+  showScreen('t1c-results');
+
+  let scoreA=0, scoreB=0, scoreC=0;
+  T1C.a.qs.forEach((q,i)=>{ if (T1C.a.ans[i] === q.answer) scoreA++; });
+  T1C.b.qs.forEach((q,i)=>{ if (T1C.b.ans[i] === q.answer) scoreB++; });
+  T1C.c.qs.forEach((q,i)=>{ if (T1C.c.ans[i] === q.answer) scoreC++; });
+
+  const marksA = scoreA * T1C_MARKS_PER_Q;
+  const marksB = scoreB * T1C_MARKS_PER_Q;
+  const marksC = scoreC * T1C_MARKS_PER_Q;
+  const total    = marksA + marksB + marksC;
+  const maxTotal = (T1C_CFG.a.total + T1C_CFG.b.total + T1C_CFG.c.total) * T1C_MARKS_PER_Q; // 200
+  const pct = Math.round(total / maxTotal * 100);
+
+  let grade, gbg, gcol;
+  if      (pct >= 90) { grade='A+ Excellent!';    gbg='#DCFCE7'; gcol='#065F46'; }
+  else if (pct >= 75) { grade='B Good Work!';     gbg='#DBEAFE'; gcol='#1E40AF'; }
+  else if (pct >= 60) { grade='C Pass';            gbg='#FEF3C7'; gcol='#78350F'; }
+  else                { grade='D Needs Practice';  gbg='#FEE2E2'; gcol='#B91C1C'; }
+
+  document.getElementById('t1c-res-name').textContent  = G.name;
+  document.getElementById('t1c-res-total').textContent = total;
+  document.getElementById('t1c-res-grade').innerHTML   = '<span class="grade-pill" style="background:'+gbg+';color:'+gcol+'">'+grade+' · '+pct+'%</span>';
+  document.getElementById('t1c-res-a').textContent = marksA + ' / ' + (T1C_CFG.a.total*T1C_MARKS_PER_Q);
+  document.getElementById('t1c-res-b').textContent = marksB + ' / ' + (T1C_CFG.b.total*T1C_MARKS_PER_Q);
+  document.getElementById('t1c-res-c').textContent = marksC + ' / ' + (T1C_CFG.c.total*T1C_MARKS_PER_Q);
+
+  ['a','b','c'].forEach(sec=>{
+    const g = document.getElementById('t1c-rdots-'+sec);
+    g.innerHTML = '';
+    T1C[sec].qs.forEach((q,i)=>{
+      const d = document.createElement('div'); d.className = 'rdot';
+      const a = T1C[sec].ans[i];
+      if      (a === null || a === undefined) { d.classList.add('sk'); d.textContent='–';   d.title='Q'+(i+1)+': Skipped (answer: '+q.answer+')'; }
+      else if (a === q.answer)                 { d.classList.add('ok'); d.textContent=i+1;   d.title='Q'+(i+1)+': Correct! ('+q.answer+')'; }
+      else                                      { d.classList.add('ng'); d.textContent=i+1;   d.title='Q'+(i+1)+': You: '+a+' · Correct: '+q.answer; }
+      g.appendChild(d);
+    });
+  });
+
+  t1cSubmitLead(total, maxTotal, pct, grade);
+}
+
+async function t1cSubmitLead(total, maxTotal, pct, grade){
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_YOUR')) return;
+  try{
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name:G.name, phone:G.phone, level:'Level 0 - Little Sparks Test', score:total, total:maxTotal, grade:grade+' ('+pct+'%)' })
+    });
+  }catch(e){ /* silent */ }
 }
 
 /* ════════════════════════════════════════════════════════════════
