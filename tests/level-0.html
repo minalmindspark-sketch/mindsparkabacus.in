@@ -787,7 +787,7 @@ body{
         <span class="sec-tag t1c-c">C</span>
         <div>
           <div style="font-weight:800;font-size:15px;margin-bottom:2px;">Hear &amp; Calculate</div>
-          <div style="font-size:13px;color:var(--muted);">15 questions · 1–4 numbers, read aloud once — listen carefully!</div>
+          <div style="font-size:13px;color:var(--muted);">15 questions · 2 numbers, read aloud once — listen carefully!</div>
         </div>
       </div>
     </div>
@@ -915,7 +915,7 @@ body{
         <span>Section B (Shown, 3–4 rows)</span><span id="t1c-res-b">0 / 60</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--navy);padding:6px 0;">
-        <span>Section C (Heard, 1–4 rows)</span><span id="t1c-res-c">0 / 60</span>
+        <span>Section C (Heard, 2 rows)</span><span id="t1c-res-c">0 / 60</span>
       </div>
     </div>
 
@@ -2433,7 +2433,7 @@ async function submitBubbleLead(){
 const T1C_CFG = {
   a: { total:20, rowRange:[2,3] },
   b: { total:15, rowRange:[3,4] },
-  c: { total:15, rowRange:[1,4] }
+  c: { total:15, rowRange:[2,2] }
 };
 const T1C_MARKS_PER_Q = 4; // 50 questions x 4 marks = 200 total, equal weighting
 const T1C_TIME_TOTAL = 3600; // 1 hour, single countdown spanning all 3 sections
