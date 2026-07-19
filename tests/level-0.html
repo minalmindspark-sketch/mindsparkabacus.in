@@ -2447,30 +2447,57 @@ let T1C = {
   inputVals:{ a:'', b:'', c:'' }
 };
 
+/* ── Single-rod bead-move validity — no formula/complement tricks ──
+   A real single abacus rod has 1 heaven bead (worth 5) + 4 earth
+   beads (worth 1 each). A move is "direct" (no friend/formula needed)
+   only if it can be done by turning beads ON (addition) or OFF
+   (subtraction) — never both in the same step, which is what a
+   5-complement "friend" trick requires. This also naturally caps
+   every value at 0-9, since that's all one rod can show. */
+function t1cValueToBeads(v){
+  const heaven = v>=5 ? 1 : 0;
+  const earth = v - heaven*5;
+  return { heaven, earth };
+}
+
+function t1cIsDirectMove(fromValue, delta){
+  const toValue = fromValue + delta;
+  if (toValue < 0 || toValue > 9) return false; // must stay a single digit — one rod only
+  const from = t1cValueToBeads(fromValue);
+  const to   = t1cValueToBeads(toValue);
+  if (delta > 0){
+    // addition: beads may only turn ON — heaven can go 0→1, earth can only increase
+    return to.heaven >= from.heaven && to.earth >= from.earth;
+  } else if (delta < 0){
+    // subtraction: beads may only turn OFF — heaven can go 1→0, earth can only decrease
+    return to.heaven <= from.heaven && to.earth <= from.earth;
+  }
+  return true;
+}
+
 function t1cGenerateQuestion(rowRange){
   const rows = randInt(rowRange[0], rowRange[1]);
   const addends = [];
-  let running = randInt(1,9); // first number is always plain/positive — no operator before it
+  let running = randInt(1,9); // first number: plain single digit, always a valid starting bead layout
   addends.push(running);
 
   for (let i = 1; i < rows; i++){
     let placed = false;
-    for (let tries = 0; tries < 30 && !placed; tries++){
+    for (let tries = 0; tries < 40 && !placed; tries++){
       const isPlus = Math.random() < 0.55; // slight bias toward addition, keeps sums friendly
       const val = randInt(1,9);
       const delta = isPlus ? val : -val;
-      const next = running + delta;
-      if (next >= 0){ // never let the running total go negative — keeps it age-appropriate
+      if (t1cIsDirectMove(running, delta)){
         addends.push(delta);
-        running = next;
+        running += delta;
         placed = true;
       }
     }
     if (!placed){
-      // fallback: guaranteed-safe small addition so the row count is always met
-      const val = randInt(1,9);
-      addends.push(val);
-      running += val;
+      // guaranteed-safe fallback — at any value 0-9, at least one of -1/+1 is always a direct move
+      const delta = t1cIsDirectMove(running, -1) ? -1 : 1;
+      addends.push(delta);
+      running += delta;
     }
   }
   return { addends, answer: running };
