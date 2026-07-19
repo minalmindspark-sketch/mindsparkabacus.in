@@ -9,10 +9,23 @@
 ║                                                                  ║
 ║  STEP 1: Create a new Google Sheet with these column headers    ║
 ║    A: Timestamp  B: Student Name  C: Phone  D: Sec1  E: Sec2   ║
-║    F: Sec3  G: Total  H: Percentage  I: Grade                   ║
+║    F: Sec3  G: Total  H: Percentage  I: Grade  J: Hash          ║
 ║                                                                  ║
 ║  STEP 2: In Google Sheets → Extensions → Apps Script            ║
-║    Paste the universal hybrid script and deploy as a Web App     ║
+║    Paste this code and deploy as a Web App:                     ║
+║                                                                  ║
+║    function doPost(e) {                                         ║
+║      var sheet = SpreadsheetApp                                  ║
+║        .getActiveSpreadsheet().getActiveSheet();                 ║
+║      var data = JSON.parse(e.postData.contents);                ║
+║      sheet.appendRow([                                           ║
+║        new Date(), data.name, data.phone, data.s1, data.s2,    ║
+║        data.s3, data.total, data.pct, data.grade, data.hash    ║
+║      ]);                                                         ║
+║      return ContentService                                       ║
+║        .createTextOutput(JSON.stringify({status:'ok'}))         ║
+║        .setMimeType(ContentService.MimeType.JSON);               ║
+║    }                                                             ║
 ║                                                                  ║
 ║  STEP 3: Deploy → New deployment → Web App                      ║
 ║    Execute as: Me | Who has access: Anyone                      ║
@@ -302,6 +315,108 @@ body{
 .resume-banner{background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:var(--r-md);padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .resume-banner p{font-size:14px;font-weight:700;color:#1E40AF;}
 .resume-banner small{font-size:12px;color:#3B82F6;display:block;margin-top:2px;}
+
+/* ══════════════════════════════════════════════
+   BUBBLE POP MATH (bonus arcade game)
+══════════════════════════════════════════════ */
+.bonus-card{
+  background:linear-gradient(135deg,#E8FBF0,#F0FFF6);border:2px solid #B8ECD0;
+  border-radius:var(--r-lg);padding:16px 18px;margin-bottom:14px;
+  display:flex;align-items:center;gap:14px;cursor:pointer;
+  transition:transform .12s,border-color .15s;
+}
+.bonus-card:hover{border-color:#0F7B3C;transform:translateY(-2px);}
+.bonus-card:active{transform:translateY(1px) scale(.99);}
+.bonus-icon{font-size:36px;flex-shrink:0;}
+.bonus-title{font-weight:800;font-size:15px;color:var(--ink);margin-bottom:2px;}
+.bonus-sub{font-size:12.5px;color:var(--muted);line-height:1.5;}
+.bonus-arrow{font-size:20px;color:#0F7B3C;flex-shrink:0;}
+
+#screen-bubble{
+  display:none;
+  background:linear-gradient(180deg,#0d1b4b 0%,#1B3A6B 40%,#2a5298 100%);
+}
+#screen-bubble.active{
+  display:flex;flex-direction:column;
+  position:fixed;inset:0;width:100%;height:100%;
+  z-index:500;overflow:hidden;
+}
+.bubble-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 6px;flex-shrink:0;}
+.bubble-score-pill{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:999px;padding:5px 14px;font-size:13px;font-weight:800;color:#fff;}
+.bubble-exit{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:800;color:#fff;cursor:pointer;}
+.bubble-equation-wrap{text-align:center;padding:6px 16px 10px;flex-shrink:0;}
+.bubble-equation{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(26px,8vw,40px);color:#fff;letter-spacing:.02em;text-shadow:0 3px 0 rgba(0,0,0,.35);}
+.bubble-question-lbl{font-size:12px;font-weight:800;color:rgba(255,255,255,.55);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px;}
+.bubble-arena{flex:1;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 120%,rgba(232,117,26,.18) 0%,transparent 70%);}
+.bubble-arena::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.8) 1px,transparent 1px),radial-gradient(circle,rgba(255,255,255,.5) 1px,transparent 1px);
+  background-size:120px 120px,80px 80px;background-position:0 0,40px 40px;
+  animation:starsDrift 20s linear infinite;pointer-events:none;
+}
+@keyframes starsDrift{from{transform:translateY(0)}to{transform:translateY(40px)}}
+
+.bubble{
+  position:absolute;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-weight:900;font-size:26px;color:#fff;
+  box-shadow:inset -6px -6px 12px rgba(0,0,0,.25),inset 4px 4px 8px rgba(255,255,255,.3),0 6px 20px rgba(0,0,0,.3);
+  transition:transform .1s;user-select:none;width:72px;height:72px;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.bubble:active{transform:scale(.9);}
+.bubble.b-orange{background:radial-gradient(circle at 35% 35%,#f5a251,#E8751A,#B85A0F);}
+.bubble.b-green {background:radial-gradient(circle at 35% 35%,#6ee78c,#27ae60,#1a7a42);}
+.bubble.b-purple{background:radial-gradient(circle at 35% 35%,#c084fc,#8B4FB8,#5b2d8a);}
+.bubble.b-teal  {background:radial-gradient(circle at 35% 35%,#5eead4,#0d9488,#065f46);}
+@keyframes bubblePop{0%{transform:scale(1);opacity:1}30%{transform:scale(1.4);opacity:.8}60%{transform:scale(.6);opacity:.4}100%{transform:scale(0);opacity:0}}
+.bubble.popping{animation:bubblePop .35s ease-out forwards;}
+@keyframes correctPulse{0%,100%{box-shadow:0 0 0 0 rgba(39,174,96,.7),inset -6px -6px 12px rgba(0,0,0,.25),inset 4px 4px 8px rgba(255,255,255,.3);}50%{box-shadow:0 0 0 10px rgba(39,174,96,0),inset -6px -6px 12px rgba(0,0,0,.25),inset 4px 4px 8px rgba(255,255,255,.3);}}
+.bubble.correct-highlight{animation:correctPulse .6s ease-out 2;border:3px solid #27ae60;}
+.burst-particle{position:absolute;border-radius:50%;pointer-events:none;animation:particleFly .5s ease-out forwards;}
+@keyframes particleFly{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+@keyframes arenaFlash{0%,100%{background:transparent}50%{background:rgba(255,50,50,.15)}}
+.bubble-arena.flash-wrong{animation:arenaFlash .4s ease;}
+
+.bubble-progress{display:flex;gap:5px;justify-content:center;padding:0 16px 4px;flex-shrink:0;}
+.bprog-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .2s;}
+.bprog-dot.done{background:#27ae60;}
+.bprog-dot.current{background:#E8751A;transform:scale(1.3);}
+
+.bubble-results-wrap{
+  background:linear-gradient(180deg,#0d1b4b,#1B3A6B);min-height:100vh;padding:32px 20px 60px;
+  display:flex;flex-direction:column;align-items:center;gap:16px;color:#fff;
+}
+.bubble-score-big{font-family:'Playfair Display',serif;font-weight:900;font-size:88px;color:#E8751A;line-height:1;text-shadow:0 6px 0 #B85A0F;}
+.bubble-star-row{display:flex;gap:6px;font-size:32px;margin:4px 0;}
+.bubble-res-card{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);border-radius:var(--r-lg);padding:20px;width:100%;max-width:380px;text-align:center;}
+.bubble-res-msg{font-size:15px;font-weight:700;line-height:1.6;color:rgba(255,255,255,.9);}
+.bubble-btn-row{display:flex;gap:12px;width:100%;max-width:380px;}
+.bres-btn{flex:1;height:56px;border-radius:var(--r-lg);border:none;cursor:pointer;font-size:15px;font-weight:800;color:#fff;box-shadow:0 5px 0 rgba(0,0,0,.3);transition:transform .1s,box-shadow .1s;}
+.bres-btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.3);}
+.bres-btn-navy{background:linear-gradient(135deg,#2a5298,#1B3A6B);}
+.bres-btn-orange{background:linear-gradient(135deg,#f28c3a,#E8751A);}
+/* ══════════════════════════════════════════════
+   MODULE CARDS — home screen hub (matches Level 0's design)
+══════════════════════════════════════════════ */
+.module-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:6px;}
+.module-card{
+  display:flex;align-items:center;gap:16px;
+  background:var(--surface);border:2.5px solid var(--border);
+  border-radius:var(--r-lg);padding:18px;cursor:pointer;
+  transition:transform .12s,border-color .15s,box-shadow .15s;text-align:left;width:100%;
+  font-family:'DM Sans',sans-serif;box-shadow:var(--shadow);
+}
+.module-card:hover{border-color:var(--orange);transform:translateY(-2px);}
+.module-card:active{transform:translateY(1px) scale(.99);}
+.module-icon{
+  width:64px;height:64px;border-radius:18px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:34px;
+}
+.module-title{font-family:'Playfair Display',serif;font-weight:900;font-size:19px;color:var(--blue);margin-bottom:3px;}
+.module-sub{font-size:13.5px;color:var(--muted);font-weight:500;line-height:1.5;}
+.module-arrow{font-size:22px;color:var(--orange);flex-shrink:0;margin-left:auto;}
+.section-label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:18px 0 10px;}
 </style>
 </head>
 <body>
@@ -355,6 +470,39 @@ body{
     <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;">We'll use this only to share your child's results and follow up about classes.</p>
   </div>
 
+  <div class="section-label">Choose an activity</div>
+
+  <div class="module-grid">
+    <button class="module-card" onclick="startBubbleGame()">
+      <div class="module-icon" style="background:#DFF3FA;">🎈</div>
+      <div>
+        <div class="module-title">Bubble Pop Math</div>
+        <div class="module-sub">A quick arcade warm-up! Pop the correct answer bubble before it falls. Doesn't count toward your test score.</div>
+      </div>
+      <div class="module-arrow">→</div>
+    </button>
+
+    <button class="module-card" onclick="goToTestIntro()">
+      <div class="module-icon" style="background:#E8EEF8;">📝</div>
+      <div>
+        <div class="module-title">Full Practice Test</div>
+        <div class="module-sub">Timed test — 200 marks, 80 minutes. Audio abacus, mental math, and visual long sums.</div>
+      </div>
+      <div class="module-arrow">→</div>
+    </button>
+
+    <!-- More modules can be added here in the future, same pattern as above -->
+  </div>
+</div>
+
+<!-- ═══════════════ FULL PRACTICE TEST — INTRO ═══════════════ -->
+<div id="screen-test-intro" class="screen">
+  <div class="hero">
+    <span class="hero-icon">📝</span>
+    <div class="page-title">Full Practice Test</div>
+    <div class="page-sub">200 marks · 80 minutes</div>
+  </div>
+
   <!-- Audio Check -->
   <div class="card">
     <span class="label-caps">🔊 Pre-test audio check</span>
@@ -396,7 +544,43 @@ body{
 
   <div class="info-box">⏱ <strong>Total: 200 marks · 80 minutes.</strong> Sections play in order. Progress is auto-saved — if you refresh, you can resume. Results are sent to your teacher automatically.</div>
   <div class="btn-row">
+    <button class="btn btn-ghost" onclick="showScreen('home')">← Back</button>
     <button class="btn btn-orange" onclick="startFresh()">Begin Test ➜</button>
+  </div>
+</div>
+
+<!-- ═══════════════ BUBBLE POP MATH (bonus) ═══════════════ -->
+<div id="screen-bubble" class="screen">
+  <div class="bubble-topbar">
+    <div class="bubble-score-pill">⭐ <span id="bp-score">0</span> / 10</div>
+    <div style="color:#fff;font-weight:800;font-size:14px;" id="bp-qlbl">Q 1</div>
+    <button class="bubble-exit" onclick="stopBubbleGame()">✕ Exit</button>
+  </div>
+  <div class="bubble-progress" id="bp-progress"></div>
+  <div class="bubble-equation-wrap">
+    <div class="bubble-question-lbl">Pop the correct answer!</div>
+    <div class="bubble-equation" id="bp-equation">3 + 2 - 1 = ?</div>
+  </div>
+  <div class="bubble-arena" id="bp-arena"></div>
+</div>
+
+<!-- ═══════════════ BUBBLE POP MATH RESULTS ═══════════════ -->
+<div id="screen-bubble-results" class="screen">
+  <div class="bubble-results-wrap">
+    <div style="font-size:52px;">🎈</div>
+    <h2 style="font-family:'Playfair Display',serif;font-weight:900;font-size:26px;text-align:center;">
+      Great job, <span id="bres-name" style="color:#E8751A;"></span>!
+    </h2>
+    <div class="bubble-score-big" id="bres-score">0</div>
+    <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,.6);">out of 10 bubbles popped</div>
+    <div class="bubble-star-row" id="bres-stars"></div>
+    <div class="bubble-res-card">
+      <div class="bubble-res-msg" id="bres-msg"></div>
+    </div>
+    <div class="bubble-btn-row">
+      <button class="bres-btn bres-btn-navy" onclick="startBubbleGame()">🔁 Play Again</button>
+      <button class="bres-btn bres-btn-orange" onclick="showScreen('home')">🏠 Back to Test Home</button>
+    </div>
   </div>
 </div>
 
@@ -545,15 +729,54 @@ body{
 </div><!-- /wrap -->
 
 <script>
+
+function showResults() {
+    // 1. Your existing calculation logic
+    let name = document.getElementById('student-name').value || "Unknown Student";
+    let s1 = calculateScore('s1'); // Assuming you have a score calculator
+    let s2 = calculateScore('s2');
+    let s3 = calculateScore('s3');
+    let total = s1 + s2 + s3;
+    let pct = Math.round((total / 200) * 100);
+    let grade = pct >= 90 ? "A+" : pct >= 75 ? "A" : pct >= 60 ? "B" : "C";
+
+    // 2. TRIGGER THE DATA SENDING (The change you requested)
+    sendDataToGoogle({
+        name: name,
+        s1: s1,
+        s2: s2,
+        s3: s3,
+        total: total,
+        pct: pct,
+        grade: grade
+    });
+
+    // 3. Update the UI
+    document.getElementById('res-name').textContent = name;
+    document.getElementById('res-total').textContent = total;
+    document.getElementById('res-s1').textContent = s1;
+    document.getElementById('res-s2').textContent = s2;
+    document.getElementById('res-s3').textContent = s3;
+    
+    showScreen('results'); 
+}
 /* ════════════════════════════════════════════════════════════════
    CONFIGURATION — edit GOOGLE_SCRIPT_URL with your Apps Script URL
    ════════════════════════════════════════════════════════════════ */
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrrxM1JQ58HZojvc1S6isBiLSSMYtY6cPvHdwHYOQnUc6BuXOUekfbXemR5kVdg_o/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9rHNnIqU4r5-mg3_9xeoBqqUFPGw0W3LGFb1O9Qs9-RcX2VByVWy7hLRCehyY6oER/exec';
 const SECRET_SALT = 'AbacusLvl1-2025-xK9p';
 const SAVE_KEY    = 'abacus_test_state_v2';
 
 /* ════════════════════════════════════════════════════════════════
    CURRICULUM ENGINE — Level 1 Abacus Problem Generator
+   Rules:
+     Direct:      +1..+9, -1..-9 if result stays in 0–9
+     Small Friend (SF): complement to 10
+       +4 → -SF(6)+10, +3→-SF(7)+10, +2→-SF(8)+10, +1→-SF(9)+10
+       -4 → +SF(6)-10, -3→+SF(7)-10, -2→+SF(8)-10, -1→+SF(9)-10
+     Big Friend (BF):  complement to 5
+       +4 → +BF(1)-5, +3→+BF(2)-5, +2→+BF(3)-5, +1→+BF(4)-5
+       -4 → -BF(1)+5, -3→-BF(2)+5, -2→-BF(3)+5, -1→-BF(4)+5
    ════════════════════════════════════════════════════════════════ */
 function classifyMove(from, delta) {
   const to = from + delta;
@@ -562,7 +785,9 @@ function classifyMove(from, delta) {
   const ones_t = to   % 10;
   const tens_f = Math.floor(from / 10);
   const tens_t = Math.floor(to   / 10);
+  // Direct on ones rod without crossing 5 boundary across tens
   if (tens_f === tens_t) return {type: delta > 0 ? 'direct_plus' : 'direct_minus', delta, from, to};
+  // Involves tens rod change — allowed only via SF
   if (Math.abs(delta) <= 9) return {type: 'small_friend', delta, from, to};
   return null;
 }
@@ -570,10 +795,11 @@ function classifyMove(from, delta) {
 function generateLvl1Question() {
   const count  = randInt(3, 5);
   const addends = [];
-  let running   = randInt(1, 9);
+  let running   = randInt(1, 9); // start on ones
   addends.push(running);
 
   for (let i = 1; i < count; i++) {
+    // Try up to 40 times to find a valid next step
     let found = false;
     for (let t = 0; t < 40; t++) {
       const dir   = Math.random() < 0.55 ? 1 : -1;
@@ -588,13 +814,14 @@ function generateLvl1Question() {
       }
     }
     if (!found) {
+      // Fallback: small safe addition
       const safe = running <= 5 ? randInt(1,4) : -randInt(1,4);
       const to   = running + safe;
       if (to >= 0 && to <= 99) { addends.push(safe); running = to; }
     }
   }
   const answer = addends.reduce((a, b) => a + b, 0);
-  if (answer < 0 || answer > 99) return generateLvl1Question();
+  if (answer < 0 || answer > 99) return generateLvl1Question(); // retry
   return { addends, answer };
 }
 
@@ -608,7 +835,7 @@ const CFG = { s1:{total:50,time:1200}, s2:{total:50,time:1200}, s3:{total:100,ti
 let G = {
   name: '',
   phone: '',
-  phase: 'home',
+  phase: 'home',   // home | s1 | s2 | s3 | results
   s1: { qs:[], ans:[], cur:0, elapsed:0 },
   s2: { qs:[], ans:[], cur:0, elapsed:0 },
   s3: { qs:[], ans:[], cur:0, elapsed:0 },
@@ -635,6 +862,7 @@ function clearSave() {
   toast('Saved progress cleared');
 }
 
+/* Check on load */
 window.addEventListener('DOMContentLoaded', () => {
   buildAbacus();
   buildNumpad('s1'); buildNumpad('s2'); buildNumpad('s3');
@@ -683,6 +911,14 @@ function showScreen(id) {
 /* ════════════════════════════════════════════════════════════════
    START / ENTER SECTION
    ════════════════════════════════════════════════════════════════ */
+function goToTestIntro() {
+  const name  = document.getElementById('student-name').value.trim();
+  const phone = document.getElementById('student-phone').value.trim();
+  if (!name) { toast('Please enter your name first!'); return; }
+  if (!phone || phone.replace(/\D/g,'').length < 10) { toast('Please enter a valid 10-digit contact number!'); return; }
+  showScreen('test-intro');
+}
+
 function startFresh() {
   const name  = document.getElementById('student-name').value.trim();
   const phone = document.getElementById('student-phone').value.trim();
@@ -770,6 +1006,7 @@ function renderQ(sec) {
     hr.className = 'sum-hr';
     col.appendChild(hr);
   } else {
+    // Audio sections: reset dots
     const dotsEl = document.getElementById(sec + '-ndots');
     dotsEl.innerHTML = '';
     qu.addends.forEach(() => {
@@ -830,7 +1067,7 @@ function numpadPress(sec, key) {
   } else if (key === '✓') {
     submitAnswer(sec);
   } else {
-    if (cur.length >= 4) return;
+    if (cur.length >= 4) return; // max 4 digits
     const next = cur + key;
     if (parseInt(next) > 9999) return;
     setInput(sec, next);
@@ -1021,6 +1258,8 @@ function useAbacusVal() {
 
 /* ════════════════════════════════════════════════════════════════
    VERIFICATION HASH (anti-cheat)
+   A simple deterministic hash so the teacher can verify
+   the score has not been manually edited.
    ════════════════════════════════════════════════════════════════ */
 async function generateHash(name, s1, s2, s3, total) {
   const raw = SECRET_SALT + '|' + name + '|' + s1 + '|' + s2 + '|' + s3 + '|' + total;
@@ -1028,6 +1267,7 @@ async function generateHash(name, s1, s2, s3, total) {
     const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('').slice(0,16).toUpperCase();
   } catch(e) {
+    // Fallback hash if SubtleCrypto unavailable (HTTP context)
     let h = 5381;
     for (let i = 0; i < raw.length; i++) h = ((h << 5) + h) ^ raw.charCodeAt(i);
     return Math.abs(h).toString(16).toUpperCase().padStart(8,'0');
@@ -1045,8 +1285,8 @@ async function submitToSheets(data) {
   try {
     const resp = await fetch(GOOGLE_SCRIPT_URL, {
       method:  'POST',
-      mode:    'cors', 
-      headers: { 'Content-Type': 'text/plain' },
+      mode:    'no-cors', // required for Apps Script
+      headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify(data)
     });
     return { ok: true };
@@ -1112,6 +1352,7 @@ async function buildResults() {
 
   resultPayload = { name:G.name, phone:G.phone, s1, s2, s3, total, pct, grade, hash, date:ds, time:ts };
 
+  // Review dots
   ['s1','s2','s3'].forEach(sec => {
     const g = document.getElementById('rdots-' + sec);
     g.innerHTML = '';
@@ -1125,11 +1366,13 @@ async function buildResults() {
     });
   });
 
+  // Auto-submit to Sheets
   submitToSheets(resultPayload).then(res => {
     if (res.ok) toast('✓ Results sent to teacher!');
     else toast('Auto-send not configured — please copy & share manually');
   });
 
+  // Clear localStorage after results
   localStorage.removeItem(SAVE_KEY);
 }
 
@@ -1187,7 +1430,7 @@ function toast(msg) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   KEYBOARD SUPPORT
+   KEYBOARD SUPPORT (physical keyboard fallback)
    ════════════════════════════════════════════════════════════════ */
 document.addEventListener('keydown', e => {
   const sec = G.phase;
@@ -1196,6 +1439,298 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'Backspace')    { numpadPress(sec, 'DEL'); e.preventDefault(); }
   else if (e.key === 'Enter')        { submitAnswer(sec); e.preventDefault(); }
 });
+
+/* ════════════════════════════════════════════════════════════════
+   BUBBLE POP MATH — bonus arcade game (does not affect the 200-mark
+   test score). Bubbles fall from the top; child taps the correct
+   answer bubble before it reaches the bottom. Harder/timed version,
+   appropriate for this older age group — a gentler, no-time-pressure
+   variant of this same game lives on the Little Sparks (Level 0) page.
+   ════════════════════════════════════════════════════════════════ */
+const BUBBLE_COLORS = ['b-orange','b-green','b-purple','b-teal'];
+
+// Self-contained audio engine (level-1 has no existing Web Audio
+// helpers — it uses speechSynthesis for question audio instead).
+let _bpAudioCtx = null;
+function bpGetAudioCtx(){
+  if (!_bpAudioCtx) _bpAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (_bpAudioCtx.state === 'suspended') _bpAudioCtx.resume();
+  return _bpAudioCtx;
+}
+function bpTone(freq, type, dur, vol, delayMs=0){
+  try {
+    const ctx = bpGetAudioCtx();
+    const o = ctx.createOscillator(); const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = type; o.frequency.value = freq;
+    const t = ctx.currentTime + delayMs/1000;
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.start(t); o.stop(t + dur);
+  } catch(e){}
+}
+function bpSfxCorrect(){ [523,659,784,1047].forEach((f,i)=>bpTone(f,'sine',0.22,0.28,i*85)); }
+function bpSfxWrong(){ bpTone(220,'sawtooth',0.12,0.18); bpTone(180,'sawtooth',0.10,0.14,90); }
+function bpSfxPop(){ bpTone(600,'triangle',0.08,0.3); }
+
+// Question generator — 3 operands, 2 operators (+/-), result 0-9
+function generateBubbleQuestion(){
+  let a,b,c,op1,op2,answer;
+  let tries=0;
+  do{
+    a=randInt(1,7); b=randInt(1,5); c=randInt(1,5);
+    op1=Math.random()<.6?'+':'-';
+    op2=Math.random()<.6?'+':'-';
+    answer=a + (op1==='+'?b:-b) + (op2==='+'?c:-c);
+    tries++;
+  }while((answer<0||answer>9) && tries<50);
+  if(answer<0||answer>9){a=2;b=3;c=1;op1='+';op2='+';answer=6;}
+  const eq=`${a} ${op1} ${b} ${op2} ${c} = ?`;
+  return {eq,answer};
+}
+
+function generateBubbleOptions(answer, isHard){
+  const spread=isHard?2:3;
+  const opts=new Set([answer]);
+  let guard=0;
+  while(opts.size<3&&guard<80){
+    guard++;
+    let c=answer+(Math.floor(Math.random()*(spread*2+1))-spread);
+    if(c<0)c=answer+opts.size+1;
+    if(c>9)c=answer-opts.size-1;
+    if(c>=0&&c<=9&&c!==answer)opts.add(c);
+  }
+  for(let i=0;opts.size<3&&i<10;i++){
+    const c=(answer+i+1)%10;
+    if(c!==answer)opts.add(c);
+  }
+  const arr=Array.from(opts);
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+
+let BG = {
+  running:false, qIdx:0, score:0,
+  answer:0, bubbles:[],
+  rafId:null, arenaW:0, arenaH:0,
+  locked:false
+};
+
+function startBubbleGame(){
+  const name = document.getElementById('student-name').value.trim();
+  const phone = document.getElementById('student-phone').value.trim();
+  if (!name) { toast('Please enter your name first! 🧒'); return; }
+  if (!phone || phone.replace(/\D/g,'').length < 10) { toast('Please enter a valid 10-digit contact number!'); return; }
+  G.name = name;
+  G.phone = phone;
+  if(BG.rafId) cancelAnimationFrame(BG.rafId);
+  BG={running:true,qIdx:0,score:0,answer:0,bubbles:[],rafId:null,arenaW:0,arenaH:0,locked:false};
+  showScreen('bubble');
+  requestAnimationFrame(()=>{
+    const arena=document.getElementById('bp-arena');
+    BG.arenaW=arena.clientWidth; BG.arenaH=arena.clientHeight;
+    nextBubbleQuestion();
+  });
+}
+
+function stopBubbleGame(){
+  BG.running=false;
+  if(BG.rafId){cancelAnimationFrame(BG.rafId);BG.rafId=null;}
+  showScreen('home');
+}
+
+function buildBubbleProgress(){
+  const wrap=document.getElementById('bp-progress');
+  wrap.innerHTML='';
+  for(let i=0;i<10;i++){
+    const d=document.createElement('div'); d.className='bprog-dot';
+    if(i===0)d.classList.add('current');
+    wrap.appendChild(d);
+  }
+}
+function updateBubbleProgress(){
+  const dots=document.querySelectorAll('#bp-progress .bprog-dot');
+  dots.forEach((d,i)=>{
+    d.className='bprog-dot';
+    if(i<BG.qIdx)d.classList.add('done');
+    else if(i===BG.qIdx)d.classList.add('current');
+  });
+  document.getElementById('bp-score').textContent=BG.score;
+  document.getElementById('bp-qlbl').textContent='Q '+(BG.qIdx+1);
+}
+
+function nextBubbleQuestion(){
+  if(!BG.running)return;
+  if(BG.qIdx>=10){endBubbleGame();return;}
+  if(BG.qIdx===0) buildBubbleProgress();
+  clearBubbleArena();
+  BG.locked=false;
+  const isHard=BG.qIdx>=5;
+  const {eq,answer}=generateBubbleQuestion();
+  BG.answer=answer;
+  const options=generateBubbleOptions(answer,isHard);
+  document.getElementById('bp-equation').textContent=eq;
+  updateBubbleProgress();
+  spawnBubbles(options,isHard);
+  BG.rafId=requestAnimationFrame(bubbleGameLoop);
+}
+
+function clearBubbleArena(){
+  if(BG.rafId){cancelAnimationFrame(BG.rafId);BG.rafId=null;}
+  const arena=document.getElementById('bp-arena');
+  arena.innerHTML='';
+  BG.bubbles=[];
+}
+
+// Bubbles fall from top to bottom — timed, harder version for Level 1
+function spawnBubbles(options,isHard){
+  const arena=document.getElementById('bp-arena');
+  const cols=options.length;
+  const segW=BG.arenaW/cols;
+  const speedBase=isHard?0.9:0.55; // px per frame
+  const colors=[...BUBBLE_COLORS].sort(()=>Math.random()-.5);
+  const BSIZE=72;
+  options.forEach((val,i)=>{
+    const el=document.createElement('div');
+    el.className=`bubble ${colors[i%colors.length]}`;
+    el.textContent=val;
+    const x=segW*i+segW/2-BSIZE/2+randInt(-10,10);
+    const stagger=i*120;
+    el.style.left=x+'px';
+    el.style.top=(-BSIZE-stagger*speedBase)+'px';
+    el.style.width=BSIZE+'px'; el.style.height=BSIZE+'px';
+    const bubbleObj={
+      el, val,
+      x, y:-BSIZE-(stagger*speedBase),
+      speed:speedBase+(Math.random()*.15),
+      popped:false, BSIZE
+    };
+    el.addEventListener('pointerdown', e=>{
+      e.preventDefault();
+      handleBubbleTap(bubbleObj);
+    });
+    arena.appendChild(el);
+    BG.bubbles.push(bubbleObj);
+  });
+}
+
+function bubbleGameLoop(){
+  if(!BG.running)return;
+  BG.bubbles.forEach(b=>{
+    if(b.popped)return;
+    b.y+=b.speed;
+    b.el.style.top=b.y+'px';
+    if(b.y>BG.arenaH && !b.popped){
+      b.popped=true;
+      b.el.style.visibility='hidden';
+      if(b.val===BG.answer && !BG.locked){
+        missedCorrectBubble();
+      }
+    }
+  });
+  BG.rafId=requestAnimationFrame(bubbleGameLoop);
+}
+
+function handleBubbleTap(b){
+  if(BG.locked || b.popped) return;
+  const correct = b.val===BG.answer;
+  BG.locked=true; // one guess per question — freeze everything on any tap
+  if(BG.rafId){cancelAnimationFrame(BG.rafId);BG.rafId=null;}
+  popBubble(b, correct);
+}
+
+function popBubble(b, correct){
+  b.popped=true;
+  b.el.classList.add('popping');
+  spawnBurst(b.x+b.BSIZE/2, b.y+b.BSIZE/2, correct);
+
+  if(correct){
+    bpSfxCorrect(); bpSfxPop();
+    BG.score++;
+    BG.qIdx++;
+    setTimeout(nextBubbleQuestion,1200);
+  } else {
+    bpSfxWrong();
+    const arena=document.getElementById('bp-arena');
+    arena.classList.add('flash-wrong');
+    setTimeout(()=>arena.classList.remove('flash-wrong'),400);
+    // pop every other wrong bubble too — only the correct one stays, highlighted
+    BG.bubbles.forEach(bb=>{
+      if(bb===b || bb.popped) return;
+      if(bb.val!==BG.answer){
+        bb.popped=true;
+        bb.el.classList.add('popping');
+        spawnBurst(bb.x+bb.BSIZE/2, bb.y+bb.BSIZE/2, false);
+      } else {
+        bb.el.classList.add('correct-highlight');
+      }
+    });
+    // this question counts as incorrect — no score++ — move on after a beat
+    BG.qIdx++;
+    setTimeout(nextBubbleQuestion,1500);
+  }
+}
+
+function missedCorrectBubble(){
+  BG.locked=true;
+  if(BG.rafId){cancelAnimationFrame(BG.rafId);BG.rafId=null;}
+  bpSfxWrong();
+  const arena=document.getElementById('bp-arena');
+  arena.classList.add('flash-wrong');
+  setTimeout(()=>arena.classList.remove('flash-wrong'),400);
+  BG.qIdx++;
+  setTimeout(nextBubbleQuestion,1000);
+}
+
+function spawnBurst(cx,cy,correct){
+  const arena=document.getElementById('bp-arena');
+  const count=8;
+  const color=correct?'#27ae60':'#e74c3c';
+  for(let i=0;i<count;i++){
+    const p=document.createElement('div');
+    p.className='burst-particle';
+    const angle=(i/count)*Math.PI*2;
+    const dist=40+randInt(0,30);
+    const tx=Math.cos(angle)*dist; const ty=Math.sin(angle)*dist;
+    const sz=6+randInt(0,6);
+    p.style.cssText=`width:${sz}px;height:${sz}px;background:${color};left:${cx-sz/2}px;top:${cy-sz/2}px;--tx:${tx}px;--ty:${ty}px;`;
+    arena.appendChild(p);
+    setTimeout(()=>p.remove(),500);
+  }
+}
+
+function endBubbleGame(){
+  BG.running=false;
+  if(BG.rafId){cancelAnimationFrame(BG.rafId);BG.rafId=null;}
+  showScreen('bubble-results');
+  document.getElementById('bres-name').textContent=G.name;
+  document.getElementById('bres-score').textContent=BG.score;
+  const starRow=document.getElementById('bres-stars');
+  starRow.innerHTML='';
+  const starCount=Math.max(1,Math.round(BG.score/10*5));
+  for(let i=1;i<=5;i++){
+    const s=document.createElement('span');
+    s.textContent='⭐';
+    s.style.opacity= i<=starCount?'1':'0.25';
+    starRow.appendChild(s);
+  }
+  const msg=document.getElementById('bres-msg');
+  if(BG.score>=8) msg.textContent=`Incredible! ${G.name} is a Bubble Pop champion! 🏆`;
+  else if(BG.score>=5) msg.textContent=`Great popping, ${G.name}! A bit more practice and you'll pop every bubble! 💪`;
+  else msg.textContent=`Nice try, ${G.name}! Play again to beat your score! 🎈`;
+  submitBubbleLead();
+}
+
+async function submitBubbleLead(){
+  if(!GOOGLE_SCRIPT_URL||GOOGLE_SCRIPT_URL.includes('PASTE_YOUR'))return;
+  try{
+    await fetch(GOOGLE_SCRIPT_URL,{
+      method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:G.name,phone:G.phone||'',level:'Level 1 (bubble bonus)',score:BG.score,total:10})
+    });
+  }catch(e){}
+}
 </script>
 </body>
 </html>
