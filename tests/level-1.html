@@ -486,7 +486,7 @@ body{
       <div class="module-icon" style="background:#E8EEF8;">📝</div>
       <div>
         <div class="module-title">Full Practice Test</div>
-        <div class="module-sub">Timed test — 200 marks, 80 minutes. Audio abacus, mental math, and visual long sums.</div>
+        <div class="module-sub">Timed test — 100 marks, 80 minutes. Audio abacus, mental math, and visual long sums.</div>
       </div>
       <div class="module-arrow">→</div>
     </button>
@@ -500,7 +500,7 @@ body{
   <div class="hero">
     <span class="hero-icon">📝</span>
     <div class="page-title">Full Practice Test</div>
-    <div class="page-sub">200 marks · 80 minutes</div>
+    <div class="page-sub">100 marks · 80 minutes</div>
   </div>
 
   <!-- Audio Check -->
@@ -520,7 +520,7 @@ body{
       <div class="sec-circle s1">1</div>
       <div>
         <div style="font-weight:800;font-size:15px;margin-bottom:2px;">Hear &amp; Calculate on Abacus</div>
-        <div style="font-size:13px;color:var(--muted);">50 questions · 50 marks · 20 min</div>
+        <div style="font-size:13px;color:var(--muted);">25 questions · 25 marks · 20 min</div>
         <div class="chips"><span class="chip chip-r">🔊 Audio only</span><span class="chip chip-b">🧮 Virtual abacus</span></div>
       </div>
     </div>
@@ -528,7 +528,7 @@ body{
       <div class="sec-circle s2">2</div>
       <div>
         <div style="font-weight:800;font-size:15px;margin-bottom:2px;">Hear &amp; Calculate Mentally</div>
-        <div style="font-size:13px;color:var(--muted);">50 questions · 50 marks · 20 min</div>
+        <div style="font-size:13px;color:var(--muted);">25 questions · 25 marks · 20 min</div>
         <div class="chips"><span class="chip chip-r">🔊 Audio only</span><span class="chip chip-a">🧠 Mental math</span></div>
       </div>
     </div>
@@ -536,13 +536,13 @@ body{
       <div class="sec-circle s3">3</div>
       <div>
         <div style="font-weight:800;font-size:15px;margin-bottom:2px;">Visual Long Sums</div>
-        <div style="font-size:13px;color:var(--muted);">100 questions · 100 marks · 40 min</div>
+        <div style="font-size:13px;color:var(--muted);">50 questions · 50 marks · 40 min</div>
         <div class="chips"><span class="chip chip-g">📝 On-screen numpad</span></div>
       </div>
     </div>
   </div>
 
-  <div class="info-box">⏱ <strong>Total: 200 marks · 80 minutes.</strong> Sections play in order. Progress is auto-saved — if you refresh, you can resume. Results are sent to your teacher automatically.</div>
+  <div class="info-box">⏱ <strong>Total: 100 marks · 80 minutes.</strong> Sections play in order. Progress is auto-saved — if you refresh, you can resume. Results are sent to your teacher automatically.</div>
   <div class="btn-row">
     <button class="btn btn-ghost" onclick="showScreen('home')">← Back</button>
     <button class="btn btn-orange" onclick="startFresh()">Begin Test ➜</button>
@@ -695,14 +695,14 @@ body{
     <div style="font-size:56px;margin-bottom:8px;">🎉</div>
     <div style="font-size:14px;font-weight:800;color:var(--muted);margin-bottom:4px;" id="res-name"></div>
     <div class="score-big" id="res-total"></div>
-    <div class="score-denom">out of 200 marks</div>
+    <div class="score-denom">out of 100 marks</div>
     <div id="res-grade"></div>
   </div>
 
   <div class="score-grid">
-    <div class="score-cell"><div class="sl">Section 1</div><div class="sv" id="res-s1"></div><div class="sd">/ 50</div></div>
-    <div class="score-cell"><div class="sl">Section 2</div><div class="sv" id="res-s2"></div><div class="sd">/ 50</div></div>
-    <div class="score-cell"><div class="sl">Section 3</div><div class="sv" id="res-s3"></div><div class="sd">/ 100</div></div>
+    <div class="score-cell"><div class="sl">Section 1</div><div class="sv" id="res-s1"></div><div class="sd">/ 25</div></div>
+    <div class="score-cell"><div class="sl">Section 2</div><div class="sv" id="res-s2"></div><div class="sd">/ 25</div></div>
+    <div class="score-cell"><div class="sl">Section 3</div><div class="sv" id="res-s3"></div><div class="sd">/ 50</div></div>
   </div>
 
   <div class="export-box">
@@ -737,7 +737,7 @@ function showResults() {
     let s2 = calculateScore('s2');
     let s3 = calculateScore('s3');
     let total = s1 + s2 + s3;
-    let pct = Math.round((total / 200) * 100);
+    let pct = Math.round((total / 100) * 100);
     let grade = pct >= 90 ? "A+" : pct >= 75 ? "A" : pct >= 60 ? "B" : "C";
 
     // 2. TRIGGER THE DATA SENDING (The change you requested)
@@ -830,7 +830,7 @@ function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
 /* ════════════════════════════════════════════════════════════════
    STATE
    ════════════════════════════════════════════════════════════════ */
-const CFG = { s1:{total:50,time:1200}, s2:{total:50,time:1200}, s3:{total:100,time:2400} };
+const CFG = { s1:{total:25,time:1200}, s2:{total:25,time:1200}, s3:{total:50,time:2400} };
 
 let G = {
   name: '',
@@ -927,9 +927,9 @@ function startFresh() {
   G.name  = name;
   G.phone = phone;
   G.phase = 's1';
-  G.s1 = { qs: Array.from({length:50},  generateLvl1Question), ans: Array(50).fill(null),  cur:0, elapsed:0 };
-  G.s2 = { qs: Array.from({length:50},  generateLvl1Question), ans: Array(50).fill(null),  cur:0, elapsed:0 };
-  G.s3 = { qs: Array.from({length:100}, generateLvl1Question), ans: Array(100).fill(null), cur:0, elapsed:0 };
+  G.s1 = { qs: Array.from({length:CFG.s1.total}, generateLvl1Question), ans: Array(CFG.s1.total).fill(null), cur:0, elapsed:0 };
+  G.s2 = { qs: Array.from({length:CFG.s2.total}, generateLvl1Question), ans: Array(CFG.s2.total).fill(null), cur:0, elapsed:0 };
+  G.s3 = { qs: Array.from({length:CFG.s3.total}, generateLvl1Question), ans: Array(CFG.s3.total).fill(null), cur:0, elapsed:0 };
   G.inputVals = { s1:'', s2:'', s3:'' };
   saveState();
   enterSection('s1');
@@ -1201,7 +1201,7 @@ function finishSection(sec) {
    ABACUS WIDGET
    ════════════════════════════════════════════════════════════════ */
 function buildAbacus() {
-  abState = Array.from({length:4}, () => ({ h:[false,false], e:[false,false,false,false,false] }));
+  abState = Array.from({length:4}, () => ({ h:[false], e:[false,false,false,false] }));
   const frame = document.getElementById('abacus-frame');
   frame.innerHTML = '';
   ['Th','H','T','U'].forEach((lbl, ri) => {
@@ -1210,7 +1210,7 @@ function buildAbacus() {
     const rc  = document.createElement('div'); rc.className = 'rod-col';
     const spine = document.createElement('div'); spine.className = 'rod-spine'; rc.appendChild(spine);
     const bt  = document.createElement('div'); bt.className = 'rod-heaven';
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 1; i++) {
       const b = document.createElement('button'); b.className = 'bead bead-h'; b.type='button';
       b.dataset.ri = ri; b.dataset.t = 'h'; b.dataset.bi = i;
       b.addEventListener('pointerdown', e => { e.preventDefault(); toggleBead(ri,'h',i); });
@@ -1219,7 +1219,7 @@ function buildAbacus() {
     rc.appendChild(bt);
     const bar = document.createElement('div'); bar.className = 'rod-bar'; rc.appendChild(bar);
     const bb  = document.createElement('div'); bb.className = 'rod-earth';
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 4; i++) {
       const b = document.createElement('button'); b.className = 'bead bead-e'; b.type='button';
       b.dataset.ri = ri; b.dataset.t = 'e'; b.dataset.bi = i;
       b.addEventListener('pointerdown', e => { e.preventDefault(); toggleBead(ri,'e',i); });
@@ -1308,7 +1308,7 @@ async function buildResults() {
   G.s2.qs.forEach((q,i) => { if (G.s2.ans[i] === q.answer) s2++; });
   G.s3.qs.forEach((q,i) => { if (G.s3.ans[i] === q.answer) s3++; });
   const total = s1 + s2 + s3;
-  const pct   = Math.round(total / 200 * 100);
+  const pct   = Math.round(total / 100 * 100);
 
   let grade, gbg, gcol;
   if      (pct >= 90) { grade='A+ Excellent!'; gbg='#DCFCE7'; gcol='#065F46'; }
@@ -1331,11 +1331,11 @@ async function buildResults() {
 ' Date     : ' + ds + '\n'+
 ' Time     : ' + ts + '\n'+
 '──────────────────────────────────\n'+
-' Sec 1 (Abacus)   : ' + s1 + ' / 50\n'+
-' Sec 2 (Mental)   : ' + s2 + ' / 50\n'+
-' Sec 3 (Long Sum) : ' + s3 + ' / 100\n'+
+' Sec 1 (Abacus)   : ' + s1 + ' / 25\n'+
+' Sec 2 (Mental)   : ' + s2 + ' / 25\n'+
+' Sec 3 (Long Sum) : ' + s3 + ' / 50\n'+
 '──────────────────────────────────\n'+
-' TOTAL      : ' + total + ' / 200\n'+
+' TOTAL      : ' + total + ' / 100\n'+
 ' PERCENTAGE : ' + pct + '%\n'+
 ' GRADE      : ' + grade + '\n'+
 '──────────────────────────────────\n'+
@@ -1441,7 +1441,7 @@ document.addEventListener('keydown', e => {
 });
 
 /* ════════════════════════════════════════════════════════════════
-   BUBBLE POP MATH — bonus arcade game (does not affect the 200-mark
+   BUBBLE POP MATH — bonus arcade game (does not affect the 100-mark
    test score). Bubbles fall from the top; child taps the correct
    answer bubble before it reaches the bottom. Harder/timed version,
    appropriate for this older age group — a gentler, no-time-pressure
@@ -1474,19 +1474,27 @@ function bpSfxWrong(){ bpTone(220,'sawtooth',0.12,0.18); bpTone(180,'sawtooth',0
 function bpSfxPop(){ bpTone(600,'triangle',0.08,0.3); }
 
 // Question generator — 3 operands, 2 operators (+/-), result 0-9
+function bpPickStep(running, maxTries){
+  for (let tries=0; tries<maxTries; tries++){
+    const op = Math.random()<.6 ? '+' : '-';
+    const val = randInt(1,5);
+    const next = op==='+' ? running+val : running-val;
+    if (next>=0 && next<=9) return { op, val, next };
+  }
+  // guaranteed-safe fallback — nudge by 1 in whichever direction stays 0-9
+  if (running < 9) return { op:'+', val:1, next:running+1 };
+  return { op:'-', val:1, next:running-1 };
+}
+
 function generateBubbleQuestion(){
-  let a,b,c,op1,op2,answer;
-  let tries=0;
-  do{
-    a=randInt(1,7); b=randInt(1,5); c=randInt(1,5);
-    op1=Math.random()<.6?'+':'-';
-    op2=Math.random()<.6?'+':'-';
-    answer=a + (op1==='+'?b:-b) + (op2==='+'?c:-c);
-    tries++;
-  }while((answer<0||answer>9) && tries<50);
-  if(answer<0||answer>9){a=2;b=3;c=1;op1='+';op2='+';answer=6;}
-  const eq=`${a} ${op1} ${b} ${op2} ${c} = ?`;
-  return {eq,answer};
+  const a = randInt(1,7);
+  let running = a;
+  const step1 = bpPickStep(running, 30);
+  running = step1.next;
+  const step2 = bpPickStep(running, 30);
+  running = step2.next;
+  const eq = `${a} ${step1.op} ${step1.val} ${step2.op} ${step2.val} = ?`;
+  return { eq, answer: running };
 }
 
 function generateBubbleOptions(answer, isHard){
