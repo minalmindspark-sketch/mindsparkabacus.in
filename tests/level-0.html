@@ -320,11 +320,6 @@ body{
 .trait-bar-fill.memory{background:linear-gradient(90deg,#8B4FB8,#B07FD4);}
 .trait-bar-fill.counter{background:linear-gradient(90deg,var(--orange),var(--orange-light));}
 .trait-bar-fill.pattern{background:linear-gradient(90deg,var(--navy),var(--navy-light));}
-.power-phone-card{
-  background:var(--surface);border:2.5px solid var(--border);border-radius:var(--r-lg);
-  padding:20px;margin:18px 0;box-shadow:var(--shadow);text-align:center;
-}
-.power-phone-card .field-label{text-align:left;}
 
 /* ══════════════════════════════════════════════
    BUBBLE POP MATH
@@ -540,6 +535,15 @@ body{
   padding:14px 16px;font-size:13.5px;color:var(--navy);line-height:1.6;
   margin-bottom:18px;font-weight:600;
 }
+
+.next-module-banner{
+  background:linear-gradient(135deg,#FFF3E0,#FFF8ED);border:2px solid #FFD9A8;
+  border-radius:var(--r-md);padding:12px 16px;margin-bottom:16px;
+  font-size:13.5px;font-weight:800;color:var(--orange-d);text-align:center;
+  cursor:pointer;transition:transform .12s,border-color .15s;
+}
+.next-module-banner:hover{border-color:var(--orange);transform:translateY(-1px);}
+.next-module-banner:active{transform:translateY(1px);}
 
 @media (max-width:380px){
   .bead{width:48px;height:26px;}
@@ -902,20 +906,20 @@ body{
       </svg>
       <h2 style="font-family:'Playfair Display',serif;font-weight:900;font-size:24px;color:var(--navy);">Test complete, <span id="t1c-res-name" style="color:var(--orange);"></span>!</h2>
       <div class="t1c-score-big" id="t1c-res-total">0</div>
-      <div style="font-size:14px;font-weight:700;color:var(--muted);">out of 200 marks</div>
+      <div style="font-size:14px;font-weight:700;color:var(--muted);">out of 100 marks</div>
       <div id="t1c-res-grade" style="margin-top:10px;"></div>
     </div>
 
     <div class="card">
       <span class="label-caps">Section breakdown</span>
       <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--navy);padding:6px 0;">
-        <span>Section A (Shown, 2–3 rows)</span><span id="t1c-res-a">0 / 80</span>
+        <span>Section A (Shown, 2–3 rows)</span><span id="t1c-res-a">0 / 40</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--navy);padding:6px 0;">
-        <span>Section B (Shown, 3–4 rows)</span><span id="t1c-res-b">0 / 60</span>
+        <span>Section B (Shown, 3–4 rows)</span><span id="t1c-res-b">0 / 30</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--navy);padding:6px 0;">
-        <span>Section C (Heard, 2 rows)</span><span id="t1c-res-c">0 / 60</span>
+        <span>Section C (Heard, 2 rows)</span><span id="t1c-res-c">0 / 30</span>
       </div>
     </div>
 
@@ -941,6 +945,10 @@ body{
       <button class="exit-btn" onclick="goHome()">🏠 Home</button>
     </div>
 
+    <div class="next-module-banner" onclick="goToNextModule('learn')">
+      <span>✨ Ready for more? Try Build a Number →</span>
+    </div>
+
     <div class="sparky-row">
       <svg class="sparky-small" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <use href="#sparky-face"/>
@@ -960,7 +968,7 @@ body{
 
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="resetAbacusLearn(true)">🔄 Clear Abacus</button>
-      <button class="btn btn-orange" onclick="goToMode('quiz')">Try the Quiz →</button>
+      <button class="btn btn-orange" onclick="goToNextModule('learn')">Try Build a Number →</button>
     </div>
   </div>
 
@@ -1097,7 +1105,10 @@ body{
       </div>
       <div class="bubble-btn-row">
         <button class="bres-btn bres-btn-navy" onclick="playAgain()">🔁 Play Again</button>
-        <button class="bres-btn bres-btn-orange" onclick="goHome()">🏠 Home</button>
+        <button class="bres-btn bres-btn-orange" onclick="goToNextModule('bubble')">🏆 Try Superpower Game</button>
+      </div>
+      <div class="bubble-btn-row" style="margin-top:10px;">
+        <button class="bres-btn bres-btn-navy" onclick="goHome()">🏠 Home</button>
       </div>
     </div>
   </div>
@@ -1134,17 +1145,14 @@ body{
 
     <p id="power-res-message" style="font-size:15px;color:var(--navy);font-weight:600;max-width:420px;margin:0 auto;line-height:1.65;text-align:center;"></p>
 
-    <div class="power-phone-card" id="power-phone-card">
-      <span class="field-label">📱 Get personalized class tips</span>
-      <input class="big-input field-gap" id="power-phone" type="tel" placeholder="Parent's contact number" autocomplete="tel" inputmode="numeric" maxlength="15" style="margin-top:8px;"/>
-      <button class="btn btn-orange" onclick="submitPowerLead()">Save My Results →</button>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-ghost" onclick="playAgain()">🔁 Play Again</button>
+      <button class="btn btn-navy" onclick="goToNextModule('power')">📝 Try Little Sparks Test</button>
     </div>
-
-    <div class="btn-row" id="power-after-save" style="margin-top:8px;display:none;">
-      <button class="btn btn-ghost" onclick="goToMode('power')">🔁 Play Again</button>
-      <button class="btn btn-navy" onclick="goToLevel1()">⭐ Try Level 1</button>
+    <div class="btn-row" style="margin-top:8px;">
+      <button class="btn btn-ghost" onclick="goToLevel1()">⭐ Try Level 1</button>
+      <button class="btn btn-orange" onclick="goHome()">🏠 Home</button>
     </div>
-    <button class="btn btn-orange" style="margin-top:12px;" onclick="goHome()">🏠 Back to Home</button>
   </div>
 
   <!-- ═══════════════ RESULTS ═══════════════ -->
@@ -1167,9 +1175,12 @@ body{
 
     <div class="btn-row" style="margin-top:8px;">
       <button class="btn btn-ghost" onclick="playAgain()">🔁 Play Again</button>
-      <button class="btn btn-navy" onclick="goToLevel1()">⭐ Try Level 1</button>
+      <button class="btn btn-navy" id="res-next-module-btn" onclick="goToNextModule(G.mode)">Try Next →</button>
     </div>
-    <button class="btn btn-orange" style="margin-top:12px;" onclick="goHome()">🏠 Back to Home</button>
+    <div class="btn-row" style="margin-top:8px;">
+      <button class="btn btn-ghost" onclick="goToLevel1()">⭐ Try Level 1</button>
+      <button class="btn btn-orange" onclick="goHome()">🏠 Home</button>
+    </div>
   </div>
 
 </div>
@@ -1238,6 +1249,31 @@ function sfxBadge(){
    STATE
    ════════════════════════════════════════════════════════════════ */
 let G = { name:'', phone:'', quizAnswers:[], quizIdx:0, score:0, mode:'quiz' };
+
+/* ── Module sequence — matches home screen card order top to bottom ──
+   Used to power "Try Next Module" buttons on every results screen. */
+const MODULE_SEQUENCE = [
+  { key:'learn',    label:'Learn & Play' },
+  { key:'build',    label:'Build a Number' },
+  { key:'quiz',     label:'Counting Quiz' },
+  { key:'treasure', label:"Sparky's Treasure Hunt" },
+  { key:'bubble',   label:'Bubble Pop Math' },
+  { key:'power',    label:"Sparky's Superpower Game" },
+  { key:'t1c',      label:'Little Sparks Test' }
+];
+
+function getNextModule(currentKey){
+  const idx = MODULE_SEQUENCE.findIndex(m => m.key === currentKey);
+  if (idx === -1 || idx === MODULE_SEQUENCE.length - 1) return null; // unknown or last in sequence
+  return MODULE_SEQUENCE[idx + 1];
+}
+
+function goToNextModule(currentKey){
+  const next = getNextModule(currentKey);
+  if (!next) { goHome(); return; }
+  if (next.key === 't1c') { goToT1CIntro(); return; }
+  launchMode(next.key);
+}
 let abLearn = [];
 let abQuiz  = [];
 let abBuild = [];
@@ -1267,12 +1303,8 @@ function goToMode(mode){
   const name  = document.getElementById('child-name').value.trim();
   const phone = document.getElementById('parent-phone').value.trim();
   if (!name) { toast("Please tell us the child's name! 🧒"); return; }
-  // Superpower Game only needs the child's name up front — phone is captured
-  // later on its own results screen, right before revealing the score.
-  if (mode !== 'power') {
-    if (!phone || phone.replace(/\D/g,'').length < 10) { toast('Please enter a valid 10-digit contact number! 📱'); return; }
-    G.phone = phone;
-  }
+  if (!phone || phone.replace(/\D/g,'').length < 10) { toast('Please enter a valid 10-digit contact number! 📱'); return; }
+  G.phone = phone;
   G.name = name;
   G.mode = mode;
   launchMode(mode);
@@ -1285,6 +1317,7 @@ function playAgain(){
 }
 
 function launchMode(mode){
+  G.mode = mode; // always keep in sync — some paths (Try Next Module, banners) call this directly, bypassing goToMode()
   if (mode === 'learn') {
     showScreen('learn');
     buildAbacus('abacus-frame-learn', abLearn = freshAbacus(), 'learn');
@@ -1793,11 +1826,12 @@ let powerG = {
   subIdx: 0,        // 0,1,2 within a round
   scores: { memory:[], counter:[], pattern:[] },
   flashStart: 0,
-  locked: false
+  locked: false,
+  memoryTimeoutId: null
 };
 
 function startPowerGame(){
-  powerG = { roundIdx:0, subIdx:0, scores:{memory:[],counter:[],pattern:[]}, flashStart:0, locked:false };
+  powerG = { roundIdx:0, subIdx:0, scores:{memory:[],counter:[],pattern:[]}, flashStart:0, locked:false, memoryTimeoutId:null };
   showScreen('power');
   renderPowerRoundBanner();
   runReadyCountdown();
@@ -1890,6 +1924,17 @@ function runMemorySubRound(idx){
     document.querySelector('#screen-power .power-instruction').textContent = 'Tap the beads you saw!';
     powerG.flashStart = Date.now();
     wireMemoryTaps(target, cfg.beadCount);
+
+    // 5-second answer timeout — auto-advance if the child hasn't finished tapping in time
+    powerG.memoryTimeoutId = setTimeout(()=>{
+      if (powerG.locked) return; // already answered in time, nothing to do
+      powerG.locked = true;
+      sfxWrong();
+      const revealState = { h:[false], e:[false,false,false,false] };
+      target.forEach(([t,i]) => revealState[t][i] = true);
+      buildAbacus('memory-rod', revealState, 'memorypreview');
+      advancePowerGame(30); // counts as incorrect, same as a wrong guess
+    }, 5000);
   }, cfg.flashMs);
 }
 
@@ -1909,6 +1954,7 @@ function wireMemoryTaps(target, neededCount){
       sfxBead();
       if (selected.size === neededCount){
         powerG.locked = true;
+        if (powerG.memoryTimeoutId){ clearTimeout(powerG.memoryTimeoutId); powerG.memoryTimeoutId = null; }
         const elapsed = Date.now() - powerG.flashStart;
         let correctCount = 0;
         selected.forEach(k => { if (targetKeys.has(k)) correctCount++; });
@@ -2098,27 +2144,8 @@ function renderPowerResults(){
   document.getElementById('power-res-message').textContent =
     `${G.name} showed a great mix of ${topMeta.name.toLowerCase()} and ${secondMeta.name.toLowerCase()} skills! This combo is a fantastic foundation for abacus learning.`;
 
-  // reset phone capture UI state
-  document.getElementById('power-phone-card').style.display = '';
-  document.getElementById('power-after-save').style.display = 'none';
-  document.getElementById('power-phone').value = '';
-}
-
-function submitPowerLead(){
-  const phone = document.getElementById('power-phone').value.trim();
-  if (!phone || phone.replace(/\D/g,'').length < 10) { toast('Please enter a valid 10-digit contact number! 📱'); return; }
-  G.phone = phone;
-
-  const top = G.powerResult.traits[0];
-  const second = G.powerResult.traits[1];
-  const topMeta = TRAIT_META[top.key];
-  const secondMeta = TRAIT_META[second.key];
-
+  // auto-submit immediately — no manual contact-info step for this game
   submitPowerToSheet(`${topMeta.name} ${top.pct}% + ${secondMeta.name} ${second.pct}%`);
-
-  document.getElementById('power-phone-card').style.display = 'none';
-  document.getElementById('power-after-save').style.display = 'flex';
-  toast('Saved! 🎉');
 }
 
 async function submitPowerToSheet(resultSummary){
@@ -2127,7 +2154,7 @@ async function submitPowerToSheet(resultSummary){
     await fetch(GOOGLE_SCRIPT_URL, {
       method:'POST', mode:'no-cors',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ name:G.name, phone:G.phone, level:'Little Sparks (power)', score:resultSummary, total:'' })
+      body: JSON.stringify({ name:G.name, phone:G.phone||'', level:'Little Sparks (power)', score:resultSummary, total:'' })
     });
   }catch(e){ /* silent */ }
 }
@@ -2435,7 +2462,7 @@ const T1C_CFG = {
   b: { total:15, rowRange:[3,4] },
   c: { total:15, rowRange:[2,2] }
 };
-const T1C_MARKS_PER_Q = 4; // 50 questions x 4 marks = 200 total, equal weighting
+const T1C_MARKS_PER_Q = 2; // 50 questions x 2 marks = 100 total, equal weighting
 const T1C_TIME_TOTAL = 3600; // 1 hour, single countdown spanning all 3 sections
 const t1cSynth = window.speechSynthesis;
 
@@ -2758,7 +2785,7 @@ function t1cFinishTest(){
   const marksB = scoreB * T1C_MARKS_PER_Q;
   const marksC = scoreC * T1C_MARKS_PER_Q;
   const total    = marksA + marksB + marksC;
-  const maxTotal = (T1C_CFG.a.total + T1C_CFG.b.total + T1C_CFG.c.total) * T1C_MARKS_PER_Q; // 200
+  const maxTotal = (T1C_CFG.a.total + T1C_CFG.b.total + T1C_CFG.c.total) * T1C_MARKS_PER_Q; // 100
   const pct = Math.round(total / maxTotal * 100);
 
   let grade, gbg, gcol;
@@ -2854,6 +2881,16 @@ function showResults(score, total, mode){
       <div class="badge-desc">${isEarned ? b.desc : '🔒 Not yet earned'}</div>`;
     badgeRow.appendChild(el);
   });
+
+  // "Try Next Module" button — dynamic based on this module's position in sequence
+  const nextBtn = document.getElementById('res-next-module-btn');
+  const next = getNextModule(mode);
+  if (next){
+    nextBtn.textContent = 'Try ' + next.label + ' →';
+    nextBtn.style.display = '';
+  } else {
+    nextBtn.style.display = 'none';
+  }
 }
 
 /* ════════════════════════════════════════════════════════════════
