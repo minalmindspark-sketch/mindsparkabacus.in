@@ -417,6 +417,149 @@ body{
 .module-sub{font-size:13.5px;color:var(--muted);font-weight:500;line-height:1.5;}
 .module-arrow{font-size:22px;color:var(--orange);flex-shrink:0;margin-left:auto;}
 .section-label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:18px 0 10px;}
+/* ══════════════════════════════════════════════
+   BIG FRIEND CANNON (bonus arcade game)
+══════════════════════════════════════════════ */
+#screen-cannon{
+  display:none;
+  background:radial-gradient(ellipse at 50% 100%,#1a0d3d 0%,#0a0620 60%,#040210 100%);
+}
+#screen-cannon.active{
+  display:flex;flex-direction:column;
+  position:fixed;inset:0;width:100%;height:100%;
+  z-index:600;overflow:hidden;
+}
+.bfc-stars{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    radial-gradient(circle,rgba(255,255,255,.9) 1px,transparent 1px),
+    radial-gradient(circle,rgba(255,255,255,.6) 1px,transparent 1px),
+    radial-gradient(circle,rgba(180,150,255,.5) 1.5px,transparent 1.5px);
+  background-size:140px 140px,90px 90px,220px 220px;
+  background-position:0 0,45px 60px,100px 20px;
+  animation:bfcStarsDrift 30s linear infinite;
+}
+@keyframes bfcStarsDrift{from{background-position:0 0,45px 60px,100px 20px}to{background-position:0 140px,45px 200px,100px 320px}}
+
+.bfc-hud{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:12px 16px;flex-shrink:0;position:relative;z-index:5;
+}
+.bfc-title{
+  font-family:'Playfair Display',serif;font-weight:900;font-size:15px;color:#fff;
+  letter-spacing:.04em;text-shadow:0 0 12px rgba(139,92,246,.8);white-space:nowrap;
+}
+.bfc-hud-pill{
+  background:rgba(139,92,246,.25);border:1.5px solid rgba(196,164,255,.5);
+  border-radius:999px;padding:5px 12px;font-size:12px;font-weight:800;color:#E9D8FD;white-space:nowrap;
+}
+.bfc-exit{
+  background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);
+  border-radius:999px;padding:5px 12px;font-size:12px;font-weight:800;color:#fff;cursor:pointer;flex-shrink:0;
+}
+
+.bfc-equation-wrap{text-align:center;padding:2px 16px 10px;flex-shrink:0;position:relative;z-index:5;}
+.bfc-equation{
+  font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(24px,7vw,36px);
+  color:#fff;letter-spacing:.02em;text-shadow:0 0 16px rgba(139,92,246,.9),0 3px 0 rgba(0,0,0,.4);
+}
+.bfc-instruction{font-size:11px;font-weight:800;color:#B8A6E8;letter-spacing:.06em;text-transform:uppercase;margin-top:4px;}
+
+.bfc-arena{
+  flex:1;position:relative;overflow:hidden;
+  touch-action:none;
+}
+
+.bfc-target{
+  position:absolute;width:78px;height:78px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-weight:900;font-size:26px;color:#fff;
+  cursor:default;user-select:none;
+  box-shadow:inset -8px -8px 16px rgba(0,0,0,.3),inset 5px 5px 10px rgba(255,255,255,.25),0 0 24px rgba(0,0,0,.4);
+  transition:transform .15s;
+  animation:bfcFloat 3.2s ease-in-out infinite;
+}
+@keyframes bfcFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.bfc-target.t0{background:radial-gradient(circle at 35% 32%,#ff9a7a,#e8511f,#a8380f);}
+.bfc-target.t1{background:radial-gradient(circle at 35% 32%,#7ae6ff,#0f9dc9,#0a6a8c);}
+.bfc-target.t2{background:radial-gradient(circle at 35% 32%,#c58aff,#8B4FB8,#5b2d8a);}
+.bfc-target.t3{background:radial-gradient(circle at 35% 32%,#8fffb0,#22c55e,#15803d);}
+.bfc-target-ring{
+  position:absolute;inset:-6px;border-radius:50%;border:3px solid rgba(255,255,255,.35);
+  pointer-events:none;
+}
+.bfc-target.hit-correct{animation:bfcCorrectPop .5s ease-out forwards;}
+.bfc-target.hit-wrong{animation:bfcWrongShake .4s ease-out;}
+@keyframes bfcCorrectPop{0%{transform:scale(1)}40%{transform:scale(1.35);box-shadow:0 0 0 0 rgba(34,197,94,.9),0 0 40px rgba(34,197,94,1)}100%{transform:scale(0);opacity:0}}
+@keyframes bfcWrongShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.bfc-target.glow-correct{box-shadow:0 0 0 6px rgba(34,197,94,.6),0 0 30px rgba(34,197,94,.9);}
+.bfc-target.glow-wrong{box-shadow:0 0 0 6px rgba(239,68,68,.6),0 0 30px rgba(239,68,68,.9);}
+
+.bfc-feedback-msg{
+  position:absolute;top:12%;left:50%;transform:translate(-50%,-10px);
+  font-family:'Playfair Display',serif;font-weight:900;font-size:28px;
+  padding:8px 22px;border-radius:999px;opacity:0;pointer-events:none;
+  transition:opacity .2s,transform .2s;z-index:20;white-space:nowrap;
+}
+.bfc-feedback-msg.show{opacity:1;transform:translate(-50%,0);}
+.bfc-feedback-msg.correct{background:rgba(34,197,94,.92);color:#fff;}
+.bfc-feedback-msg.wrong{background:rgba(239,68,68,.92);color:#fff;}
+
+.bfc-aim-line{
+  position:absolute;pointer-events:none;z-index:3;
+  height:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.7) 0 8px,transparent 8px 16px);
+  transform-origin:0 50%;
+}
+
+.bfc-cannon-wrap{
+  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+  width:90px;height:90px;z-index:4;pointer-events:none;
+}
+.bfc-cannon-base{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:70px;height:36px;border-radius:35px 35px 10px 10px;
+  background:linear-gradient(180deg,#4a4a6a,#2a2a42);
+  box-shadow:0 4px 10px rgba(0,0,0,.5);
+}
+.bfc-cannon-barrel{
+  position:absolute;bottom:18px;left:50%;width:16px;height:58px;
+  background:linear-gradient(90deg,#6a6a8a,#8a8ab0,#6a6a8a);
+  border-radius:8px 8px 3px 3px;
+  transform-origin:50% 100%;
+  box-shadow:0 0 12px rgba(139,92,246,.5);
+}
+.bfc-cannon-barrel::after{
+  content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);
+  width:20px;height:12px;border-radius:6px;background:#3a3a5a;
+}
+
+.bfc-ball{
+  position:absolute;width:22px;height:22px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#ffe27a,#f59e0b,#b45309);
+  box-shadow:0 0 14px rgba(245,158,11,.9),0 0 28px rgba(245,158,11,.5);
+  z-index:6;pointer-events:none;
+}
+
+.bfc-progress{display:flex;gap:5px;justify-content:center;padding:0 16px 6px;flex-shrink:0;position:relative;z-index:5;}
+.bfc-progress-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .2s;}
+.bfc-progress-dot.done{background:#22c55e;}
+.bfc-progress-dot.current{background:#8B4FB8;transform:scale(1.3);}
+
+.bfc-results-wrap{
+  background:radial-gradient(ellipse at 50% 0%,#1a0d3d 0%,#0a0620 60%,#040210 100%);
+  min-height:100vh;padding:32px 20px 60px;
+  display:flex;flex-direction:column;align-items:center;gap:14px;color:#fff;
+}
+.bfc-score-big{font-family:'Playfair Display',serif;font-weight:900;font-size:76px;color:#f59e0b;line-height:1;text-shadow:0 0 24px rgba(245,158,11,.7);}
+.bfc-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:380px;}
+.bfc-stat-card{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);border-radius:14px;padding:14px;text-align:center;}
+.bfc-stat-val{font-family:'Playfair Display',serif;font-weight:900;font-size:24px;color:#fff;}
+.bfc-stat-lbl{font-size:11px;font-weight:800;color:#B8A6E8;text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+.bfc-btn-row{display:flex;gap:12px;width:100%;max-width:380px;margin-top:6px;}
+.bfc-btn{flex:1;height:56px;border-radius:16px;border:none;cursor:pointer;font-size:15px;font-weight:800;color:#fff;box-shadow:0 5px 0 rgba(0,0,0,.3);transition:transform .1s,box-shadow .1s;}
+.bfc-btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.3);}
+.bfc-btn-purple{background:linear-gradient(135deg,#a78bfa,#7c3aed);}
+.bfc-btn-orange{background:linear-gradient(135deg,#f59e0b,#c2410c);}
 </style>
 </head>
 <body>
@@ -477,7 +620,16 @@ body{
       <div class="module-icon" style="background:#DFF3FA;">🎈</div>
       <div>
         <div class="module-title">Bubble Pop Math</div>
-        <div class="module-sub">A quick arcade warm-up! Pop the correct answer bubble before it falls. Doesn't count toward your test score.</div>
+        <div class="module-sub">A quick arcade warm-up using the small friend formula! Pop the correct answer bubble before it falls. Doesn't count toward your test score.</div>
+      </div>
+      <div class="module-arrow">→</div>
+    </button>
+
+    <button class="module-card" onclick="startCannonGame()">
+      <div class="module-icon" style="background:#E8E4FB;">🚀</div>
+      <div>
+        <div class="module-title">Big Friend Cannon</div>
+        <div class="module-sub">Aim, shoot, and solve! Practice the big friend formula by blasting the correct answer. Doesn't count toward your test score.</div>
       </div>
       <div class="module-arrow">→</div>
     </button>
@@ -584,7 +736,71 @@ body{
   </div>
 </div>
 
-<!-- ════════════════════════ SECTION 1 ════════════════════════ -->
+<!-- ═══════════════ BIG FRIEND CANNON (bonus) ═══════════════ -->
+<div id="screen-cannon" class="screen">
+  <div class="bfc-stars"></div>
+  <div class="bfc-hud">
+    <div class="bfc-title">🚀 BIG FRIEND CANNON</div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div class="bfc-hud-pill" id="bfc-qlbl">Q 1/10</div>
+      <div class="bfc-hud-pill" id="bfc-score">⭐ 0</div>
+      <div class="bfc-hud-pill" id="bfc-timer">00:00</div>
+      <button class="bfc-exit" onclick="stopCannonGame()">✕</button>
+    </div>
+  </div>
+
+  <div class="bfc-progress" id="bfc-progress"></div>
+
+  <div class="bfc-equation-wrap">
+    <div class="bfc-equation" id="bfc-equation">3 + 8 = ?</div>
+    <div class="bfc-instruction">Aim at the correct answer and shoot!</div>
+  </div>
+
+  <div class="bfc-arena" id="bfc-arena">
+    <div class="bfc-feedback-msg" id="bfc-feedback"></div>
+    <div class="bfc-aim-line" id="bfc-aimline"></div>
+    <div class="bfc-cannon-wrap" id="bfc-cannon">
+      <div class="bfc-cannon-barrel" id="bfc-barrel"></div>
+      <div class="bfc-cannon-base"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ BIG FRIEND CANNON RESULTS ═══════════════ -->
+<div id="screen-cannon-results" class="screen">
+  <div class="bfc-results-wrap">
+    <div style="font-size:48px;">🏆</div>
+    <h2 style="font-family:'Playfair Display',serif;font-weight:900;font-size:24px;text-align:center;">
+      Game Complete, <span id="bfcres-name" style="color:#f59e0b;"></span>! 🎉
+    </h2>
+    <div class="bfc-score-big" id="bfcres-score">0</div>
+    <div style="font-size:13px;font-weight:700;color:#B8A6E8;">POINTS</div>
+
+    <div class="bfc-stat-grid">
+      <div class="bfc-stat-card">
+        <div class="bfc-stat-val" id="bfcres-correct">0 / 10</div>
+        <div class="bfc-stat-lbl">Correct</div>
+      </div>
+      <div class="bfc-stat-card">
+        <div class="bfc-stat-val" id="bfcres-accuracy">0%</div>
+        <div class="bfc-stat-lbl">Accuracy</div>
+      </div>
+      <div class="bfc-stat-card">
+        <div class="bfc-stat-val" id="bfcres-attempts">0</div>
+        <div class="bfc-stat-lbl">Attempts</div>
+      </div>
+      <div class="bfc-stat-card">
+        <div class="bfc-stat-val" id="bfcres-time">00:00</div>
+        <div class="bfc-stat-lbl">Time</div>
+      </div>
+    </div>
+
+    <div class="bfc-btn-row">
+      <button class="bfc-btn bfc-btn-purple" onclick="startCannonGame()">🔁 Play Again</button>
+      <button class="bfc-btn bfc-btn-orange" onclick="showScreen('home')">🏠 Home</button>
+    </div>
+  </div>
+</div>
 <div id="screen-s1" class="screen">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
     <span class="sec-tag s1">Section 1 / 3</span>
@@ -1474,31 +1690,61 @@ function bpSfxWrong(){ bpTone(220,'sawtooth',0.12,0.18); bpTone(180,'sawtooth',0
 function bpSfxPop(){ bpTone(600,'triangle',0.08,0.3); }
 
 // Question generator — 3 operands, 2 operators (+/-), result 0-9
-function bpPickStep(running, maxTries){
-  for (let tries=0; tries<maxTries; tries++){
-    const op = Math.random()<.6 ? '+' : '-';
-    const val = randInt(1,5);
-    const next = op==='+' ? running+val : running-val;
-    if (next>=0 && next<=9) return { op, val, next };
+/* ── Single-rod bead model — used to classify moves as direct vs
+   "small friend" formula moves. A move is DIRECT if it can be done by
+   only turning beads ON (addition) or only turning beads OFF
+   (subtraction). A "small friend" formula move is anything else that's
+   still a valid single-digit (0-9) move — i.e. it requires trading the
+   heaven bead for its earth complement (or vice versa). */
+function bpValueToBeads(v){
+  const heaven = v>=5 ? 1 : 0;
+  const earth = v - heaven*5;
+  return { heaven, earth };
+}
+function bpIsDirectMove(fromValue, delta){
+  const toValue = fromValue + delta;
+  if (toValue < 0 || toValue > 9) return null; // not a valid move at all
+  const from = bpValueToBeads(fromValue);
+  const to   = bpValueToBeads(toValue);
+  if (delta > 0) return to.heaven >= from.heaven && to.earth >= from.earth;
+  if (delta < 0) return to.heaven <= from.heaven && to.earth <= from.earth;
+  return true;
+}
+// All formula (non-direct) moves available from a given value, 0-9.
+// Note: only values 1-8 ever have any — 0 and 9 are dead ends, and
+// every formula move stays within 1-8, so a sequence built entirely
+// from formula moves can never get stuck.
+function bpGetFormulaMoves(v){
+  const moves = [];
+  for (let d=-9; d<=9; d++){
+    if (d===0) continue;
+    const to = v+d;
+    if (to<0 || to>9) continue;
+    if (bpIsDirectMove(v,d) === false) moves.push([d, to]);
   }
-  // guaranteed-safe fallback — nudge by 1 in whichever direction stays 0-9
-  if (running < 9) return { op:'+', val:1, next:running+1 };
-  return { op:'-', val:1, next:running-1 };
+  return moves;
 }
 
 function generateBubbleQuestion(){
-  const a = randInt(1,7);
-  let running = a;
-  const step1 = bpPickStep(running, 30);
-  running = step1.next;
-  const step2 = bpPickStep(running, 30);
-  running = step2.next;
-  const eq = `${a} ${step1.op} ${step1.val} ${step2.op} ${step2.val} = ?`;
+  const rows = Math.random()<0.5 ? 3 : 4; // 3 or 4 numbers total, randomly
+  const numSteps = rows - 1;
+  const startPool = [1,2,3,4,5,6,7,8]; // 0 and 9 have no formula continuation
+  let start = startPool[randInt(0, startPool.length-1)];
+  let running = start;
+  const parts = [String(start)];
+  for (let s=0; s<numSteps; s++){
+    const moves = bpGetFormulaMoves(running);
+    const pick = moves[randInt(0, moves.length-1)];
+    const delta = pick[0];
+    parts.push(delta>=0?'+':'-', String(Math.abs(delta)));
+    running = pick[1];
+  }
+  const eq = parts.join(' ') + ' = ?';
   return { eq, answer: running };
 }
 
-function generateBubbleOptions(answer, isHard){
-  const spread=isHard?2:3;
+function generateBubbleOptions(answer){
+  const spread=2; // uniform across all 10 questions — every question is formula-based now
   const opts=new Set([answer]);
   let guard=0;
   while(opts.size<3&&guard<80){
@@ -1576,7 +1822,7 @@ function nextBubbleQuestion(){
   const isHard=BG.qIdx>=5;
   const {eq,answer}=generateBubbleQuestion();
   BG.answer=answer;
-  const options=generateBubbleOptions(answer,isHard);
+  const options=generateBubbleOptions(answer);
   document.getElementById('bp-equation').textContent=eq;
   updateBubbleProgress();
   spawnBubbles(options,isHard);
@@ -1736,6 +1982,386 @@ async function submitBubbleLead(){
       method:'POST',mode:'no-cors',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name:G.name,phone:G.phone||'',level:'Level 1 (bubble bonus)',score:BG.score,total:10})
+    });
+  }catch(e){}
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BIG FRIEND CANNON — bonus arcade game (does not affect the
+   100-mark test score). Teaches the "big friend" (friend of 10)
+   formula: every question is built so each addition/subtraction
+   step forces carrying/borrowing across the tens boundary.
+   Namespaced with 'bfc' prefix to avoid collisions.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Self-contained audio (reuses the bp* tone engine already built
+   for Bubble Pop Math, just called directly here too) ───────────── */
+function bfcSfxCorrect(){ [523,659,784,1047].forEach((f,i)=>bpTone(f,'sine',0.22,0.28,i*85)); }
+function bfcSfxWrong(){ bpTone(220,'sawtooth',0.12,0.18); bpTone(180,'sawtooth',0.10,0.14,90); }
+function bfcSfxShoot(){ bpTone(300,'triangle',0.1,0.2); bpTone(150,'square',0.08,0.12,40); }
+
+/* ── Big Friend move classifier + question generator ──────────────
+   A move requires the big-friend formula when (1) the ones digit
+   can't absorb it directly and must carry/borrow with the tens
+   digit, AND (2) the resulting ones-rod complement adjustment is
+   itself a DIRECT move on the ones rod (reusing the same classifier
+   built for Bubble Pop Math's small-friend logic). Condition 2 is
+   essential — without it, some "big friend" steps secretly also
+   need an embedded small-friend move to complete, mixing formulas
+   instead of testing big friend in isolation. */
+function bfcGetBigFriendMoves(v){
+  const ones = v % 10;
+  const tens = Math.floor(v / 10);
+  const moves = [];
+  for (let d=1; d<=9; d++){ // addition
+    if (ones + d >= 10){
+      const newOnes = (ones + d) - 10;
+      // The ones-rod complement adjustment must itself be a DIRECT move —
+      // otherwise this step secretly needs an embedded small-friend trick,
+      // which isn't a "pure" big friend question.
+      if (bpIsDirectMove(ones, newOnes - ones) === true) moves.push([d, v+d]);
+    }
+  }
+  for (let d=1; d<=9; d++){ // subtraction
+    if (d > ones && tens >= 1 && (v-d) >= 0){
+      const newOnes = (ones - d) + 10;
+      if (bpIsDirectMove(ones, newOnes - ones) === true) moves.push([-d, v-d]);
+    }
+  }
+  return moves;
+}
+
+function bfcGenerateQuestion(){
+  const rows = Math.random()<0.5 ? 3 : 4;
+  const numSteps = rows - 1;
+  for (let attempt=0; attempt<200; attempt++){
+    let start = randInt(1,9);
+    let running = start;
+    const deltas = [];
+    let ok = true;
+    for (let s=0; s<numSteps; s++){
+      const moves = bfcGetBigFriendMoves(running);
+      if (moves.length === 0){ ok = false; break; }
+      const pick = moves[randInt(0, moves.length-1)];
+      deltas.push(pick[0]);
+      running = pick[1];
+    }
+    if (ok){
+      const parts = [String(start)];
+      deltas.forEach(d => parts.push(d>=0?'+':'-', String(Math.abs(d))));
+      return { eq: parts.join(' ') + ' = ?', answer: running };
+    }
+  }
+  return { eq: '8 + 9 = ?', answer: 17 }; // verified-safe fallback, should never trigger
+}
+
+function bfcGenerateOptions(answer){
+  const spread = 6;
+  const opts = new Set([answer]);
+  let guard = 0;
+  while (opts.size < 4 && guard < 80){
+    guard++;
+    let c = answer + (randInt(-spread, spread));
+    if (c < 1) c = answer + opts.size + 1;
+    if (c === answer) continue;
+    if (c >= 1) opts.add(c);
+  }
+  const arr = Array.from(opts);
+  for (let i=arr.length-1;i>0;i--){ const j=randInt(0,i); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr;
+}
+
+/* ── Game state ────────────────────────────────────────────────── */
+const BFC_SLOTS = [
+  { left:'14%', top:'10%' },
+  { left:'62%', top:'8%'  },
+  { left:'8%',  top:'40%' },
+  { left:'68%', top:'42%' }
+];
+
+let BFC = {
+  running:false, qIdx:0, score:0, correctCount:0, attempts:0,
+  answer:0, aimAngle:0, shooting:false, timerId:null, elapsed:0,
+  qStartTime:0
+};
+
+function startCannonGame(){
+  const name = document.getElementById('student-name').value.trim();
+  const phone = document.getElementById('student-phone').value.trim();
+  if (!name) { toast('Please enter your name first! 🧒'); return; }
+  if (!phone || phone.replace(/\D/g,'').length < 10) { toast('Please enter a valid 10-digit contact number!'); return; }
+  G.name = name; G.phone = phone;
+
+  if (BFC.timerId) clearInterval(BFC.timerId);
+  BFC = { running:true, qIdx:0, score:0, correctCount:0, attempts:0, answer:0, aimAngle:0, shooting:false, timerId:null, elapsed:0, qStartTime:0 };
+  showScreen('cannon');
+  bfcBuildProgress();
+  bfcWireAiming();
+  bfcStartTimer();
+  requestAnimationFrame(()=>bfcNextQuestion());
+}
+
+function stopCannonGame(){
+  BFC.running = false;
+  if (BFC.timerId){ clearInterval(BFC.timerId); BFC.timerId = null; }
+  showScreen('home');
+}
+
+function bfcBuildProgress(){
+  const wrap = document.getElementById('bfc-progress');
+  wrap.innerHTML = '';
+  for (let i=0;i<10;i++){
+    const d = document.createElement('div');
+    d.className = 'bfc-progress-dot';
+    if (i===0) d.classList.add('current');
+    wrap.appendChild(d);
+  }
+}
+function bfcUpdateProgress(){
+  const dots = document.querySelectorAll('#bfc-progress .bfc-progress-dot');
+  dots.forEach((d,i)=>{
+    d.className = 'bfc-progress-dot';
+    if (i<BFC.qIdx) d.classList.add('done');
+    else if (i===BFC.qIdx) d.classList.add('current');
+  });
+  document.getElementById('bfc-qlbl').textContent = 'Q ' + (BFC.qIdx+1) + '/10';
+  document.getElementById('bfc-score').textContent = '⭐ ' + BFC.score;
+}
+
+/* ── Timer (count-up) ──────────────────────────────────────────── */
+function bfcStartTimer(){
+  bfcRenderTimer();
+  BFC.timerId = setInterval(()=>{
+    BFC.elapsed++;
+    bfcRenderTimer();
+  }, 1000);
+}
+function bfcRenderTimer(){
+  const m = String(Math.floor(BFC.elapsed/60)).padStart(2,'0');
+  const s = String(BFC.elapsed%60).padStart(2,'0');
+  document.getElementById('bfc-timer').textContent = m+':'+s;
+}
+
+/* ── Question rendering ───────────────────────────────────────────*/
+function bfcNextQuestion(){
+  if (!BFC.running) return;
+  if (BFC.qIdx >= 10){ bfcFinishGame(); return; }
+  bfcClearTargets();
+  const q = bfcGenerateQuestion();
+  BFC.answer = q.answer;
+  BFC.qStartTime = Date.now();
+  document.getElementById('bfc-equation').textContent = q.eq;
+  bfcUpdateProgress();
+
+  const options = bfcGenerateOptions(q.answer);
+  const slotOrder = [0,1,2,3].sort(()=>Math.random()-0.5);
+  const arena = document.getElementById('bfc-arena');
+  options.forEach((val, i)=>{
+    const slot = BFC_SLOTS[slotOrder[i]];
+    const t = document.createElement('div');
+    t.className = 'bfc-target t' + i;
+    t.style.left = slot.left; t.style.top = slot.top;
+    t.dataset.val = val;
+    t.innerHTML = '<div class="bfc-target-ring"></div>' + val;
+    arena.appendChild(t);
+  });
+}
+
+function bfcClearTargets(){
+  document.querySelectorAll('#bfc-arena .bfc-target').forEach(t=>t.remove());
+}
+
+/* ── Aiming — mouse, touch, and keyboard ──────────────────────────*/
+function bfcGetCannonPivot(){
+  const cannon = document.getElementById('bfc-cannon');
+  const arena = document.getElementById('bfc-arena');
+  const cRect = cannon.getBoundingClientRect();
+  const aRect = arena.getBoundingClientRect();
+  return {
+    x: cRect.left + cRect.width/2 - aRect.left,
+    y: cRect.top + 18 - aRect.top // roughly the barrel's pivot point
+  };
+}
+
+function bfcSetAimFromPoint(px, py){
+  const pivot = bfcGetCannonPivot();
+  const dx = px - pivot.x;
+  const dy = py - pivot.y;
+  let angle = Math.atan2(dx, -dy) * 180/Math.PI;
+  angle = Math.max(-85, Math.min(85, angle));
+  bfcSetAimAngle(angle);
+}
+
+function bfcSetAimAngle(angle){
+  BFC.aimAngle = angle;
+  document.getElementById('bfc-barrel').style.transform = 'translateX(-50%) rotate(' + angle + 'deg)';
+  bfcRenderAimLine();
+}
+
+function bfcRenderAimLine(){
+  const pivot = bfcGetCannonPivot();
+  const line = document.getElementById('bfc-aimline');
+  const rad = BFC.aimAngle * Math.PI/180;
+  const length = 260;
+  line.style.width = length + 'px';
+  line.style.left = pivot.x + 'px';
+  line.style.top = pivot.y + 'px';
+  // angle for CSS rotate: 0deg = pointing right (standard), our aimAngle is measured from "up"
+  const cssAngle = BFC.aimAngle - 90;
+  line.style.transform = 'rotate(' + cssAngle + 'deg)';
+}
+
+let bfcAimWired = false;
+function bfcWireAiming(){
+  if (bfcAimWired) return; // listeners only need to be attached once
+  bfcAimWired = true;
+  const arena = document.getElementById('bfc-arena');
+
+  arena.addEventListener('mousemove', e=>{
+    if (!BFC.running) return;
+    const rect = arena.getBoundingClientRect();
+    bfcSetAimFromPoint(e.clientX - rect.left, e.clientY - rect.top);
+  });
+  arena.addEventListener('click', e=>{
+    if (!BFC.running) return;
+    bfcShoot();
+  });
+  arena.addEventListener('touchmove', e=>{
+    if (!BFC.running) return;
+    e.preventDefault();
+    const rect = arena.getBoundingClientRect();
+    const t = e.touches[0];
+    bfcSetAimFromPoint(t.clientX - rect.left, t.clientY - rect.top);
+  }, {passive:false});
+  arena.addEventListener('touchend', e=>{
+    if (!BFC.running) return;
+    bfcShoot();
+  });
+  document.addEventListener('keydown', e=>{
+    if (!BFC.running) return;
+    if (e.key === 'ArrowLeft'){ bfcSetAimAngle(Math.max(-85, BFC.aimAngle-4)); e.preventDefault(); }
+    else if (e.key === 'ArrowRight'){ bfcSetAimAngle(Math.min(85, BFC.aimAngle+4)); e.preventDefault(); }
+    else if (e.key === 'Enter'){ bfcShoot(); e.preventDefault(); }
+  });
+
+  // initial aim: straight up
+  bfcSetAimAngle(0);
+}
+
+/* ── Shooting + collision ─────────────────────────────────────────*/
+function bfcShoot(){
+  if (!BFC.running || BFC.shooting) return;
+  BFC.shooting = true;
+  BFC.attempts++;
+  bfcSfxShoot();
+
+  const arena = document.getElementById('bfc-arena');
+  const pivot = bfcGetCannonPivot();
+  const ball = document.createElement('div');
+  ball.className = 'bfc-ball';
+  arena.appendChild(ball);
+
+  const rad = BFC.aimAngle * Math.PI/180;
+  const vx = Math.sin(rad);
+  const vy = -Math.cos(rad);
+  const speed = 9; // px per frame
+  let x = pivot.x, y = pivot.y;
+  const arenaRect = arena.getBoundingClientRect();
+
+  function frame(){
+    if (!BFC.running){ ball.remove(); return; }
+    x += vx*speed; y += vy*speed;
+    ball.style.left = (x-11) + 'px';
+    ball.style.top = (y-11) + 'px';
+
+    // collision check against each target
+    const targets = arena.querySelectorAll('.bfc-target');
+    for (const t of targets){
+      const tRect = t.getBoundingClientRect();
+      const tx = tRect.left + tRect.width/2 - arenaRect.left;
+      const ty = tRect.top + tRect.height/2 - arenaRect.top;
+      const dist = Math.hypot(x-tx, y-ty);
+      if (dist < (tRect.width/2 + 11)){
+        ball.remove();
+        bfcHandleHit(t);
+        return;
+      }
+    }
+
+    // off-screen check
+    if (x < -30 || x > arenaRect.width+30 || y < -30 || y > arenaRect.height+30){
+      ball.remove();
+      BFC.shooting = false;
+      return;
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function bfcHandleHit(targetEl){
+  const val = parseInt(targetEl.dataset.val, 10);
+  const correct = val === BFC.answer;
+  const fb = document.getElementById('bfc-feedback');
+
+  if (correct){
+    bfcSfxCorrect();
+    targetEl.classList.add('glow-correct','hit-correct');
+    fb.textContent = 'Correct! 🎉';
+    fb.className = 'bfc-feedback-msg correct show';
+
+    const elapsedForQ = (Date.now() - BFC.qStartTime) / 1000;
+    const speedBonus = elapsedForQ <= 5 ? 5 : 0;
+    BFC.score += 10 + speedBonus;
+    BFC.correctCount++;
+    BFC.qIdx++;
+
+    setTimeout(()=>{
+      fb.classList.remove('show');
+      BFC.shooting = false;
+      bfcNextQuestion();
+    }, 1100);
+  } else {
+    bfcSfxWrong();
+    targetEl.classList.add('glow-wrong','hit-wrong');
+    fb.textContent = 'Try Again!';
+    fb.className = 'bfc-feedback-msg wrong show';
+    setTimeout(()=>{
+      targetEl.classList.remove('glow-wrong','hit-wrong');
+    }, 450);
+    setTimeout(()=>{
+      fb.classList.remove('show');
+      BFC.shooting = false;
+    }, 700);
+  }
+}
+
+/* ── Finish game / results ────────────────────────────────────────*/
+function bfcFinishGame(){
+  BFC.running = false;
+  if (BFC.timerId){ clearInterval(BFC.timerId); BFC.timerId = null; }
+  showScreen('cannon-results');
+
+  document.getElementById('bfcres-name').textContent = G.name;
+  document.getElementById('bfcres-score').textContent = BFC.score;
+  document.getElementById('bfcres-correct').textContent = BFC.correctCount + ' / 10';
+  const accuracy = BFC.attempts > 0 ? Math.round(BFC.correctCount / BFC.attempts * 100) : 0;
+  document.getElementById('bfcres-accuracy').textContent = accuracy + '%';
+  document.getElementById('bfcres-attempts').textContent = BFC.attempts;
+  const m = String(Math.floor(BFC.elapsed/60)).padStart(2,'0');
+  const s = String(BFC.elapsed%60).padStart(2,'0');
+  document.getElementById('bfcres-time').textContent = m+':'+s;
+
+  bfcSubmitLead();
+}
+
+async function bfcSubmitLead(){
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_YOUR')) return;
+  try{
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name:G.name, phone:G.phone||'', level:'Level 1 (big friend cannon)', score:BFC.score, total:10 })
     });
   }catch(e){}
 }
