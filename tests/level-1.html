@@ -378,7 +378,7 @@ body{
 @keyframes arenaFlash{0%,100%{background:transparent}50%{background:rgba(255,50,50,.15)}}
 .bubble-arena.flash-wrong{animation:arenaFlash .4s ease;}
 
-.bubble-progress{display:flex;gap:5px;justify-content:center;padding:0 16px 4px;flex-shrink:0;}
+.bubble-progress{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;padding:0 16px 4px;flex-shrink:0;}
 .bprog-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .2s;}
 .bprog-dot.done{background:#27ae60;}
 .bprog-dot.current{background:#E8751A;transform:scale(1.3);}
@@ -709,7 +709,7 @@ body{
 <!-- ═══════════════ BUBBLE POP MATH (bonus) ═══════════════ -->
 <div id="screen-bubble" class="screen">
   <div class="bubble-topbar">
-    <div class="bubble-score-pill">⭐ <span id="bp-score">0</span> / 10</div>
+    <div class="bubble-score-pill">⭐ <span id="bp-score">0</span> / 25</div>
     <div style="color:#fff;font-weight:800;font-size:14px;" id="bp-qlbl">Q 1</div>
     <button class="bubble-exit" onclick="stopBubbleGame()">✕ Exit</button>
   </div>
@@ -729,7 +729,7 @@ body{
       Great job, <span id="bres-name" style="color:#E8751A;"></span>!
     </h2>
     <div class="bubble-score-big" id="bres-score">0</div>
-    <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,.6);">out of 10 bubbles popped</div>
+    <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,.6);">out of 25 bubbles popped</div>
     <div class="bubble-star-row" id="bres-stars"></div>
     <div class="bubble-res-card">
       <div class="bubble-res-msg" id="bres-msg"></div>
@@ -1801,7 +1801,7 @@ function stopBubbleGame(){
 function buildBubbleProgress(){
   const wrap=document.getElementById('bp-progress');
   wrap.innerHTML='';
-  for(let i=0;i<10;i++){
+  for(let i=0;i<25;i++){
     const d=document.createElement('div'); d.className='bprog-dot';
     if(i===0)d.classList.add('current');
     wrap.appendChild(d);
@@ -1820,7 +1820,7 @@ function updateBubbleProgress(){
 
 function nextBubbleQuestion(){
   if(!BG.running)return;
-  if(BG.qIdx>=10){endBubbleGame();return;}
+  if(BG.qIdx>=25){endBubbleGame();return;}
   if(BG.qIdx===0) buildBubbleProgress();
   clearBubbleArena();
   BG.locked=false;
@@ -1986,7 +1986,7 @@ async function submitBubbleLead(){
     await fetch(GOOGLE_SCRIPT_URL,{
       method:'POST',mode:'no-cors',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name:G.name,phone:G.phone||'',level:'Level 1 (bubble bonus)',score:BG.score,total:10})
+      body:JSON.stringify({name:G.name,phone:G.phone||'',level:'Level 1 (bubble bonus)',score:BG.score,total:25})
     });
   }catch(e){}
 }
