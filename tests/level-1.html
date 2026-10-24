@@ -545,9 +545,10 @@ body{
   z-index:6;pointer-events:none;
 }
 
-.bfc-progress{display:flex;gap:5px;justify-content:center;padding:0 16px 6px;flex-shrink:0;position:relative;z-index:5;}
+.bfc-progress{display:flex;flex-wrap:wrap;gap:4px 3px;justify-content:center;padding:0 12px 6px;flex-shrink:0;position:relative;z-index:5;}
 .bfc-progress-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .2s;}
 .bfc-progress-dot.done{background:#22c55e;}
+.bfc-progress-dot.wrong{background:#ef4444;}
 .bfc-progress-dot.current{background:#8B4FB8;transform:scale(1.3);}
 
 .bfc-results-wrap{
@@ -749,7 +750,7 @@ body{
     <button class="bfc-exit" onclick="stopCannonGame()">✕</button>
   </div>
   <div class="bfc-hud-stats">
-    <div class="bfc-hud-pill" id="bfc-qlbl">Q 1/10</div>
+    <div class="bfc-hud-pill" id="bfc-qlbl">Q 1/25</div>
     <div class="bfc-hud-pill" id="bfc-score">⭐ 0</div>
     <div class="bfc-hud-pill" id="bfc-timer">00:00</div>
   </div>
@@ -779,11 +780,11 @@ body{
       Game Complete, <span id="bfcres-name" style="color:#f59e0b;"></span>! 🎉
     </h2>
     <div class="bfc-score-big" id="bfcres-score">0</div>
-    <div style="font-size:13px;font-weight:700;color:#B8A6E8;">POINTS</div>
+    <div style="font-size:13px;font-weight:700;color:#B8A6E8;">MARKS (out of 25)</div>
 
     <div class="bfc-stat-grid">
       <div class="bfc-stat-card">
-        <div class="bfc-stat-val" id="bfcres-correct">0 / 10</div>
+        <div class="bfc-stat-val" id="bfcres-correct">0 / 25</div>
         <div class="bfc-stat-lbl">Correct</div>
       </div>
       <div class="bfc-stat-card">
@@ -792,7 +793,7 @@ body{
       </div>
       <div class="bfc-stat-card">
         <div class="bfc-stat-val" id="bfcres-attempts">0</div>
-        <div class="bfc-stat-lbl">Attempts</div>
+        <div class="bfc-stat-lbl">Wrong</div>
       </div>
       <div class="bfc-stat-card">
         <div class="bfc-stat-val" id="bfcres-time">00:00</div>
@@ -984,7 +985,7 @@ function showResults() {
 /* ════════════════════════════════════════════════════════════════
    CONFIGURATION — edit GOOGLE_SCRIPT_URL with your Apps Script URL
    ════════════════════════════════════════════════════════════════ */
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrrxM1JQ58HZojvc1S6isBiLSSMYtY6cPvHdwHYOQnUc6BuXOUekfbXemR5kVdg_o/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9rHNnIqU4r5-mg3_9xeoBqqUFPGw0W3LGFb1O9Qs9-RcX2VByVWy7hLRCehyY6oER/exec';
 const SECRET_SALT = 'AbacusLvl1-2025-xK9p';
 const SAVE_KEY    = 'abacus_test_state_v2';
 
@@ -1749,7 +1750,7 @@ function generateBubbleQuestion(){
 }
 
 function generateBubbleOptions(answer){
-  const spread=2; // uniform across all 10 questions — every question is formula-based now
+  const spread=2; // uniform across all questions — every question is formula-based now
   const opts=new Set([answer]);
   let guard=0;
   while(opts.size<3&&guard<80){
@@ -2084,8 +2085,10 @@ const BFC_SLOTS = [
   { left:'68%', top:'42%' }
 ];
 
+const BFC_TOTAL = 25; // questions per game
+
 let BFC = {
-  running:false, qIdx:0, score:0, correctCount:0, attempts:0,
+  running:false, qIdx:0, score:0, correctCount:0, wrongCount:0, results:[], attempts:0,
   answer:0, aimAngle:0, shooting:false, timerId:null, elapsed:0,
   qStartTime:0
 };
@@ -2098,7 +2101,7 @@ function startCannonGame(){
   G.name = name; G.phone = phone;
 
   if (BFC.timerId) clearInterval(BFC.timerId);
-  BFC = { running:true, qIdx:0, score:0, correctCount:0, attempts:0, answer:0, aimAngle:0, shooting:false, timerId:null, elapsed:0, qStartTime:0 };
+  BFC = { running:true, qIdx:0, score:0, correctCount:0, wrongCount:0, results:[], attempts:0, answer:0, aimAngle:0, shooting:false, timerId:null, elapsed:0, qStartTime:0 };
   showScreen('cannon');
   bfcBuildProgress();
   bfcWireAiming();
@@ -2115,7 +2118,7 @@ function stopCannonGame(){
 function bfcBuildProgress(){
   const wrap = document.getElementById('bfc-progress');
   wrap.innerHTML = '';
-  for (let i=0;i<10;i++){
+  for (let i=0;i<BFC_TOTAL;i++){
     const d = document.createElement('div');
     d.className = 'bfc-progress-dot';
     if (i===0) d.classList.add('current');
@@ -2126,10 +2129,10 @@ function bfcUpdateProgress(){
   const dots = document.querySelectorAll('#bfc-progress .bfc-progress-dot');
   dots.forEach((d,i)=>{
     d.className = 'bfc-progress-dot';
-    if (i<BFC.qIdx) d.classList.add('done');
+    if (i<BFC.qIdx) d.classList.add(BFC.results[i]==='w' ? 'wrong' : 'done');
     else if (i===BFC.qIdx) d.classList.add('current');
   });
-  document.getElementById('bfc-qlbl').textContent = 'Q ' + (BFC.qIdx+1) + '/10';
+  document.getElementById('bfc-qlbl').textContent = 'Q ' + Math.min(BFC.qIdx+1, BFC_TOTAL) + '/' + BFC_TOTAL;
   document.getElementById('bfc-score').textContent = '⭐ ' + BFC.score;
 }
 
@@ -2150,7 +2153,7 @@ function bfcRenderTimer(){
 /* ── Question rendering ───────────────────────────────────────────*/
 function bfcNextQuestion(){
   if (!BFC.running) return;
-  if (BFC.qIdx >= 10){ bfcFinishGame(); return; }
+  if (BFC.qIdx >= BFC_TOTAL){ bfcFinishGame(); return; }
   bfcClearTargets();
   const q = bfcGenerateQuestion();
   BFC.answer = q.answer;
@@ -2312,33 +2315,32 @@ function bfcHandleHit(targetEl){
   if (correct){
     bfcSfxCorrect();
     targetEl.classList.add('glow-correct','hit-correct');
-    fb.textContent = 'Correct! 🎉';
+    fb.textContent = 'Correct! +1 🎉';
     fb.className = 'bfc-feedback-msg correct show';
-
-    const elapsedForQ = (Date.now() - BFC.qStartTime) / 1000;
-    const speedBonus = elapsedForQ <= 5 ? 5 : 0;
-    BFC.score += 10 + speedBonus;
+    BFC.score += 1;
     BFC.correctCount++;
-    BFC.qIdx++;
-
-    setTimeout(()=>{
-      fb.classList.remove('show');
-      BFC.shooting = false;
-      bfcNextQuestion();
-    }, 1100);
+    BFC.results[BFC.qIdx] = 'c';
   } else {
     bfcSfxWrong();
     targetEl.classList.add('glow-wrong','hit-wrong');
-    fb.textContent = 'Try Again!';
+    // reveal the right answer, then move on — no second chance
+    document.querySelectorAll('#bfc-arena .bfc-target').forEach(t=>{
+      if (parseInt(t.dataset.val,10) === BFC.answer) t.classList.add('glow-correct');
+    });
+    fb.textContent = 'Wrong! -1';
     fb.className = 'bfc-feedback-msg wrong show';
-    setTimeout(()=>{
-      targetEl.classList.remove('glow-wrong','hit-wrong');
-    }, 450);
-    setTimeout(()=>{
-      fb.classList.remove('show');
-      BFC.shooting = false;
-    }, 700);
+    BFC.score -= 1;
+    BFC.wrongCount++;
+    BFC.results[BFC.qIdx] = 'w';
   }
+  BFC.qIdx++;
+  bfcUpdateProgress(); // dot turns green/red right away
+
+  setTimeout(()=>{
+    fb.classList.remove('show');
+    BFC.shooting = false;
+    bfcNextQuestion();
+  }, correct ? 1100 : 1400);
 }
 
 /* ── Finish game / results ────────────────────────────────────────*/
@@ -2349,10 +2351,11 @@ function bfcFinishGame(){
 
   document.getElementById('bfcres-name').textContent = G.name;
   document.getElementById('bfcres-score').textContent = BFC.score;
-  document.getElementById('bfcres-correct').textContent = BFC.correctCount + ' / 10';
-  const accuracy = BFC.attempts > 0 ? Math.round(BFC.correctCount / BFC.attempts * 100) : 0;
+  document.getElementById('bfcres-correct').textContent = BFC.correctCount + ' / ' + BFC_TOTAL;
+  const answered = BFC.correctCount + BFC.wrongCount;
+  const accuracy = answered > 0 ? Math.round(BFC.correctCount / answered * 100) : 0;
   document.getElementById('bfcres-accuracy').textContent = accuracy + '%';
-  document.getElementById('bfcres-attempts').textContent = BFC.attempts;
+  document.getElementById('bfcres-attempts').textContent = BFC.wrongCount;
   const m = String(Math.floor(BFC.elapsed/60)).padStart(2,'0');
   const s = String(BFC.elapsed%60).padStart(2,'0');
   document.getElementById('bfcres-time').textContent = m+':'+s;
@@ -2366,7 +2369,7 @@ async function bfcSubmitLead(){
     await fetch(GOOGLE_SCRIPT_URL, {
       method:'POST', mode:'no-cors',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ name:G.name, phone:G.phone||'', level:'Level 1 (big friend cannon)', score:BFC.score, total:10 })
+      body: JSON.stringify({ name:G.name, phone:G.phone||'', level:'Level 1 (big friend cannon)', score:BFC.score, total:BFC_TOTAL })
     });
   }catch(e){}
 }
